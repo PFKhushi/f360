@@ -41,7 +41,7 @@ export default function Login() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col lg:flex-row  items-center justify-evenly p-10 md:p-24 bg-[#D9D9D9]">
+    <main className="flex min-h-screen flex-col lg:flex-row  items-center justify-evenly p-10 md:p-24 bg-neutral">
       <div className="flex justify-center ">
         <Image
           src="/img/LOGO-ROXA-LETREIRO-HORIZONTAL.png"
@@ -65,7 +65,7 @@ export default function Login() {
               {...register('email')}
             />
             <label htmlFor="login">
-              <FiUser className="text-[#482DA5] text-3xl absolute top-5 xl:right-3 xl:left-auto left-6" />
+              <FiUser className="text-light-purple text-3xl absolute top-5 xl:right-3 xl:left-auto left-6" />
             </label>
             {errors.email && (
               <span className="text-red-500 text-sm">
@@ -84,7 +84,7 @@ export default function Login() {
                 {...register('password')}
               />
               <label htmlFor="senha">
-                <GoLock className="text-[#482DA5] text-3xl absolute top-5 xl:right-3 xl:left-auto left-6" />
+                <GoLock className="text-light-purple text-3xl absolute top-5 xl:right-3 xl:left-auto left-6" />
               </label>
             </div>
             {errors.password && (
@@ -92,12 +92,12 @@ export default function Login() {
                 {errors.password.message}
               </span>
             )}
-            <a href="#" className="text-[#482DA5] text-lg">
+            <a href="#" className="text-light-purple text-lg">
               Esqueceu a senha?
             </a>
           </article>
 
-          <button className="bg-[#482DA5] text-white text-xl font-bold py-5 px-20 xl:rounded-lg rounded-3xl shadow-md hover:bg-yellow-400 active:bg-yellow-500 duration-200">
+          <button className="bg-light-purple text-white text-xl font-bold py-5 px-20 xl:rounded-lg rounded-3xl shadow-md hover:bg-yellow-400 active:bg-yellow-500 duration-200">
             ENTRE
           </button>
         </form>

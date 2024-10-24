@@ -8,6 +8,16 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      colors: {
+        primary: '#271A54', // Roxo Escuro
+        secondary: '#482DA5', // Roxo Claro
+        accent: '#FFB01C', // Amarelo
+        neutral: '#D9D9D9', // Cinza
+        'dark-purple': '#271A54',
+        'light-purple': '#482DA5',
+        'dark-yellow': '#FFB01C',
+        'light-grey': '#D9D9D9',
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
