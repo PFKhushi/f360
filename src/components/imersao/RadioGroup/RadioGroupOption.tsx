@@ -3,9 +3,13 @@ import React from 'react'
 
 interface RadioGroupOptionProps {
   value: string
+  text: string
 }
 
-export default function RadioGroupOption({ value }: RadioGroupOptionProps) {
+export default function RadioGroupOption({
+  value,
+  text,
+}: RadioGroupOptionProps) {
   return (
     <RadioGroup.Option value={value}>
       {({ checked }) => (
@@ -14,7 +18,7 @@ export default function RadioGroupOption({ value }: RadioGroupOptionProps) {
             checked ? 'bg-light-purple' : ''
           }`}
         >
-          {value}
+          {text}
         </span>
       )}
     </RadioGroup.Option>

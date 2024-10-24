@@ -21,12 +21,12 @@ export default function Radio({
   errorText,
 }: RadioGroupProps) {
   const [plan, setPlan] = useState('')
-  const [range, setRange] = useState([
-    { id: 1, value: '1' },
-    { id: 2, value: '2' },
-    { id: 3, value: '3' },
-    { id: 4, value: '4' },
-    { id: 5, value: '5' },
+  const [range] = useState([
+    { id: 1, value: '0', text: 'Nenhuma' },
+    { id: 2, value: '1', text: 'Trainee' },
+    { id: 3, value: '2', text: 'Junior' },
+    { id: 4, value: '3', text: 'Pleno' },
+    { id: 5, value: '4', text: 'Senior' },
   ])
 
   function setRadio(e: any) {
@@ -40,7 +40,11 @@ export default function Radio({
         <RadioGroup.Label className="text-white">{label}</RadioGroup.Label>
         <div className="grid grid-cols-5 gap-x-1 py-4 text-white md:gap-x-10">
           {range.map((item) => (
-            <RadioGroupOption key={item.id} value={item.value} />
+            <RadioGroupOption
+              key={item.id}
+              value={item.value}
+              text={item.text}
+            />
           ))}
         </div>
         {error && <span className="text-red-400">{errorText}</span>}
