@@ -10,6 +10,7 @@ class Usuarios(AbstractUser):
         ADS = "ADS", "Análise e Desenvolvimento de Sistemas"
         CC = "CC", "Ciência da Computação"
         SI = "SI", "Sistemas para Internet"
+        CD = "CD", "Ciência de Dados"
         OTR = "OTR", "Outros"  # TODO: Futuramente mapear todos os que podem ou não entrar na Fábrica
 
     class Cargos(models.TextChoices):
@@ -47,12 +48,9 @@ class Usuarios(AbstractUser):
     
     nome = models.CharField(verbose_name="Nome completo do usuário", max_length=120)
     username = models.EmailField("E-mail do usuário", unique=True)
-    data_nasc = models.DateField("Data de nascimento do usuário")
-    sexo = models.CharField("Sexo Biológico", max_length=1, choices=Sexo.choices) 
     rgm = models.CharField("Registro Geral de Matrícula da Instituição", max_length=8, unique=True)
     curso = models.CharField("Curso", max_length=40, choices=Cursos.choices)
     cargo = models.CharField("Cargo", max_length=15, choices=Cargos.choices)
-    ingresso_inst = models.DateField("Data de ingresso na instituição")
     ingresso_fab = models.DateField("Data de ingresso na Fábrica de Software", null=True, blank=True)
     setor = models.CharField("Setor", max_length=23, choices=Setores.choices, null=True, blank=True)
     situacao = models.CharField("Situação", max_length=10, choices=Situacoes.choices)
@@ -61,8 +59,9 @@ class Usuarios(AbstractUser):
     data_criacao = models.DateTimeField("Data de criação do usuário", auto_now_add=True)
     data_atualizacao = models.DateTimeField("Data de atualização do usuário", auto_now=True)
 
-    USERNAME_FIELD = 'username'
+    USERNAME_FIELD = 'username' # Identificador para login, o email
     REQUIRED_FIELDS = ['nome', 'data_nasc', 'sexo', 'rgm', 'curso', 'cargo', 'ingresso_inst', 'situacao']
+    
     class Meta:
         verbose_name = "Usuário"
         verbose_name_plural = "Usuários"
