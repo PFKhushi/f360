@@ -24,9 +24,9 @@ export default function Radio({
   const [range] = useState([
     { id: 1, value: '0', text: 'Nenhuma' },
     { id: 2, value: '1', text: 'Trainee' },
-    { id: 3, value: '2', text: 'Junior' },
+    { id: 3, value: '2', text: 'Júnior' },
     { id: 4, value: '3', text: 'Pleno' },
-    { id: 5, value: '4', text: 'Senior' },
+    { id: 5, value: '4', text: 'Sênior' },
   ])
 
   function setRadio(e: any) {
@@ -37,15 +37,18 @@ export default function Radio({
   return (
     <div className="py-2">
       <RadioGroup value={plan} onChange={(e) => setRadio(e)}>
-        <RadioGroup.Label className="text-white">{label}</RadioGroup.Label>
-        <div className="grid grid-cols-5 gap-x-1 py-4 text-white md:gap-x-10">
-          {range.map((item) => (
-            <RadioGroupOption
-              key={item.id}
-              value={item.value}
-              text={item.text}
-            />
-          ))}
+        <RadioGroup.Label className="text-accent text-lg ml-[11%] md:ml-[11%]  lg:ml-[16%]">{label}</RadioGroup.Label>
+        <div className='flex justify-center'>
+          <div className="grid grid-cols-5 gap-x-1 py-4  md:gap-x-10 text-xs md:text-xl">
+            {range.map((item) => (
+              <RadioGroupOption
+                key={item.id}
+                value={item.value}
+                text={item.text}
+              
+              />
+            ))}
+          </div>
         </div>
         {error && <span className="text-red-400">{errorText}</span>}
       </RadioGroup>
