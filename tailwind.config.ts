@@ -14,6 +14,7 @@ const config: Config = {
         accent: '#FFB01C', // Amarelo
         neutral: '#D9D9D9', // Cinza
         'dark-purple': '#271A54',
+        'dark-blackpurple': '#23174c',
         'light-purple': '#482DA5',
         'dark-yellow': '#FFB01C',
         'light-grey': '#D9D9D9',

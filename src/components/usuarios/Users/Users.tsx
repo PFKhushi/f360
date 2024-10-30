@@ -1,17 +1,10 @@
 'use client'
-import { usersGet } from '@/hook/usersGet'
+import UsersTable from '../Table/UsersTable'
 
 export default function Users() {
-  const { users } = usersGet()
-
   return (
-    <div>
-      {users.map((user) => (
-        <div key={user.id}>
-          <h2>{user.nome}</h2>
-          <p>{user.cpf}</p>
-        </div>
-      ))}
+    <div className="p4 lg:px-12 xl:px-24">
+      <UsersTable />
     </div>
   )
 }
