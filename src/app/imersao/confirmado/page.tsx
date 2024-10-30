@@ -1,11 +1,9 @@
 import Confirmacao from '@/components/imersao/ConfirmacaoImersao/Confirmacao'
 
-
-export default function Imersionista() {
+export default function ConfirmacaoImersao() {
   return (
     <main className="min-h-screen bg-dark-purple text-white">
-      <Confirmacao/>
-      
+      <Confirmacao />
     </main>
   )
 }
