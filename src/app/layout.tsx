@@ -22,8 +22,10 @@ export default function RootLayout({
       <body className={inter.className}>
         <NextAuthSessionProvider>
           <ReactQueryProvider>
+            <>  
             {children}
             <ToasterProvider />
+            </>   
           </ReactQueryProvider>
         </NextAuthSessionProvider>
       </body>

@@ -1,3 +1,6 @@
+import { RegistroFormSchemaType, registroFormSchema } from "./registerFormSchema"
+
+
 export default function Registro() {
   return (
     <div>
