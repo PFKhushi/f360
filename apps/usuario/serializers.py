@@ -4,8 +4,17 @@ from .models import Usuarios, Experiencias
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuarios
-        fields = "__all__"
-        
+        fields = [
+            "nome", 
+            "username",
+            "rgm", 
+            "curso", 
+            "ingresso_fab",
+            "setor",
+            "data_criacao",
+            "data_atualizacao"
+        ]
+
 class ExperienciaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Experiencias

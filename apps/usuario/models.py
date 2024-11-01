@@ -1,3 +1,4 @@
+import re
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -11,7 +12,7 @@ class Usuarios(AbstractUser):
         CC = "CC", "Ciência da Computação"
         SI = "SI", "Sistemas para Internet"
         CD = "CD", "Ciência de Dados"
-        OTR = "OTR", "Outros"  # TODO: Futuramente mapear todos os que podem ou não entrar na Fábrica
+        OTR = "OTR", "Outros"
 
     class Cargos(models.TextChoices):
         GESTOR = "GESTOR","Gestor"
@@ -48,6 +49,7 @@ class Usuarios(AbstractUser):
     
     nome = models.CharField(verbose_name="Nome completo do usuário", max_length=120)
     username = models.EmailField("E-mail do usuário", unique=True)
+    email_institucional = models.EmailField("Email Institucional", unique = True)
     rgm = models.CharField("Registro Geral de Matrícula da Instituição", max_length=8, unique=True)
     curso = models.CharField("Curso", max_length=40, choices=Cursos.choices)
     cargo = models.CharField("Cargo", max_length=15, choices=Cargos.choices)
@@ -60,12 +62,23 @@ class Usuarios(AbstractUser):
     data_atualizacao = models.DateTimeField("Data de atualização do usuário", auto_now=True)
 
     USERNAME_FIELD = 'username' # Identificador para login, o email
-    REQUIRED_FIELDS = ['nome', 'data_nasc', 'sexo', 'rgm', 'curso', 'cargo', 'ingresso_inst', 'situacao']
+    REQUIRED_FIELDS = ['nome', 'rgm', 'curso', 'cargo', 'situacao']
     
     class Meta:
         verbose_name = "Usuário"
         verbose_name_plural = "Usuários"
     
+    def valida_email(email):
+        email_cruzeiro = r'^[a-zA-Z0-9._%+-]+@cs\.cruzeirodosul\.edu\.br$'
+        return bool(re.match(email_cruzeiro, email))
+
+
+    def valida_rgm(rgm):
+        if isinstance(rgm, str) and len(rgm) == 8 and rgm.isdigit():
+            return True
+        else:
+            return False
+
     def __str__(self):
         return f"{self.nome} - {self.rgm}"
 
