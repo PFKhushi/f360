@@ -51,6 +51,7 @@ class Usuarios(AbstractUser):
     username = models.EmailField("E-mail do usuário", unique=True)
     email_institucional = models.EmailField("Email Institucional", unique = True)
     rgm = models.CharField("Registro Geral de Matrícula da Instituição", max_length=8, unique=True)
+    telefone = models.CharField("Número de Telefone", max_length=15, blank=True)
     curso = models.CharField("Curso", max_length=40, choices=Cursos.choices)
     cargo = models.CharField("Cargo", max_length=15, choices=Cargos.choices)
     ingresso_fab = models.DateField("Data de ingresso na Fábrica de Software", null=True, blank=True)
