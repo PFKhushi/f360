@@ -104,10 +104,10 @@ export default function Login() {
           </button>
         </form>
       </div>
-      <div className="bg-[#271A54] w-1/4 text-white p-3 flex flex-col justify-center items-center gap-8 lg:p-7">
+      <div className="bg-primary w-1/4 text-white p-3 flex flex-col justify-center items-center gap-8 lg:p-7">
         <h1 className="text-4xl  font-bold">Novo Aqui?</h1>
         <p className="text-xs">Faça seu cadastro como imersionista!</p>
-        <a href="../../registrar" className="bg-white p-3 text-[#482DA5] font-extrabold rounded-md w-full flex justify-center ">CADASTRE-SE</a>
+        <a href="../../registrar" className="bg-white p-3 text-light-purple font-extrabold rounded-md w-full flex justify-center ">CADASTRE-SE</a>
       </div>
     </main>
   );

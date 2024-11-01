@@ -3,7 +3,7 @@ interface InputTextProps {
   label: string;
   placeholder: string;
   type: string;
-  register: any;
+ // register: any;
   error?: FieldError;
 }
 
@@ -11,7 +11,7 @@ export default function InputText({
   label,
   placeholder,
   type,
-  register,
+ // register,
   error,
 }: InputTextProps) {
   return (
@@ -21,7 +21,7 @@ export default function InputText({
         type={type}
         placeholder={placeholder}
         className="w-80 md:w-72 lg:w-96 h-9 rounded-md text-black p-2"
-        {...register}
+       // {...register}
       />
         {error && <p className="text-red-500">{error.message}</p>} 
     </div>
