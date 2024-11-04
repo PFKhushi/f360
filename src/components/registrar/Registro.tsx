@@ -1,25 +1,25 @@
-"use client";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+'use client'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
   RegistroFormSchemaType,
   registroFormSchema,
-} from "./registerFormSchema";
-import Image from "next/image";
-import InputText from "../Inputs/InputText";
+} from './registerFormSchema'
+import Image from 'next/image'
+import InputText from '../Inputs/InputText'
 
 export default function Registro() {
-  const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<RegistroFormSchemaType>({
     resolver: zodResolver(registroFormSchema),
-  });
+  })
 
-  const onSubmit = async (data: RegistroFormSchemaType) => {};
+  const onSubmit = async (data: RegistroFormSchemaType) => {
+    console.log(data)
+  }
 
   return (
     <div>
@@ -31,20 +31,23 @@ export default function Registro() {
           height={147}
           className=""
         />
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 p-2 mt-4 items-center">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-2 p-2 mt-4 items-center"
+        >
           <InputText
             label="Nome Completo"
             placeholder="Digite seu nome completo"
             type="text"
             error={errors.nomeCompleto}
-            {...register("nomeCompleto")}
+            register={register('nomeCompleto')}
           />
           <InputText
             label="Email"
             placeholder="Digite seu email"
             type="email"
             error={errors.email}
-            {...register("email")}
+            register={register('email')}
           />
           <button className=" bg-white p-3 mt-4 text-light-purple font-extrabold rounded-md w-2/3 flex justify-center ">
             CADASTRE-SE
@@ -52,5 +55,5 @@ export default function Registro() {
         </form>
       </div>
     </div>
-  );
+  )
 }

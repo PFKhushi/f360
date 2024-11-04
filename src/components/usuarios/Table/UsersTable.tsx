@@ -5,6 +5,12 @@ import { MdBlock } from 'react-icons/md'
 
 export default function Manageusuario() {
   const [isMobile, setIsMobile] = useState(false)
+  const [nomeFiltro, setNomeFiltro] = useState('')
+  const [periodoFiltro, setPeriodoFiltro] = useState('')
+  const [cargoFiltro, setCargoFiltro] = useState('')
+  const [projetosFiltro, setProjetosFiltro] = useState('')
+  const [areaFiltro, setAreaFiltro] = useState('')
+  const [especialidadeFiltro, setEspecialidadeFiltro] = useState('')
 
   useEffect(() => {
     const handleResize = () => {
@@ -63,6 +69,38 @@ export default function Manageusuario() {
     },
   ]
 
+  const normalizeString = (str: string) => {
+    return str
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+  }
+
+  const usuariosFiltrados = usuarios.filter((usuario) => {
+    return (
+      (nomeFiltro === '' ||
+        normalizeString(usuario.nome).includes(normalizeString(nomeFiltro))) &&
+      (periodoFiltro === '' ||
+        normalizeString(usuario.periodo).includes(
+          normalizeString(periodoFiltro),
+        )) &&
+      (cargoFiltro === '' ||
+        normalizeString(usuario.cargo).includes(
+          normalizeString(cargoFiltro),
+        )) &&
+      (projetosFiltro === '' ||
+        usuario.projetos.some((projeto) =>
+          normalizeString(projeto).includes(normalizeString(projetosFiltro)),
+        )) &&
+      (areaFiltro === '' ||
+        normalizeString(usuario.area).includes(normalizeString(areaFiltro))) &&
+      (especialidadeFiltro === '' ||
+        normalizeString(usuario.especialidade).includes(
+          normalizeString(especialidadeFiltro),
+        ))
+    )
+  })
+
   return (
     <div className="w-full md:p-4 flex flex-col justify-center items-center bg-dark-purple rounded-xl">
       <div className="flex flex-col items-center w-full mb-1 md:justify-normal">
@@ -78,6 +116,8 @@ export default function Manageusuario() {
               name="nome"
               type="text"
               placeholder="Filtrar por nome"
+              value={nomeFiltro}
+              onChange={(e) => setNomeFiltro(e.target.value)}
               className="w-full bg-white text-black p-2 rounded-xl text-sm"
             />
           </div>
@@ -86,6 +126,8 @@ export default function Manageusuario() {
             <input
               type="text"
               placeholder="Filtrar por período"
+              value={periodoFiltro}
+              onChange={(e) => setPeriodoFiltro(e.target.value)}
               className="w-full bg-white text-black p-2 rounded-xl text-sm"
             />
           </div>
@@ -94,6 +136,8 @@ export default function Manageusuario() {
             <input
               type="text"
               placeholder="Filtrar por cargo"
+              value={cargoFiltro}
+              onChange={(e) => setCargoFiltro(e.target.value)}
               className="w-full bg-white text-black p-2 rounded-xl text-sm"
             />
           </div>
@@ -102,6 +146,8 @@ export default function Manageusuario() {
             <input
               type="text"
               placeholder="Filtrar por projetos"
+              value={projetosFiltro}
+              onChange={(e) => setProjetosFiltro(e.target.value)}
               className="w-full bg-white text-black p-2 rounded-xl text-sm"
             />
           </div>
@@ -110,6 +156,8 @@ export default function Manageusuario() {
             <input
               type="text"
               placeholder="Filtrar por área"
+              value={areaFiltro}
+              onChange={(e) => setAreaFiltro(e.target.value)}
               className="w-full bg-white text-black p-2 rounded-xl text-sm"
             />
           </div>
@@ -118,6 +166,8 @@ export default function Manageusuario() {
             <input
               type="text"
               placeholder="Filtrar por especialidade"
+              value={especialidadeFiltro}
+              onChange={(e) => setEspecialidadeFiltro(e.target.value)}
               className="w-full bg-white text-black p-2 rounded-xl text-sm"
             />
           </div>
@@ -139,7 +189,7 @@ export default function Manageusuario() {
               </tr>
             </thead>
             <tbody className="bg-light-purple rounded-b-lg">
-              {usuarios.map((usuario, index) => (
+              {usuariosFiltrados.map((usuario, index) => (
                 <tr key={index} className="border-b-4 border-[#3a2484]">
                   <td className="lg:p-4 p-2 text-center">{usuario.nome}</td>
                   <td>
@@ -187,7 +237,7 @@ export default function Manageusuario() {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center gap-6 w-full px-6 pb-6">
-          {usuarios.map((usuario, index) => (
+          {usuariosFiltrados.map((usuario, index) => (
             <div
               className="w-full bg-light-purple rounded-lg shadow-2xl text-[#FFF] items-center flex flex-col"
               key={index}

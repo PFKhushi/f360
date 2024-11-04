@@ -2,14 +2,14 @@
 import { useState } from 'react'
 import { RadioGroup } from '@headlessui/react'
 import RadioGroupOption from './RadioGroupOption'
-import { FieldErrors, UseFormSetValue } from 'react-hook-form'
+import { UseFormSetValue } from 'react-hook-form'
 import { imersaoFormSchemaType } from '../imersaoFormSchema'
 
 interface RadioGroupProps {
   label: string
   setValue: UseFormSetValue<imersaoFormSchemaType>
   name: keyof imersaoFormSchemaType
-  error?: FieldErrors<imersaoFormSchemaType>
+  error?: any
   errorText: string
 }
 
@@ -36,21 +36,32 @@ export default function Radio({
 
   return (
     <div className="py-2">
-      <RadioGroup value={plan} onChange={(e) => setRadio(e)}>
-        <RadioGroup.Label className="text-accent text-lg ml-[11%] md:ml-[11%]  lg:ml-[16%]">{label}</RadioGroup.Label>
-        <div className='flex justify-center'>
+      <RadioGroup
+        value={plan}
+        onChange={(e) => setRadio(e)}
+        className="flex flex-col gap-2"
+      >
+        <RadioGroup.Label className="text-accent text-lg md:text-xl font-semibold ml-[11%] md:ml-[11%]  lg:ml-[16%]">
+          {label}
+        </RadioGroup.Label>
+        <div className="flex justify-center">
           <div className="grid grid-cols-5 gap-x-1 py-4  md:gap-x-10 text-xs md:text-xl">
             {range.map((item) => (
               <RadioGroupOption
                 key={item.id}
                 value={item.value}
                 text={item.text}
-              
               />
             ))}
           </div>
         </div>
-        {error && <span className="text-red-400">{errorText}</span>}
+        <div className="flex justify-center items-center">
+          {error && (
+            <span className="text-red-500 text-sm font-semibold ml-1">
+              {errorText}
+            </span>
+          )}
+        </div>
       </RadioGroup>
     </div>
   )
