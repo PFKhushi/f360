@@ -1,4 +1,5 @@
 import re
+from localflavor.br.models import BRCPFField
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -48,6 +49,7 @@ class Usuarios(AbstractUser):
         ESTAGIANDO = "ESTAGIANDO", "Estagiando"
     
     nome = models.CharField(verbose_name="Nome completo do usuário", max_length=120)
+    cpf = BRCPFField(verbose_name="CPF", null=False, blank=False, unique=True)
     username = models.EmailField("E-mail do usuário", unique=True)
     email_institucional = models.EmailField("Email Institucional", unique = True)
     rgm = models.CharField("Registro Geral de Matrícula da Instituição", max_length=8, unique=True)

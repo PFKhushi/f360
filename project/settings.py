@@ -29,6 +29,7 @@ DEFAULT_APPS = [
 THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
+    "localflavor",
     "corsheaders",
 ]
 
@@ -124,3 +125,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Custom Auth User Model
 AUTH_USER_MODEL = 'usuario.Usuarios'
+
+# Corsheaders
+CORS_ALLOW_ALL_ORIGINS = True
