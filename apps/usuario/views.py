@@ -1,5 +1,6 @@
 from rest_framework.viewsets import ModelViewSet
-from .serializers import *
+from .models import Usuarios, Experiencias
+from .serializers import UsuarioSerializer, ExperienciaSerializer
 
 class UsuarioViewSet(ModelViewSet):
     queryset = Usuarios.objects.all()
