@@ -61,6 +61,9 @@ export const AtualizarCadastroFormSchema = z.object({
       return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
     })
     .refine((value) => isValidCPF(value), 'Esse CPF é inválido'),
+  termoDeUso: z
+    .boolean()
+    .refine((value) => value, 'É necessário aceitar os termos de uso'),
 })
 
 export type AtualizarCadastroFormSchemaType = z.infer<
