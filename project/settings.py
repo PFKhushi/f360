@@ -50,6 +50,13 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+# Custom Auth User Model
+AUTH_USER_MODEL = 'usuario.Usuarios'
+
+# Corsheaders
+CORS_ALLOW_ALL_ORIGINS = True
+
+# Rest Framework
 ROOT_URLCONF = "project.urls"
 
 TEMPLATES = [
@@ -122,9 +129,3 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-# Custom Auth User Model
-AUTH_USER_MODEL = 'usuario.Usuarios'
-
-# Corsheaders
-CORS_ALLOW_ALL_ORIGINS = True
