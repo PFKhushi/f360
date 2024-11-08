@@ -86,7 +86,7 @@ export default function AtualizarCadastro() {
           <p>
             Eu li e concordo com os{' '}
             <span className="text-dark-yellow underline ">
-              <Link href="/termoDeUso">termos de uso.</Link>
+              <Link href="/termos-de-uso">termos de uso.</Link>
             </span>
           </p>
         </div>

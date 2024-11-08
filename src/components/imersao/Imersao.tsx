@@ -1,11 +1,11 @@
-"use client";
-import { FiChevronDown } from "react-icons/fi";
-import Radio from "./RadioGroup/RadioGroup";
-import Image from "next/image";
-import InputSelect from "../Inputs/InputSelect";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { imersaoFormSchemaType, imersaoFormSchema } from "./imersaoFormSchema";
+'use client'
+import { FiChevronDown } from 'react-icons/fi'
+import Radio from './RadioGroup/RadioGroup'
+import Image from 'next/image'
+import InputSelect from '../Inputs/InputSelect'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { imersaoFormSchemaType, imersaoFormSchema } from './imersaoFormSchema'
 
 export default function Imersao() {
   const {
@@ -15,16 +15,18 @@ export default function Imersao() {
     setValue,
     formState: { errors },
   } = useForm<imersaoFormSchemaType>({
-    mode: "all",
+    mode: 'all',
     resolver: zodResolver(imersaoFormSchema),
-  });
+  })
 
-  console.log(errors);
+  console.log(errors)
 
   const handleForm = (data: imersaoFormSchemaType) => {
-    console.log(data);
-  };
-  const funcao = watch("funcao");
+    console.log(data)
+  }
+
+  const funcao = watch('funcao')
+
   return (
     <div className="pb-12">
       <div className="pt-8">
@@ -41,7 +43,7 @@ export default function Imersao() {
           <div className="flex flex-col gap-4 items-center justify-center md:grid grid-cols-2 md:gap-8 mt-12">
             <InputSelect
               label="Função"
-              register={register("funcao")}
+              register={register('funcao')}
               error={errors.funcao}
             >
               <option value="" hidden>
@@ -50,11 +52,11 @@ export default function Imersao() {
               <option value="Back-End">Back-End</option>
               <option value="Front-End">Front-End</option>
               <option value="Dados">Dados</option>
-              <option value="Dados">PO</option>
+              <option value="PO">PO</option>
             </InputSelect>
             <InputSelect
               label="Período"
-              register={register("periodo")}
+              register={register('periodo')}
               error={errors.periodo}
             >
               <option value="" hidden>
@@ -82,68 +84,77 @@ export default function Imersao() {
           <FiChevronDown className="ml-2 h-5 w-5 transform scale-125" />
         </div>
         <div>
-          {funcao === "Front-End" && (
+          {funcao === 'Front-End' && (
             <>
               <Radio
-                label={"Next.js & React"}
+                label={'Next.js & React'}
                 setValue={setValue}
-                name={"nextJsReact"}
+                name={'nextJsReact'}
                 error={errors.nextJsReact}
                 errorText="A habilidade é obrigatória"
               ></Radio>
               <Radio
-                label={"Vite & React"}
+                label={'Vite & React'}
                 setValue={setValue}
-                name={"nextJsReact"}
+                name={'nextJsReact'}
                 error={errors.nextJsReact}
                 errorText="A habilidade é obrigatória"
               ></Radio>
               <Radio
-                label={"TypeScript"}
+                label={'TypeScript'}
                 setValue={setValue}
-                name={"nextJsReact"}
+                name={'nextJsReact'}
                 error={errors.nextJsReact}
                 errorText="A habilidade é obrigatória"
               ></Radio>
               <Radio
-                label={"JavaScript"}
+                label={'JavaScript'}
                 setValue={setValue}
-                name={"nextJsReact"}
+                name={'nextJsReact'}
                 error={errors.nextJsReact}
                 errorText="A habilidade é obrigatória"
               ></Radio>
             </>
           )}
-          {funcao === "Back-End" && (
+          {funcao === 'Back-End' && (
             <>
               <Radio
-                label={"Python & Django"}
+                label={'Python & Django'}
                 setValue={setValue}
-                name={"pythonDjango"}
+                name={'pythonDjango'}
                 error={errors.pythonDjango}
                 errorText="A habilidade é obrigatória"
               ></Radio>
               <Radio
-                label={"PHP & Laravel"}
+                label={'PHP & Laravel'}
                 setValue={setValue}
-                name={"pythonDjango"}
+                name={'pythonDjango'}
                 error={errors.pythonDjango}
                 errorText="A habilidade é obrigatória"
               ></Radio>
               <Radio
-                label={"Node.JS & Express"}
+                label={'Node.JS & Express'}
                 setValue={setValue}
-                name={"pythonDjango"}
+                name={'pythonDjango'}
                 error={errors.pythonDjango}
                 errorText="A habilidade é obrigatória"
               ></Radio>
             </>
           )}
-          {funcao === "Dados" && (
+          {funcao === 'Dados' && (
             <Radio
-              label={"Java & Spring"}
+              label={'Habilidade Dados'}
               setValue={setValue}
-              name={"javaSpring"}
+              name={'javaSpring'}
+              error={errors.javaSpring}
+              errorText="A habilidade é obrigatória"
+            ></Radio>
+          )}
+          {funcao === 'PO' && (
+            <Radio
+              label={'Habilidade PO'}
+              setValue={setValue}
+              name={'javaSpring'}
               error={errors.javaSpring}
               errorText="A habilidade é obrigatória"
             ></Radio>
@@ -154,5 +165,5 @@ export default function Imersao() {
         </button>
       </form>
     </div>
-  );
+  )
 }
