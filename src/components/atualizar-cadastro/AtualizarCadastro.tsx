@@ -81,7 +81,7 @@ export default function AtualizarCadastro() {
         >
           ATUALIZAR
         </button>
-        <div className="flex flex-row justify-center mt-8  md:space-x-3">
+        <div className="flex flex-row justify-center mt-8 mb-8  md:space-x-3">
           <input type="checkbox"/>
           <p>Eu li e concordo com os <span className="text-dark-yellow">termos de uso.</span></p>
         </div>
