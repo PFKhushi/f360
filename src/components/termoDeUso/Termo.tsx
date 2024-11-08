@@ -20,8 +20,8 @@ export default function termoDeUso() {
       <p className="text-center mt-3 md:text-2xl">Data da última atualização: 01/11/2024 </p>
       <div className="ml-8 md:ml-28 lg:ml-60  mt-8">
           <p className="text-1xl md:text-3xl font-bold"><span className="text-dark-yellow">1.</span> Aceitação dos Termos</p>
-          <ul className="list-disc">
-            <li className="ml-14  text-justify mt-3 text-sm md:text-xl w-56  md:w-[70%]">Ao prosseguir com o cadastro e fornecer informações adicionais como RGM, CPF e Telefone, você aceita e concorda com os Termos de Uso aqui descritos. Este documento detalha como os dados fornecidos serão utilizados e armazenados em conformidade com as leis de proteção de dados vigentes.</li>
+         <ul className="list-disc">
+            <li className="ml-14  text-justify mt-3 text-sm md:text-xl w-56  md:w-[70%]">Ao prosseguir com o cadastro e fornecer    informações adicionais como RGM, CPF e Telefone, você aceita e concorda com os Termos de Uso aqui descritos. Este documento detalha como os dados fornecidos serão utilizados e armazenados em conformidade com as leis de proteção de dados vigentes.</li>
           </ul>
           <p className="text-1xl md:text-3xl mt-8 font-bold"><span className="text-dark-yellow">2.</span> Coleta e Uso dos Dados</p>
           <ul className="list-disc">
@@ -53,14 +53,7 @@ export default function termoDeUso() {
           <ul className="list-disc">
             <li className="ml-14 text-justify mt-3 text-sm md:text-xl w-56  md:w-[70%]">Caso tenha dúvidas sobre este Termo de Uso ou sobre o uso das suas informações, entre em contato com nossa equipe de suporte através do e-mail [email de contato].</li>
           </ul>
-          
-
-
-
-
       </div>
-
-
    </div>
   )
 }

@@ -1,5 +1,5 @@
 'use client'
-
+import Link from 'next/link';
 import Image from 'next/image'
 import InputText from '../Inputs/InputText'
 import { useForm } from 'react-hook-form'
@@ -83,9 +83,8 @@ export default function AtualizarCadastro() {
         </button>
         <div className="flex flex-row justify-center mt-8 mb-8  md:space-x-3">
           <input type="checkbox"/>
-          <p>Eu li e concordo com os <span className="text-dark-yellow">termos de uso.</span></p>
+          <p>Eu li e concordo com os <span className="text-dark-yellow underline "><Link href="/termoDeUso" >termos de uso.</Link></span></p>
         </div>
-       
       </form>
     </div>
   )
