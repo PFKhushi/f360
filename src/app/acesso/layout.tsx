@@ -10,7 +10,7 @@ const inter = Poppins({
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <main className={inter.className}>
+    <main className={(inter.className, 'bg-light-grey min-h-screen')}>
       <Header>{children}</Header>
     </main>
   )
