@@ -1,12 +1,19 @@
 import { ReactNode } from 'react'
 
 export type User = {
-  id: number
   nome: string
   cpf: string
-  cargo: number
+  username: string
+  email_institucional: string
+  rgm: string
+  curso: string
+  telefone: string
+  ingresso_fab: string
+  setor?: string
+  data_criacao: string
+  data_atualizacao: string
+  aceita_termo: boolean
 }
-
 export type ReactQueryProviderProps = {
   children: ReactNode
 }

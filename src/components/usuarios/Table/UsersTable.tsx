@@ -1,9 +1,14 @@
 'use client'
+import { User } from '@/@types'
 import React, { useEffect, useState } from 'react'
 import { BiSolidEdit } from 'react-icons/bi'
 import { MdBlock } from 'react-icons/md'
 
-export default function Manageusuario() {
+interface UsersTableProps {
+  users: User[]
+}
+
+export default function Manageusuario({ users }: UsersTableProps) {
   const [isMobile, setIsMobile] = useState(false)
   const [nomeFiltro, setNomeFiltro] = useState('')
   const [periodoFiltro, setPeriodoFiltro] = useState('')
@@ -11,6 +16,8 @@ export default function Manageusuario() {
   const [projetosFiltro, setProjetosFiltro] = useState('')
   const [areaFiltro, setAreaFiltro] = useState('')
   const [especialidadeFiltro, setEspecialidadeFiltro] = useState('')
+
+  console.log(users)
 
   useEffect(() => {
     const handleResize = () => {
