@@ -110,7 +110,7 @@ export default function Manageusuario() {
           </h2>
         </div>
         <div className="min-h-24 w-full bg-dark-blackpurple rounded-xl flex justify-evenly gap-4 flex-wrap py-4">
-          <div className="flex flex-col justify-center items-center min-w-32">
+          <div className="flex flex-col justify-center items-center min-w-24">
             <label className="text-dark-yellow font-bold">Nome</label>
             <input
               name="nome"
@@ -123,13 +123,28 @@ export default function Manageusuario() {
           </div>
           <div className="flex flex-col justify-center items-center">
             <label className="text-dark-yellow font-bold">Período</label>
-            <input
-              type="text"
-              placeholder="Filtrar por período"
+            <select
               value={periodoFiltro}
               onChange={(e) => setPeriodoFiltro(e.target.value)}
-              className="w-full bg-white text-black p-2 rounded-xl text-sm"
-            />
+              className={`w-20 bg-white ${periodoFiltro !== '' ? 'text-black' : 'text-gray-500'} p-2 rounded-xl text-sm`}
+            >
+              <option value="" hidden>
+                Filtrar
+              </option>
+              <option value="">Nenhum</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+            </select>
           </div>
           <div className="flex flex-col justify-center items-center">
             <label className="text-dark-yellow font-bold">Cargo</label>

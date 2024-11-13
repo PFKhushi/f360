@@ -3,7 +3,7 @@ import React from 'react'
 
 export default function usuarios() {
   return (
-    <main className="bg-[#D9D9D9] min-h-screen p-4">
+    <main className="min-h-screen p-4">
       <Users />
     </main>
   )

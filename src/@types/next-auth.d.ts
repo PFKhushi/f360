@@ -7,6 +7,8 @@ declare module 'next-auth' {
       token: string
       access: string
       refresh: string
+      role: string
+      id: number
     }
   }
 }

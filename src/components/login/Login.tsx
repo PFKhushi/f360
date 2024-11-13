@@ -9,6 +9,7 @@ import { LoginFormSchemaType, loginFormSchema } from './loginFormSchema'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import toast from 'react-hot-toast'
+import Link from 'next/link'
 
 export default function Login() {
   const router = useRouter()
@@ -105,12 +106,12 @@ export default function Login() {
       <div className="bg-primary h-full pt-10 pb-44 lg:py-0 lg:h-auto lg:w-1/4 text-white p-3 flex flex-col justify-center items-center gap-8 lg:p-7">
         <h1 className="text-5xl font-bold">Novo Aqui?</h1>
         <p className="text-md">Faça seu cadastro como imersionista!</p>
-        <a
-          href="../../registrar"
-          className="bg-white py-5 px-20 text-xl text-light-purple font-extrabold rounded-md shadow-md hover:text-white hover:bg-yellow-400 active:bg-yellow-500 duration-200"
+        <Link
+          href="/registrar"
+          className="bg-white py-5 px-12 xl:px-20 text-xl whitespace-nowrap text-light-purple font-extrabold rounded-md shadow-md hover:text-white hover:bg-yellow-400 active:bg-yellow-500 duration-200"
         >
           CADASTRE-SE
-        </a>
+        </Link>
       </div>
     </main>
   )
