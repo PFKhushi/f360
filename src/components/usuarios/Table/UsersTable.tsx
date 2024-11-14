@@ -33,48 +33,48 @@ export default function Manageusuario({ users }: UsersTableProps) {
     }
   }, [])
 
-  const usuarios = [
-    {
-      nome: 'Júlio César Carvalho Santos',
-      periodo: '4',
-      cargo: 'Veterano',
-      projetos: ['Conte Cornetet', 'Fábrica 360'],
-      area: 'FrontEnd',
-      especialidade: 'Next.js',
-    },
-    {
-      nome: 'Wallace Sartori Bonfim',
-      periodo: 'N/A',
-      cargo: 'Administrador',
-      projetos: ['Conte Cornetet', 'Fábrica 360'],
-      area: 'CEO',
-      especialidade: 'N/A',
-    },
-    {
-      nome: 'Alice da Silva',
-      periodo: '2',
-      cargo: 'Estagiária',
-      projetos: ['Projeto Alpha', 'Inovação Beta'],
-      area: 'BackEnd',
-      especialidade: 'Node.js',
-    },
-    {
-      nome: 'Bruno Oliveira',
-      periodo: '6',
-      cargo: 'Desenvolvedor',
-      projetos: ['Fábrica 360', 'Projeto Gamma'],
-      area: 'Mobile',
-      especialidade: 'React Native',
-    },
-    {
-      nome: 'Carla Souza',
-      periodo: '3',
-      cargo: 'Trainee',
-      projetos: ['Projeto Delta'],
-      area: 'UI/UX',
-      especialidade: 'Figma',
-    },
-  ]
+  // const usuarios = [
+  //   {
+  //     nome: 'Júlio César Carvalho Santos',
+  //     periodo: '4',
+  //     cargo: 'Veterano',
+  //     projetos: ['Conte Cornetet', 'Fábrica 360'],
+  //     area: 'FrontEnd',
+  //     especialidade: 'Next.js',
+  //   },
+  //   {
+  //     nome: 'Wallace Sartori Bonfim',
+  //     periodo: 'N/A',
+  //     cargo: 'Administrador',
+  //     projetos: ['Conte Cornetet', 'Fábrica 360'],
+  //     area: 'CEO',
+  //     especialidade: 'N/A',
+  //   },
+  //   {
+  //     nome: 'Alice da Silva',
+  //     periodo: '2',
+  //     cargo: 'Estagiária',
+  //     projetos: ['Projeto Alpha', 'Inovação Beta'],
+  //     area: 'BackEnd',
+  //     especialidade: 'Node.js',
+  //   },
+  //   {
+  //     nome: 'Bruno Oliveira',
+  //     periodo: '6',
+  //     cargo: 'Desenvolvedor',
+  //     projetos: ['Fábrica 360', 'Projeto Gamma'],
+  //     area: 'Mobile',
+  //     especialidade: 'React Native',
+  //   },
+  //   {
+  //     nome: 'Carla Souza',
+  //     periodo: '3',
+  //     cargo: 'Trainee',
+  //     projetos: ['Projeto Delta'],
+  //     area: 'UI/UX',
+  //     especialidade: 'Figma',
+  //   },
+  // ]
 
   const normalizeString = (str: string) => {
     return str
@@ -83,28 +83,30 @@ export default function Manageusuario({ users }: UsersTableProps) {
       .toLowerCase()
   }
 
-  const usuariosFiltrados = usuarios.filter((usuario) => {
+  const usuariosFiltrados = users.filter((usuario) => {
     return (
       (nomeFiltro === '' ||
         normalizeString(usuario.nome).includes(normalizeString(nomeFiltro))) &&
-      (periodoFiltro === '' ||
-        normalizeString(usuario.periodo).includes(
-          normalizeString(periodoFiltro),
-        )) &&
+      // (periodoFiltro === '' ||
+      //   normalizeString(usuario.periodo).includes(
+      //     normalizeString(periodoFiltro),
+      //   )) &&
       (cargoFiltro === '' ||
         normalizeString(usuario.cargo).includes(
           normalizeString(cargoFiltro),
         )) &&
-      (projetosFiltro === '' ||
-        usuario.projetos.some((projeto) =>
-          normalizeString(projeto).includes(normalizeString(projetosFiltro)),
-        )) &&
+      // (projetosFiltro === '' ||
+      //   usuario.projetos.some((projeto) =>
+      //     normalizeString(projeto).includes(normalizeString(projetosFiltro)),
+      //   )) &&
       (areaFiltro === '' ||
-        normalizeString(usuario.area).includes(normalizeString(areaFiltro))) &&
-      (especialidadeFiltro === '' ||
-        normalizeString(usuario.especialidade).includes(
-          normalizeString(especialidadeFiltro),
+        normalizeString(usuario.setor || '').includes(
+          normalizeString(areaFiltro),
         ))
+      // (especialidadeFiltro === '' ||
+      //   normalizeString(usuario.especialidade).includes(
+      //     normalizeString(especialidadeFiltro),
+      //   ))
     )
   })
 
@@ -155,13 +157,21 @@ export default function Manageusuario({ users }: UsersTableProps) {
           </div>
           <div className="flex flex-col justify-center items-center">
             <label className="text-dark-yellow font-bold">Cargo</label>
-            <input
-              type="text"
-              placeholder="Filtrar por cargo"
+            <select
               value={cargoFiltro}
               onChange={(e) => setCargoFiltro(e.target.value)}
-              className="w-full bg-white text-black p-2 rounded-xl text-sm"
-            />
+              className={`w-full min-w-32 bg-white ${cargoFiltro !== '' ? 'text-black' : 'text-gray-500'} p-2 rounded-xl text-sm`}
+            >
+              <option value="" hidden>
+                Filtrar cargo
+              </option>
+              <option value="">Nenhum</option>
+              <option value="GESTOR">Gestor</option>
+              <option value="IMERSIONISTA">Imersionista</option>
+              <option value="NOVATO">Novato</option>
+              <option value="TECH_LEADER">Tech Leader</option>
+              <option value="VETERANO">Veterano</option>
+            </select>
           </div>
           <div className="flex flex-col justify-center items-center">
             <label className="text-dark-yellow font-bold">Projetos</label>
@@ -175,13 +185,27 @@ export default function Manageusuario({ users }: UsersTableProps) {
           </div>
           <div className="flex flex-col justify-center items-center">
             <label className="text-dark-yellow font-bold">Área</label>
-            <input
-              type="text"
-              placeholder="Filtrar por área"
+            <select
               value={areaFiltro}
               onChange={(e) => setAreaFiltro(e.target.value)}
-              className="w-full bg-white text-black p-2 rounded-xl text-sm"
-            />
+              className={`w-full min-w-32 bg-white ${areaFiltro !== '' ? 'text-black' : 'text-gray-500'} p-2 rounded-xl text-sm`}
+            >
+              <option value="" hidden>
+                Filtrar área
+              </option>
+              <option value="">Nenhum</option>
+              <option value="GESTAO">Gestão</option>
+              <option value="BACK">Back-end</option>
+              <option value="DADOS">Dados</option>
+              <option value="DEVOPS">DevOps</option>
+              <option value="FRONT">Front-end</option>
+              <option value="IA">Inteligência Artificial</option>
+              <option value="JOGOS">Jogos</option>
+              <option value="MOBILE">Mobile</option>
+              <option value="PO">Product Owner</option>
+              <option value="QA">Quality Assurance</option>
+              <option value="UIUX">UI/UX</option>
+            </select>
           </div>
           <div className="flex flex-col justify-center items-center">
             <label className="text-dark-yellow font-bold">Especialidade</label>
@@ -216,9 +240,9 @@ export default function Manageusuario({ users }: UsersTableProps) {
                   <td className="lg:p-4 p-2 text-center">{usuario.nome}</td>
                   <td>
                     <p className="lg:p-4 p-2 text-center">
-                      {usuario.periodo === 'N/A'
+                      {/* {usuario.periodo === 'N/A'
                         ? 'N/A'
-                        : `${usuario.periodo}º`}
+                        : `${usuario.periodo}º`} */}
                     </p>
                   </td>
                   <td className="max-h-44">
@@ -228,22 +252,22 @@ export default function Manageusuario({ users }: UsersTableProps) {
                   </td>
                   <td className="max-h-44">
                     <div className="max-h-40 overflow-y-scroll my-4 divide-y divide-white">
-                      {usuario.projetos.map((projeto, index) => (
+                      {/* {usuario.projetos.map((projeto, index) => (
                         <p key={index} className="lg:p-4 p-2 text-center">
                           {projeto}
                         </p>
-                      ))}
+                      ))} */}
                     </div>
                   </td>
 
                   <td className="max-h-44">
-                    <p className="lg:p-4 p-2 text-center">{usuario.area}</p>
+                    <p className="lg:p-4 p-2 text-center">{usuario.setor}</p>
                   </td>
                   <td>
                     <p className="lg:p-4 p-2 text-center">
-                      {usuario.especialidade === ''
+                      {/* {usuario.especialidade === ''
                         ? 'N/A'
-                        : usuario.especialidade}
+                        : usuario.especialidade} */}
                     </p>
                   </td>
                   <td>
@@ -277,7 +301,7 @@ export default function Manageusuario({ users }: UsersTableProps) {
                     Período
                   </p>
                   <p className="p-4">
-                    {usuario.periodo === 'N/A' ? 'N/A' : `${usuario.periodo}º`}
+                    {/* {usuario.periodo === 'N/A' ? 'N/A' : `${usuario.periodo}º`} */}
                   </p>
                 </div>
                 <div className="mb-2 max-h-56 overflow-y-scroll w-full">
@@ -294,24 +318,24 @@ export default function Manageusuario({ users }: UsersTableProps) {
                     Projetos
                   </p>
                   <div className="p-4 w-full max-h-56 overflow-y-scroll">
-                    {usuario.projetos.map((projeto, index) => (
+                    {/* {usuario.projetos.map((projeto, index) => (
                       <p key={index} className="text-center">
                         {projeto}
                       </p>
-                    ))}
+                    ))} */}
                   </div>
                 </div>
                 <div className="w-full">
                   <p className="bg-dark-purple rounded-lg w-full text-center self-center">
                     Área
                   </p>
-                  <p className="p-4 w-full">{usuario.area}</p>
+                  <p className="p-4 w-full">{usuario.setor}</p>
                 </div>
                 <div className="w-full">
                   <p className="bg-dark-purple rounded-lg w-full text-center self-center">
                     Especialidade
                   </p>
-                  <p className="p-4 w-full">{usuario.especialidade}</p>
+                  {/* <p className="p-4 w-full">{usuario.especialidade}</p> */}
                 </div>
 
                 <div className="flex items-center justify-end gap-3 px-10 py-4">

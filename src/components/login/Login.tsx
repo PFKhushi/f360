@@ -61,7 +61,7 @@ export default function Login() {
             <input
               type="text"
               id="login"
-              placeholder="Login"
+              placeholder="Email"
               className="bg-white border-white border-2 text-lg xl:pl-3 pl-16 py-5 rounded-lg w-full"
               {...register('email')}
             />
@@ -69,7 +69,7 @@ export default function Login() {
               <FiUser className="text-light-purple text-3xl absolute top-5 xl:right-3 xl:left-auto left-6" />
             </label>
             {errors.email && (
-              <span className="text-red-500 text-sm">
+              <span className="text-red-500 text-sm md:text-base font-semibold">
                 {errors.email.message}
               </span>
             )}
@@ -89,7 +89,7 @@ export default function Login() {
               </label>
             </div>
             {errors.password && (
-              <span className="text-red-500 text-sm">
+              <span className="text-red-500 text-sm md:text-base font-semibold">
                 {errors.password.message}
               </span>
             )}
