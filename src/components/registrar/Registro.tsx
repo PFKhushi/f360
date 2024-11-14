@@ -7,6 +7,7 @@ import {
 } from './registerFormSchema'
 import Image from 'next/image'
 import InputText from '../Inputs/InputText'
+import axios from 'axios'
 
 export default function Registro() {
   const {
@@ -18,7 +19,27 @@ export default function Registro() {
   })
 
   const onSubmit = async (data: RegistroFormSchemaType) => {
-    console.log(data)
+    try {
+    
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}`,
+        data, 
+        {
+          headers: {
+            'Content-Type': 'application/json',  
+          },
+        }
+      )
+
+      console.log('O Usuário cadastrado com sucesso:', response.data)
+
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Erro ao cadastrar o usuário:', error.response?.data || error.message)
+      } else {
+        console.error('O Erro é desconhecido:', error)
+      }
+    }
   }
 
   return (
