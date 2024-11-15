@@ -20,28 +20,33 @@ export default function Registro() {
 
   const onSubmit = async (data: RegistroFormSchemaType) => {
     try {
-    
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}`,
-        data, 
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/usuario/usuarios/`,
+        {
+          username: data.email,
+          email_institucional: data.email,
+          nome: data.nome,
+        },
         {
           headers: {
-            'Content-Type': 'application/json',  
+            'Content-Type': 'application/json',
           },
-        }
+        },
       )
 
       console.log('O Usuário cadastrado com sucesso:', response.data)
-
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error('Erro ao cadastrar o usuário:', error.response?.data || error.message)
+        console.error(
+          'Erro ao cadastrar o usuário:',
+          error.response?.data || error.message,
+        )
       } else {
         console.error('O Erro é desconhecido:', error)
       }
     }
   }
-//
+
   return (
     <div>
       <div className="flex flex-col gap-8 justify-center items-center p-8">
@@ -60,8 +65,8 @@ export default function Registro() {
             label="Nome Completo"
             placeholder="Digite seu nome completo"
             type="text"
-            error={errors.nomeCompleto}
-            register={register('nomeCompleto')}
+            error={errors.nome}
+            register={register('nome')}
           />
           <InputText
             label="Email"

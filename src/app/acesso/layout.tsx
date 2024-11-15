@@ -8,7 +8,7 @@ const inter = Poppins({
   subsets: ['latin'],
 })
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function SystemLayout({ children }: { children: ReactNode }) {
   return (
     <main className={(inter.className, 'bg-light-grey min-h-screen')}>
       <Header>{children}</Header>

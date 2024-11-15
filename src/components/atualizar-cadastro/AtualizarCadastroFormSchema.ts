@@ -42,26 +42,26 @@ function isValidCPF(cpf: string) {
 }
 
 export const AtualizarCadastroFormSchema = z.object({
-  inputRGM: z.string().length(8, 'É necessário que o RGM contenha 8 dígitos.'),
-  inputCurso: z
+  rgm: z.string().length(8, 'É necessário que o RGM contenha 8 dígitos.'),
+  curso: z
     .string()
     .max(100, 'É necessário que contenha no máximo 100 digitos')
     .min(2, 'O curso é obrigatório'),
-  inputTelefone: z
+  telefone: z
     .string()
     .min(1, 'O telefone é obrigatório')
     .refine((val) => !val || telefoneRegex.test(val), {
       message:
         'O telefone deve estar no formato (XX)XXXXX-XXXX ou (XX)XXXX-XXXX',
     }),
-  inputCPF: z
+  cpf: z
     .string()
     .min(1, 'O CPF é obrigatório')
     .transform((cpf) => {
       return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
     })
     .refine((value) => isValidCPF(value), 'Esse CPF é inválido'),
-  termoDeUso: z
+  aceita_termo: z
     .boolean()
     .refine((value) => value, 'É necessário aceitar os termos de uso'),
 })

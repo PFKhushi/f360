@@ -5,6 +5,7 @@ interface InputTextProps {
   type: string
   register: any
   error?: any
+  defaultValue?: any
 }
 
 export default function InputText({
@@ -13,6 +14,7 @@ export default function InputText({
   type,
   register,
   error,
+  defaultValue,
 }: InputTextProps) {
   return (
     <div className="flex flex-col gap-2">
@@ -21,10 +23,11 @@ export default function InputText({
         type={type}
         placeholder={placeholder}
         className="w-80 md:w-72 lg:w-96 h-9 rounded-md text-black p-2"
+        defaultValue={defaultValue}
         {...register}
       />
       {error && (
-        <span className="text-red-500 xl:text-sm text-md font-semibold ml-1">
+        <span className="text-red-500 xl:text-sm text-md font-semibold ml-1 w-80 md:w-72 lg:w-96">
           {error.message}
         </span>
       )}
