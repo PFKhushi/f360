@@ -8,6 +8,8 @@ import {
   AtualizarCadastroFormSchema,
   AtualizarCadastroFormSchemaType,
 } from './AtualizarCadastroFormSchema'
+import axios from "axios";
+import { useState } from 'react'
 
 export default function AtualizarCadastro() {
   const {
@@ -22,6 +24,38 @@ export default function AtualizarCadastro() {
   const handleForm = (data: AtualizarCadastroFormSchemaType) => {
     console.log(data)
   }
+  const [formData, setFormData] = useState<AtualizarCadastroFormSchemaType>({
+    inputRGM: '',
+    inputCurso: '',
+    inputTelefone: '',
+    inputCPF: '',
+    termoDeUso: false
+  });
+
+  const atualizarDados = async (data: AtualizarCadastroFormSchemaType) => {
+    try{
+      const response = await axios.patch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}`,
+        data, 
+        {
+          headers: {
+            'Content-Type': 'application/json',  
+          },
+        }
+      )
+      console.log("Atualização realizada com sucesso", response.data)
+    } catch(error){
+      if(axios.isAxiosError(error)){
+        console.error("Erro ao atualizar cadastro: ", error.response?.data || error.message)
+      }
+      else{
+        console.error("O erro é desconhecido: ",error)
+      }
+    }
+  }
+  const handleClick = () => {
+    atualizarDados(formData);
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen">
@@ -78,6 +112,7 @@ export default function AtualizarCadastro() {
         <button
           type="submit"
           className="text-secondary font-bold text-xl bg-light-grey flex items-center justify-center m-auto p-4 rounded-md mt-12 md:mt-28 md:w-60"
+          onClick={handleClick}
         >
           ATUALIZAR
         </button>
