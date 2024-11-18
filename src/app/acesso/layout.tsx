@@ -1,4 +1,5 @@
 import Header from '@/components/navbar/Header'
+import AuthGuard from '@/providers/AuthGuard'
 import { Poppins } from 'next/font/google'
 
 import { ReactNode } from 'react'
@@ -11,7 +12,9 @@ const inter = Poppins({
 export default function SystemLayout({ children }: { children: ReactNode }) {
   return (
     <main className={(inter.className, 'bg-light-grey min-h-screen')}>
-      <Header>{children}</Header>
+      <AuthGuard>
+        <Header>{children}</Header>
+      </AuthGuard>
     </main>
   )
 }

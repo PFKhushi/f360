@@ -8,6 +8,7 @@ import {
 import Image from 'next/image'
 import InputText from '../Inputs/InputText'
 import axios from 'axios'
+import toast from 'react-hot-toast'
 
 export default function Registro() {
   const {
@@ -34,16 +35,10 @@ export default function Registro() {
         },
       )
 
-      console.log('O Usuário cadastrado com sucesso:', response.data)
+      toast.success('O Usuário cadastrado com sucesso:', response.data)
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error(
-          'Erro ao cadastrar o usuário:',
-          error.response?.data || error.message,
-        )
-      } else {
-        console.error('O Erro é desconhecido:', error)
-      }
+      toast.error('Erro ao cadastrar o usuário')
+      console.error(error)
     }
   }
 

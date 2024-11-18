@@ -9,31 +9,48 @@ import {
   AtualizarCadastroFormSchemaType,
 } from './AtualizarCadastroFormSchema'
 import { PatchData } from '@/services/axios'
-import { useSession } from 'next-auth/react'
-import { usersGet } from '@/hook/usersGet'
+import { User } from '@/@types'
+import toast from 'react-hot-toast'
+import { useEffect } from 'react'
+import InputSelect from '../Inputs/InputSelect'
+import { useRouter } from 'next/navigation'
 
-export default function AtualizarCadastro() {
-  const session = useSession()
-  const id = session?.data?.user?.id
-  const { userId } = usersGet(id)
+interface AtualizarCadastroProps {
+  user: User
+}
 
+export default function AtualizarCadastro({ user }: AtualizarCadastroProps) {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<AtualizarCadastroFormSchemaType>({
     mode: 'all',
     resolver: zodResolver(AtualizarCadastroFormSchema),
   })
 
+  const router = useRouter()
+
+  useEffect(() => {
+    if (user) {
+      setValue('rgm', user?.rgm || '')
+      setValue('cpf', user?.cpf || '')
+      setValue('telefone', user?.telefone || '')
+      setValue('curso', user?.curso || '')
+    }
+  }, [user, setValue])
+
   const handleForm = (data: AtualizarCadastroFormSchemaType) => {
-    console.log(data)
     PatchData({
-      url: `/usuario/usuarios/${id}/`,
+      url: `/usuario/usuarios/${user.id}/`,
       data: { ...data },
-      onSuccess: () => console.log('Atualização realizada com sucesso'),
+      onSuccess: () => {
+        toast.success('Atualização realizada com sucesso')
+        router.push('/acesso/usuarios')
+      },
       onError: (error) =>
-        console.error(
+        toast.error(
           'Erro ao atualizar cadastro: ',
           error.response?.data || error.message,
         ),
@@ -52,7 +69,7 @@ export default function AtualizarCadastro() {
             className="m-auto mt-8"
           />
         </div>
-        <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-12 md:space-y-4">
+        <div className="flex flex-col md:grid grid-cols-2 justify-center items-center gap-4 md:gap-12">
           <div>
             <InputText
               label="RGM"
@@ -60,7 +77,7 @@ export default function AtualizarCadastro() {
               type="text"
               register={register('rgm')}
               error={errors.rgm}
-              defaultValue={userId[0]?.rgm}
+              defaultValue={user?.rgm}
             />
           </div>
           <div>
@@ -70,11 +87,10 @@ export default function AtualizarCadastro() {
               type="text"
               register={register('cpf')}
               error={errors.cpf}
-              defaultValue={userId[0]?.cpf}
+              defaultValue={user?.cpf}
             />
           </div>
-        </div>
-        <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-12 md:space-y-4 mt-4">
+
           <div>
             <InputText
               label="Telefone"
@@ -82,18 +98,25 @@ export default function AtualizarCadastro() {
               type="text"
               register={register('telefone')}
               error={errors.telefone}
-              defaultValue={userId[0]?.telefone}
+              defaultValue={user?.telefone}
             />
           </div>
           <div>
-            <InputText
+            <InputSelect
               label="Curso"
-              placeholder="Insira seu Curso"
-              type="text"
               register={register('curso')}
               error={errors.curso}
-              defaultValue={userId[0]?.curso}
-            />
+              valueDefault={user?.curso}
+            >
+              <option value="" hidden>
+                Selecione um curso
+              </option>
+              <option value="ADS">Análise e Desenvolvimento de Sistemas</option>
+              <option value="CC">Ciência da Computação</option>
+              <option value="SI">Sistemas para Internet</option>
+              <option value="CD">Ciência de Dados</option>
+              <option value="OTR">Outros</option>
+            </InputSelect>
           </div>
         </div>
         <button
@@ -102,8 +125,12 @@ export default function AtualizarCadastro() {
         >
           ATUALIZAR
         </button>
-        <div className="flex flex-row justify-center mt-8 mb-8  md:space-x-3">
-          <input type="checkbox" {...register('aceita_termo')} />
+        <div className="flex flex-row justify-center items-center mt-8 mb-2 md:gap-3">
+          <input
+            type="checkbox"
+            {...register('aceita_termo')}
+            className="cursor-pointer rounded accent-purple-300 border-white border-4 w-5 h-5"
+          />
           <p>
             Eu li e concordo com os{' '}
             <span className="text-dark-yellow underline ">

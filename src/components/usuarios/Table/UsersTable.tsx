@@ -1,8 +1,11 @@
 'use client'
 import { User } from '@/@types'
+import Modal from '@/components/modal/Modal'
 import React, { useEffect, useState } from 'react'
 import { BiSolidEdit } from 'react-icons/bi'
 import { MdBlock } from 'react-icons/md'
+import ChangeUser from '../ChangeUser/ChangeUser'
+import CreateUser from '../CreateUser/CreateUser'
 
 interface UsersTableProps {
   users: User[]
@@ -16,8 +19,9 @@ export default function Manageusuario({ users }: UsersTableProps) {
   const [projetosFiltro, setProjetosFiltro] = useState('')
   const [areaFiltro, setAreaFiltro] = useState('')
   const [especialidadeFiltro, setEspecialidadeFiltro] = useState('')
-
-  console.log(users)
+  const [usuario, setUsuario] = useState<User | null>(null)
+  const [isOpenEditar, setIsOpenEditar] = useState(false)
+  const [isOpenCriar, setIsOpenCriar] = useState(false)
 
   useEffect(() => {
     const handleResize = () => {
@@ -32,49 +36,6 @@ export default function Manageusuario({ users }: UsersTableProps) {
       window.removeEventListener('resize', handleResize)
     }
   }, [])
-
-  // const usuarios = [
-  //   {
-  //     nome: 'Júlio César Carvalho Santos',
-  //     periodo: '4',
-  //     cargo: 'Veterano',
-  //     projetos: ['Conte Cornetet', 'Fábrica 360'],
-  //     area: 'FrontEnd',
-  //     especialidade: 'Next.js',
-  //   },
-  //   {
-  //     nome: 'Wallace Sartori Bonfim',
-  //     periodo: 'N/A',
-  //     cargo: 'Administrador',
-  //     projetos: ['Conte Cornetet', 'Fábrica 360'],
-  //     area: 'CEO',
-  //     especialidade: 'N/A',
-  //   },
-  //   {
-  //     nome: 'Alice da Silva',
-  //     periodo: '2',
-  //     cargo: 'Estagiária',
-  //     projetos: ['Projeto Alpha', 'Inovação Beta'],
-  //     area: 'BackEnd',
-  //     especialidade: 'Node.js',
-  //   },
-  //   {
-  //     nome: 'Bruno Oliveira',
-  //     periodo: '6',
-  //     cargo: 'Desenvolvedor',
-  //     projetos: ['Fábrica 360', 'Projeto Gamma'],
-  //     area: 'Mobile',
-  //     especialidade: 'React Native',
-  //   },
-  //   {
-  //     nome: 'Carla Souza',
-  //     periodo: '3',
-  //     cargo: 'Trainee',
-  //     projetos: ['Projeto Delta'],
-  //     area: 'UI/UX',
-  //     especialidade: 'Figma',
-  //   },
-  // ]
 
   const normalizeString = (str: string) => {
     return str
@@ -110,6 +71,11 @@ export default function Manageusuario({ users }: UsersTableProps) {
     )
   })
 
+  const openEditModal = (usuario: User) => {
+    setUsuario(usuario)
+    setIsOpenEditar(true)
+  }
+
   return (
     <div className="w-full md:p-4 flex flex-col justify-center items-center bg-dark-purple rounded-xl">
       <div className="flex flex-col items-center w-full mb-1 md:justify-normal">
@@ -117,6 +83,12 @@ export default function Manageusuario({ users }: UsersTableProps) {
           <h2 className="text-2xl md:text-4xl font-semibold mb-1 text-text-primary text-white">
             Gerenciar usuários
           </h2>
+          <div
+            className="bg-light-purple text-white font-semibold text-xl text-center py-2 px-4 rounded-lg cursor-pointer"
+            onClick={() => setIsOpenCriar(true)}
+          >
+            Adicionar novo usuário +
+          </div>
         </div>
         <div className="min-h-24 w-full bg-dark-blackpurple rounded-xl flex justify-evenly gap-4 flex-wrap py-4">
           <div className="flex flex-col justify-center items-center min-w-24">
@@ -272,7 +244,10 @@ export default function Manageusuario({ users }: UsersTableProps) {
                   </td>
                   <td>
                     <div className="flex justify-center items-center gap-2">
-                      <BiSolidEdit className="text-2xl" />
+                      <BiSolidEdit
+                        className="text-2xl cursor-pointer"
+                        onClick={() => openEditModal(usuario)}
+                      />
                       <MdBlock className="text-2xl" />
                     </div>
                   </td>
@@ -339,7 +314,10 @@ export default function Manageusuario({ users }: UsersTableProps) {
                 </div>
 
                 <div className="flex items-center justify-end gap-3 px-10 py-4">
-                  <BiSolidEdit className="text-2xl" />
+                  <BiSolidEdit
+                    className="text-2xl"
+                    onClick={() => openEditModal(usuario)}
+                  />
                   <MdBlock className="text-2xl" />
                 </div>
               </div>
@@ -347,6 +325,20 @@ export default function Manageusuario({ users }: UsersTableProps) {
           ))}
         </div>
       )}
+      <Modal
+        isOpen={isOpenEditar}
+        setModalOpened={setIsOpenEditar}
+        className="mt-10 h-[660px] w-full max-w-6xl transform overflow-auto rounded-2xl p-1 px-8 text-left align-middle shadow-xl transition-all !scrollbar-none !scrollbar-track-transparent !scrollbar-thumb-black md:h-[600px] md:w-9/12 lg:h-[80vh]"
+      >
+        <ChangeUser setIsOpen={setIsOpenEditar} user={usuario} />
+      </Modal>
+      <Modal
+        isOpen={isOpenCriar}
+        setModalOpened={setIsOpenCriar}
+        className="mt-10 h-[660px] w-full max-w-6xl transform overflow-auto rounded-2xl p-1 px-8 text-left align-middle shadow-xl transition-all !scrollbar-none !scrollbar-track-transparent !scrollbar-thumb-black md:h-[600px] md:w-9/12 lg:h-[80vh]"
+      >
+        <CreateUser setIsOpen={setIsOpenCriar} />
+      </Modal>
     </div>
   )
 }
