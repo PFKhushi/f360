@@ -2,10 +2,10 @@
 import Image from 'next/image'
 import InputSelect from '../Inputs/InputSelect'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { useFieldArray, useForm } from 'react-hook-form'
 import { imersaoFormSchemaType, imersaoFormSchema } from './imersaoFormSchema'
 import HabilidadesSelect from './HabilidadesSelect'
-import { PatchData } from '@/services/axios'
+import { PatchData, PostData } from '@/services/axios'
 import toast from 'react-hot-toast'
 import { User } from '@/@types'
 import { useRouter } from 'next/navigation'
@@ -16,6 +16,7 @@ interface ImersaoProps {
 
 export default function Imersao({ user }: ImersaoProps) {
   const {
+    control,
     register,
     handleSubmit,
     setValue,
@@ -24,6 +25,11 @@ export default function Imersao({ user }: ImersaoProps) {
   } = useForm<imersaoFormSchemaType>({
     mode: 'all',
     resolver: zodResolver(imersaoFormSchema),
+  })
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'habilidades',
   })
 
   const router = useRouter()
@@ -36,8 +42,37 @@ export default function Imersao({ user }: ImersaoProps) {
         setor: data.setor,
       },
       onSuccess: () => {
-        toast.success('Incristo na Imersão com sucesso')
-        router.push('/acesso/usuarios')
+        if (!data?.habilidades || data.habilidades.length === 0) {
+          toast.success('Inscrito na Imersão com sucesso')
+          router.push('/acesso/usuarios')
+          console.log('Sem habilidades')
+        } else {
+          let processedCount = 0
+          const totalHabilidades = data.habilidades.length
+
+          data.habilidades.forEach((habilidade) => {
+            PostData({
+              url: `/usuario/habilidades/`,
+              data: {
+                usuario: user.id,
+                tecnologias: habilidade.tecnologias,
+                senioridade: habilidade.senioridade,
+                descricao: 'Nenhuma',
+              },
+              onSuccess: () => {
+                processedCount++
+                if (processedCount === totalHabilidades) {
+                  toast.success('Inscrito na Imersão com sucesso')
+                  router.push('/acesso/usuarios')
+                }
+              },
+              onError: (error) => {
+                toast.error('Erro ao se inscrever na Imersão')
+                console.error(error)
+              },
+            })
+          })
+        }
       },
       onError: (error) => {
         toast.error('Erro ao se inscrever na Imersão')
@@ -112,11 +147,14 @@ export default function Imersao({ user }: ImersaoProps) {
             <div className="col-span-2">
               <HabilidadesSelect
                 contentName="habilidades"
-                errors={errors.habilidades}
+                errors={errors}
                 label="Habilidades"
                 setValue={setValue}
                 watch={watch}
-                defaultRegioes={[]}
+                defaultHabilidades={[]}
+                fields={fields}
+                append={append}
+                remove={remove}
               />
             </div>
           </div>

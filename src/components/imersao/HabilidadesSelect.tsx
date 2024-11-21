@@ -5,14 +5,18 @@ import { Combobox } from '@headlessui/react'
 import React, { Fragment, useEffect, useState } from 'react'
 import { FaCheck, FaPlus } from 'react-icons/fa'
 import { IoClose } from 'react-icons/io5'
+import Radio from './RadioGroup/RadioGroup'
 
 interface HabilidadesSelectProps {
   label: string
   errors: any
   contentName: string
   setValue: any
-  defaultRegioes?: number[]
+  defaultHabilidades?: number[]
   watch: any
+  fields: any
+  append: any
+  remove: any
 }
 
 export default function HabilidadesSelect({
@@ -20,8 +24,10 @@ export default function HabilidadesSelect({
   setValue,
   errors,
   contentName,
-  defaultRegioes,
-  watch,
+  defaultHabilidades,
+  fields,
+  append,
+  remove,
 }: HabilidadesSelectProps) {
   const { habilidades } = habilidadesGet()
   const [selectedHabilidadeId, setSelectedHabilidadeId] = useState<
@@ -30,18 +36,34 @@ export default function HabilidadesSelect({
   const [query, setQuery] = useState('')
   const [selectedOptions, setSelectedOptions] = useState<number[]>([])
 
-  function setSelectedRegioes(selectedOptions: number[]) {
+  function setSelectedHabilidades(selectedOptions: number[]) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     setValue(contentName, selectedOptions)
   }
 
   useEffect(() => {
-    if (defaultRegioes && defaultRegioes.length > 0) {
-      setSelectedOptions(defaultRegioes)
-      setSelectedRegioes(defaultRegioes)
+    if (defaultHabilidades && defaultHabilidades.length > 0) {
+      setSelectedOptions(defaultHabilidades)
+      setSelectedHabilidades(defaultHabilidades)
     }
-  }, [defaultRegioes])
+  }, [defaultHabilidades])
+
+  useEffect(() => {
+    fields.forEach((field: any, index: number) => remove(index))
+
+    // Adiciona novos campos baseados em selectedOptions
+    selectedOptions.forEach((optionId) => {
+      const habilidade = habilidades.find((h) => h.id === optionId)
+      if (habilidade) {
+        append({
+          id: optionId,
+          senioridade: '', // Inicializa como vazio
+          tecnologias: optionId, // Ou qualquer valor relevante
+        })
+      }
+    })
+  }, [selectedOptions])
 
   const handleAddOption = () => {
     if (
@@ -51,19 +73,24 @@ export default function HabilidadesSelect({
       const updatedOptions = [...selectedOptions, selectedHabilidadeId]
       setSelectedOptions(updatedOptions)
       setValue('regiao', updatedOptions)
-      setSelectedRegioes(updatedOptions)
+      setSelectedHabilidades(updatedOptions)
     }
   }
 
-  const handleRemoveOption = (regiaoId: number) => {
-    const updatedOptions = selectedOptions.filter((id) => id !== regiaoId)
+  const handleRemoveOption = (habilidadeId: number) => {
+    // Remova a habilidade do array de opções selecionadas
+    const updatedOptions = selectedOptions.filter((id) => id !== habilidadeId)
     setSelectedOptions(updatedOptions)
-    setSelectedRegioes(updatedOptions)
-  }
+    setSelectedHabilidades(updatedOptions)
 
-  console.log('selected', selectedOptions)
-  console.log('default', defaultRegioes)
-  console.log('zod', watch('regiao'))
+    // Encontre o índice do campo correspondente no array de campos
+    const indexToRemove = fields.findIndex(
+      (field: any) => field.tecnologias === habilidadeId,
+    )
+    if (indexToRemove !== -1) {
+      remove(indexToRemove)
+    }
+  }
 
   const filteredHabilidades =
     query === ''
@@ -92,11 +119,7 @@ export default function HabilidadesSelect({
                 )
                 return selectedHabilidade ? selectedHabilidade.nome : ''
               }}
-              className={` w-80 md:w-72 lg:w-96 h-9 rounded-md text-black p-2 border mt-2 ${
-                errors
-                  ? 'border-2 border-red-500 outline-red-600'
-                  : 'border-bordercolor-input'
-              }`}
+              className={` w-80 md:w-72 lg:w-96 h-9 rounded-md text-black p-2 border mt-2`}
             />
             <div>
               <button
@@ -141,33 +164,61 @@ export default function HabilidadesSelect({
         </Combobox>
       </div>
 
-      <div className="mt-2 overflow-y-scroll max-h-64 col-span-2">
+      <div className="mt-2 col-span-2">
         <p className="mb-2 font-semibold">Suas habilidades:</p>
-        <ul className="flex flex-wrap gap-4">
-          {selectedOptions.map((option) => (
-            <li
-              key={option}
-              className="text-dark-purple font-semibold md:p-2 p-1 bg-light-grey w-full rounded mb-1 flex justify-between"
-            >
-              {habilidades.map((habilidade) => {
-                if (habilidade.id === option) {
-                  return (
-                    <p key={habilidade.id} className="md:p-0 p-1 text-md">
-                      {habilidade.nome}
-                    </p>
-                  )
-                }
-                return null
-              })}
-              <button
-                onClick={() => handleRemoveOption(option)}
-                className="ml-2 text-white"
-              >
-                <IoClose className="text-white bg-red-700 rounded-full h-5 w-5" />
-              </button>
+        <div className="col-span-2 p-4 bg-light-purple rounded-md">
+          <h3 className="text-lg font-bold mb-2 text-dark-yellow">
+            Níveis de Senioridade
+          </h3>
+          <ul className="list-disc list-inside text-white">
+            <li>
+              <strong>TRAINEE</strong>: Menos de 3 meses de experiência
             </li>
-          ))}
-        </ul>
+            <li>
+              <strong>JÚNIOR</strong>: Menos de 1 ano de experiência
+            </li>
+            <li>
+              <strong>PLENO</strong>: De 1 a 3 anos de experiência
+            </li>
+            <li>
+              <strong>SÊNIOR</strong>: Mais de 3 anos de experiência
+            </li>
+          </ul>
+        </div>
+        <div className="text-dark-purple font-semibold md:p-2 p-1 w-full rounded mb-1 flex flex-col mt-4 gap-4 justify-between">
+          {fields.map((field: any, index: number) => {
+            const habilidade = habilidades.find(
+              (h) => h.id === field.tecnologias,
+            )
+            if (habilidade) {
+              return (
+                <li
+                  key={field.id}
+                  className="border-2 border-dashed border-white font-semibold p-4 w-full rounded mb-1 flex items-start justify-between relative"
+                >
+                  <Radio
+                    key={index}
+                    label={habilidade.nome}
+                    setValue={setValue}
+                    name={`habilidades.${index}.senioridade`}
+                    nameTech={`habilidades.${index}.tecnologias`}
+                    error={errors.habilidades?.[index]?.senioridade}
+                    tecnologia={habilidade.id}
+                  />
+
+                  <button
+                    onClick={() => handleRemoveOption(habilidade.id)}
+                    className="text-white absolute right-2 top-2"
+                    type="button"
+                  >
+                    <IoClose className="text-white bg-red-700 rounded-full h-7 w-7" />
+                  </button>
+                </li>
+              )
+            }
+            return null
+          })}
+        </div>
       </div>
     </div>
   )
