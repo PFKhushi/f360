@@ -111,12 +111,28 @@ export default function AtualizarCadastro({ user }: AtualizarCadastroProps) {
               <option value="" hidden>
                 Selecione um curso
               </option>
-              <option value="ADS">Análise e Desenvolvimento de Sistemas</option>
-              <option value="CC">Ciência da Computação</option>
-              <option value="SI">Sistemas para Internet</option>
-              <option value="CD">Ciência de Dados</option>
-              <option value="OTR">Outros</option>
+              <option value="Análise e Desenvolvimento de Sistemas">
+                Análise e Desenvolvimento de Sistemas
+              </option>
+              <option value="Ciência da Computação">
+                Ciência da Computação
+              </option>
+              <option value="Sistemas para Internet">
+                Sistemas para Internet
+              </option>
+              <option value="Ciência de Dados">Ciência de Dados</option>
+              <option value="Outros">Outros</option>
             </InputSelect>
+          </div>
+          <div>
+            <InputText
+              label="Curso - Outros"
+              placeholder="Insira seu curso"
+              type="text"
+              register={register('outros_cursos')}
+              error={errors.outros_cursos}
+              defaultValue={user?.outros_cursos}
+            />
           </div>
         </div>
         <button

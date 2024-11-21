@@ -47,6 +47,10 @@ export const AtualizarCadastroFormSchema = z.object({
     .string()
     .max(100, 'É necessário que contenha no máximo 100 digitos')
     .min(2, 'O curso é obrigatório'),
+  outros_cursos: z
+    .string()
+    .max(100, 'É necessário que contenha no máximo 100 digitos')
+    .optional(),
   telefone: z
     .string()
     .min(1, 'O telefone é obrigatório')
