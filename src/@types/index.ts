@@ -26,3 +26,8 @@ export type User = {
 export type ReactQueryProviderProps = {
   children: ReactNode
 }
+
+export type Habilidade = {
+  id: number
+  nome: string
+}
