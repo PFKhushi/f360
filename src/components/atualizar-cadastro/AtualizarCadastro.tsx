@@ -24,6 +24,7 @@ export default function AtualizarCadastro({ user }: AtualizarCadastroProps) {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<AtualizarCadastroFormSchemaType>({
     mode: 'all',
@@ -38,6 +39,7 @@ export default function AtualizarCadastro({ user }: AtualizarCadastroProps) {
       setValue('cpf', user?.cpf || '')
       setValue('telefone', user?.telefone || '')
       setValue('curso', user?.curso || '')
+      setValue('outros_cursos', user?.outros_cursos || '')
     }
   }, [user, setValue])
 
@@ -56,6 +58,8 @@ export default function AtualizarCadastro({ user }: AtualizarCadastroProps) {
         ),
     })
   }
+
+  const curso = watch('curso')
 
   return (
     <div className="flex justify-center items-center min-h-screen">
@@ -124,16 +128,18 @@ export default function AtualizarCadastro({ user }: AtualizarCadastroProps) {
               <option value="Outros">Outros</option>
             </InputSelect>
           </div>
-          <div>
-            <InputText
-              label="Curso - Outros"
-              placeholder="Insira seu curso"
-              type="text"
-              register={register('outros_cursos')}
-              error={errors.outros_cursos}
-              defaultValue={user?.outros_cursos}
-            />
-          </div>
+          {curso === 'Outros' && (
+            <div>
+              <InputText
+                label="Curso - Outros"
+                placeholder="Insira seu curso"
+                type="text"
+                register={register('outros_cursos')}
+                error={errors.outros_cursos}
+                defaultValue={user?.outros_cursos}
+              />
+            </div>
+          )}
         </div>
         <button
           type="submit"

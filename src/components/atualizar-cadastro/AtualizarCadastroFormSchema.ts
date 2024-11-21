@@ -41,34 +41,47 @@ function isValidCPF(cpf: string) {
   return true
 }
 
-export const AtualizarCadastroFormSchema = z.object({
-  rgm: z.string().length(8, 'É necessário que o RGM contenha 8 dígitos.'),
-  curso: z
-    .string()
-    .max(100, 'É necessário que contenha no máximo 100 digitos')
-    .min(2, 'O curso é obrigatório'),
-  outros_cursos: z
-    .string()
-    .max(100, 'É necessário que contenha no máximo 100 digitos')
-    .optional(),
-  telefone: z
-    .string()
-    .min(1, 'O telefone é obrigatório')
-    .refine((val) => !val || telefoneRegex.test(val), {
-      message:
-        'O telefone deve estar no formato (XX)XXXXX-XXXX ou (XX)XXXX-XXXX',
-    }),
-  cpf: z
-    .string()
-    .min(1, 'O CPF é obrigatório')
-    .transform((cpf) => {
-      return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
-    })
-    .refine((value) => isValidCPF(value), 'Esse CPF é inválido'),
-  aceita_termo: z
-    .boolean()
-    .refine((value) => value, 'É necessário aceitar os termos de uso'),
-})
+export const AtualizarCadastroFormSchema = z
+  .object({
+    rgm: z.string().length(8, 'É necessário que o RGM contenha 8 dígitos.'),
+    curso: z
+      .string()
+      .max(100, 'É necessário que contenha no máximo 100 digitos')
+      .min(2, 'O curso é obrigatório'),
+    outros_cursos: z
+      .string()
+      .max(100, 'É necessário que contenha no máximo 100 digitos')
+      .optional(),
+    telefone: z
+      .string()
+      .min(1, 'O telefone é obrigatório')
+      .refine((val) => !val || telefoneRegex.test(val), {
+        message:
+          'O telefone deve estar no formato (XX)XXXXX-XXXX ou (XX)XXXX-XXXX',
+      }),
+    cpf: z
+      .string()
+      .min(1, 'O CPF é obrigatório')
+      .transform((cpf) => {
+        return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+      })
+      .refine((value) => isValidCPF(value), 'Esse CPF é inválido'),
+    aceita_termo: z
+      .boolean()
+      .refine((value) => value, 'É necessário aceitar os termos de uso'),
+  })
+  .refine(
+    (data) => {
+      if (data.curso === 'Outros') {
+        return data.outros_cursos && data.outros_cursos.trim() !== ''
+      }
+      return true
+    },
+    {
+      path: ['outros_cursos'],
+      message: 'É necessário informar qual é o seu curso',
+    },
+  )
 
 export type AtualizarCadastroFormSchemaType = z.infer<
   typeof AtualizarCadastroFormSchema
