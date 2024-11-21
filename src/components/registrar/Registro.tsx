@@ -9,6 +9,7 @@ import Image from 'next/image'
 import InputText from '../Inputs/InputText'
 import axios from 'axios'
 import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 
 export default function Registro() {
   const {
@@ -19,6 +20,8 @@ export default function Registro() {
     resolver: zodResolver(registroFormSchema),
   })
 
+  const router = useRouter()
+
   const onSubmit = async (data: RegistroFormSchemaType) => {
     try {
       const response = await axios.post(
@@ -27,6 +30,7 @@ export default function Registro() {
           username: data.email,
           email_institucional: data.email,
           nome: data.nome,
+          cargo: 'REGISTRADO',
         },
         {
           headers: {
@@ -34,8 +38,8 @@ export default function Registro() {
           },
         },
       )
-
       toast.success('O Usuário cadastrado com sucesso:', response.data)
+      router.push('/')
     } catch (error) {
       toast.error('Erro ao cadastrar o usuário')
       console.error(error)
