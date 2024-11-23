@@ -8,6 +8,8 @@ import {
 import Image from 'next/image'
 import InputText from '../Inputs/InputText'
 import axios from 'axios'
+import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 
 export default function Registro() {
   const {
@@ -18,30 +20,32 @@ export default function Registro() {
     resolver: zodResolver(registroFormSchema),
   })
 
+  const router = useRouter()
+
   const onSubmit = async (data: RegistroFormSchemaType) => {
     try {
-    
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}`,
-        data, 
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/usuario/usuarios/`,
+        {
+          username: data.email,
+          email_institucional: data.email,
+          nome: data.nome,
+          cargo: 'REGISTRADO',
+        },
         {
           headers: {
-            'Content-Type': 'application/json',  
+            'Content-Type': 'application/json',
           },
-        }
+        },
       )
-
-      console.log('O Usuário cadastrado com sucesso:', response.data)
-
+      toast.success('O Usuário cadastrado com sucesso:', response.data)
+      router.push('/')
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error('Erro ao cadastrar o usuário:', error.response?.data || error.message)
-      } else {
-        console.error('O Erro é desconhecido:', error)
-      }
+      toast.error('Erro ao cadastrar o usuário')
+      console.error(error)
     }
   }
-//
+
   return (
     <div>
       <div className="flex flex-col gap-8 justify-center items-center p-8">
@@ -60,8 +64,8 @@ export default function Registro() {
             label="Nome Completo"
             placeholder="Digite seu nome completo"
             type="text"
-            error={errors.nomeCompleto}
-            register={register('nomeCompleto')}
+            error={errors.nome}
+            register={register('nome')}
           />
           <InputText
             label="Email"

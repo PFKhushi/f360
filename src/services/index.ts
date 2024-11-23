@@ -13,3 +13,16 @@ export const getUsers = async () => {
 
   return response.data
 }
+
+export const getHabilidades = async () => {
+  const session = await getSession()
+  const token = session?.user?.access
+  const response = await axios.get(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/habilidades/`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  )
+
+  return response.data
+}

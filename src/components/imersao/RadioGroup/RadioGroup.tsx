@@ -8,47 +8,49 @@ import { imersaoFormSchemaType } from '../imersaoFormSchema'
 interface RadioGroupProps {
   label: string
   setValue: UseFormSetValue<imersaoFormSchemaType>
-  name: keyof imersaoFormSchemaType
+  name: any
+  nameTech: any
   error?: any
-  errorText: string
+  tecnologia: number
 }
 
 export default function Radio({
   label,
   setValue,
   name,
+  nameTech,
   error,
-  errorText,
+  tecnologia,
 }: RadioGroupProps) {
   const [plan, setPlan] = useState('')
   const [range] = useState([
-    { id: 1, value: '0', text: 'Nenhuma' },
-    { id: 2, value: '1', text: 'Trainee' },
-    { id: 3, value: '2', text: 'Júnior' },
-    { id: 4, value: '3', text: 'Pleno' },
-    { id: 5, value: '4', text: 'Sênior' },
+    { value: 'Trainee', text: 'Trainee' },
+    { value: 'Júnior', text: 'Júnior' },
+    { value: 'Pleno', text: 'Pleno' },
+    { value: 'Sênior', text: 'Sênior' },
   ])
 
   function setRadio(e: any) {
     setPlan(e)
     setValue(name, String(e))
+    setValue(nameTech, tecnologia)
   }
 
   return (
-    <div className="py-2">
+    <div className="py-2 w-full">
       <RadioGroup
         value={plan}
         onChange={(e) => setRadio(e)}
         className="flex flex-col gap-2"
       >
-        <RadioGroup.Label className="text-accent text-lg md:text-xl font-semibold ml-[11%] md:ml-[11%]  lg:ml-[16%]">
+        <RadioGroup.Label className="text-accent text-xl md:text-xl font-semibold">
           {label}
         </RadioGroup.Label>
         <div className="flex justify-center">
-          <div className="grid grid-cols-5 gap-x-1 py-4  md:gap-x-10 text-xs md:text-xl">
-            {range.map((item) => (
+          <div className="grid grid-cols-4 gap-x-1 py-4  md:gap-x-10 text-xs md:text-xl text-white">
+            {range.map((item, index) => (
               <RadioGroupOption
-                key={item.id}
+                key={index}
                 value={item.value}
                 text={item.text}
               />
@@ -58,7 +60,7 @@ export default function Radio({
         <div className="flex justify-center items-center">
           {error && (
             <span className="text-red-500 text-sm font-semibold ml-1">
-              {errorText}
+              Algo ocorreu errado ao adicionar a habilidade
             </span>
           )}
         </div>
