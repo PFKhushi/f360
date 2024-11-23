@@ -5,13 +5,14 @@ import React, { useEffect, useState } from 'react'
 import { BiSolidEdit } from 'react-icons/bi'
 import { MdBlock } from 'react-icons/md'
 import ChangeUser from '../ChangeUser/ChangeUser'
-import CreateUser from '../CreateUser/CreateUser'
+import CreateUser from '../CreateUser/CreateUserSchema'
 
 interface UsersTableProps {
-  users: User[]
+  users: User[],
+  userRefetch: () => void
 }
 
-export default function Manageusuario({ users }: UsersTableProps) {
+export default function Manageusuario({ users, userRefetch}: UsersTableProps) {
   const [isMobile, setIsMobile] = useState(false)
   const [nomeFiltro, setNomeFiltro] = useState('')
   const [periodoFiltro, setPeriodoFiltro] = useState('')
@@ -203,6 +204,8 @@ export default function Manageusuario({ users }: UsersTableProps) {
                 <th className="lg:p-2 p-1">Projetos</th>
                 <th className="lg:p-2 p-1">Área</th>
                 <th className="lg:p-2 p-1">Especialidade</th>
+                <th className="lg:p-2 p-1">RGM</th>
+                <th className="lg:p-2 p-1">Email institucional</th>
                 <th className="lg:p-2 p-1"></th>
               </tr>
             </thead>
@@ -330,14 +333,14 @@ export default function Manageusuario({ users }: UsersTableProps) {
         setModalOpened={setIsOpenEditar}
         className="mt-10 h-[660px] w-full max-w-6xl transform overflow-auto rounded-2xl p-1 px-8 text-left align-middle shadow-xl transition-all !scrollbar-none !scrollbar-track-transparent !scrollbar-thumb-black md:h-[600px] md:w-9/12 lg:h-[80vh]"
       >
-        <ChangeUser setIsOpen={setIsOpenEditar} user={usuario} />
+        <ChangeUser setIsOpen={setIsOpenEditar} user={usuario} userRefetch={userRefetch}/>
       </Modal>
       <Modal
         isOpen={isOpenCriar}
         setModalOpened={setIsOpenCriar}
         className="mt-10 h-[660px] w-full max-w-6xl transform overflow-auto rounded-2xl p-1 px-8 text-left align-middle shadow-xl transition-all !scrollbar-none !scrollbar-track-transparent !scrollbar-thumb-black md:h-[600px] md:w-9/12 lg:h-[80vh]"
       >
-        <CreateUser setIsOpen={setIsOpenCriar} />
+        <CreateUser setIsOpen={setIsOpenCriar} userRefetch={userRefetch}/>
       </Modal>
     </div>
   )
