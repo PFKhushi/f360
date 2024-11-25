@@ -219,27 +219,27 @@ export default function ChangeUser({
                     <option value="QA">Quality Assurance</option>
                     <option value="UIUX">UI/UX</option>
                   </InputSelect>
-                </div>
 
-                <InputSelect
-                  label="Periodo"
-                  register={register('periodo')}
-                  error={errors.periodo}
-                >
-                  <option value="">Nenhum</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
-                  <option value="7">7</option>
-                  <option value="8">8</option>
-                  <option value="9">9</option>
-                  <option value="10">10</option>
-                  <option value="11">11</option>
-                  <option value="12">12</option>
-                </InputSelect>
+                  <InputSelect
+                    label="Periodo"
+                    register={register('periodo')}
+                    error={errors.periodo}
+                  >
+                    <option value="">Nenhum</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                  </InputSelect>
+                </div>
 
                 <div className="w-full flex justify-center items-center">
                   <button

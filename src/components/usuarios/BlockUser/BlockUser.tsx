@@ -54,7 +54,7 @@ export default function BlockUser({
           <h2 className="text-3xl font-semibold py-5 text-white mt-10 px-10 text-center">
             Deseja mesmo bloquear o usuário {user?.nome}?
           </h2>
-          <div className="text-start flex flex-col justify-end items-center gap-x-10">
+          <div className="text-start flex flex-col justify-end items-center gap-x-10 mt-8">
             <div className="w-full flex gap-4 justify-center items-center">
               <button
                 onClick={closeModal}

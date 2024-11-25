@@ -6,6 +6,8 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { FaCheck, FaPlus } from 'react-icons/fa'
 import { IoClose } from 'react-icons/io5'
 import Radio from './RadioGroup/RadioGroup'
+import { Experiencia } from '@/@types'
+import RadioGroupEdit from './RadioGroup/RadioGroupEdit'
 
 interface HabilidadesSelectProps {
   label: string
@@ -17,6 +19,8 @@ interface HabilidadesSelectProps {
   fields: any
   append: any
   remove: any
+  experiencias?: Experiencia[]
+  experienceRefetch: () => void
 }
 
 export default function HabilidadesSelect({
@@ -28,6 +32,8 @@ export default function HabilidadesSelect({
   fields,
   append,
   remove,
+  experiencias,
+  experienceRefetch,
 }: HabilidadesSelectProps) {
   const { habilidades } = habilidadesGet()
   const [selectedHabilidadeId, setSelectedHabilidadeId] = useState<
@@ -92,10 +98,15 @@ export default function HabilidadesSelect({
     }
   }
 
+  const filteredHabilidadesExperience = habilidades.filter(
+    (habilidade) =>
+      !(experiencias ?? []).some((exp) => exp.tecnologias === habilidade.id),
+  )
+
   const filteredHabilidades =
     query === ''
-      ? habilidades
-      : habilidades.filter((habilidade) => {
+      ? filteredHabilidadesExperience
+      : filteredHabilidadesExperience.filter((habilidade) => {
           return habilidade.nome.toLowerCase().includes(query.toLowerCase())
         })
 
@@ -186,6 +197,18 @@ export default function HabilidadesSelect({
           </ul>
         </div>
         <div className="text-dark-purple font-semibold md:p-2 p-1 w-full rounded mb-1 flex flex-col mt-4 gap-4 justify-between">
+          {experiencias?.map((experiencia) => (
+            <li
+              key={experiencia.id}
+              className="border-2 border-dashed border-white font-semibold p-4 w-full rounded mb-1 flex items-start justify-between relative"
+            >
+              <RadioGroupEdit
+                key={experiencia.id}
+                experiencia={experiencia}
+                experienceRefetch={experienceRefetch}
+              />
+            </li>
+          ))}
           {fields.map((field: any, index: number) => {
             const habilidade = habilidades.find(
               (h) => h.id === field.tecnologias,

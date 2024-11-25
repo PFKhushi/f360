@@ -19,9 +19,20 @@ export function experienciasGet(id?: number) {
     return []
   }
 
+  const experienciaUserId = () => {
+    if (data) {
+      const experienciaId = data.filter(
+        (experiencia) => experiencia.usuario === id,
+      )
+      return experienciaId
+    }
+    return []
+  }
+
   return {
     experiencias,
     experienciaId: experienciaId(),
+    experienciaUserId,
     experienciaError: error,
     experienciaLoading: isLoading,
     experienciaRefetch: refetch,

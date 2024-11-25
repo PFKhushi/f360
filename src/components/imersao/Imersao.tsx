@@ -9,6 +9,8 @@ import { PatchData, PostData } from '@/services/axios'
 import toast from 'react-hot-toast'
 import { User } from '@/@types'
 import { useRouter } from 'next/navigation'
+import { useExperiencias } from '@/hook/experienciaUserGet'
+import { useEffect } from 'react'
 
 interface ImersaoProps {
   user: User
@@ -34,6 +36,13 @@ export default function Imersao({ user }: ImersaoProps) {
 
   const router = useRouter()
 
+  useEffect(() => {
+    if (user) {
+      setValue('periodo', String(user?.periodo) || '')
+      setValue('setor', user?.setor || '')
+    }
+  }, [user, setValue])
+
   const handleForm = (data: imersaoFormSchemaType) => {
     PatchData({
       url: `/usuario/usuarios/${user.id}/`,
@@ -44,8 +53,7 @@ export default function Imersao({ user }: ImersaoProps) {
       onSuccess: () => {
         if (!data?.habilidades || data.habilidades.length === 0) {
           toast.success('Inscrito na Imersão com sucesso')
-          router.push('/acesso/usuarios')
-          console.log('Sem habilidades')
+          router.push('/imersao/confirmado')
         } else {
           let processedCount = 0
           const totalHabilidades = data.habilidades.length
@@ -63,7 +71,7 @@ export default function Imersao({ user }: ImersaoProps) {
                 processedCount++
                 if (processedCount === totalHabilidades) {
                   toast.success('Inscrito na Imersão com sucesso')
-                  router.push('/acesso/usuarios')
+                  router.push('/imersao/confirmado')
                 }
               },
               onError: (error) => {
@@ -80,6 +88,8 @@ export default function Imersao({ user }: ImersaoProps) {
       },
     })
   }
+
+  const { experienciaUser, refetchExperiencias } = useExperiencias(user?.id)
 
   return (
     <div className="pb-12">
@@ -99,7 +109,6 @@ export default function Imersao({ user }: ImersaoProps) {
               label="Função"
               register={register('setor')}
               error={errors.setor}
-              valueDefault={user?.setor}
             >
               <option value="" hidden>
                 Selecione uma função
@@ -137,13 +146,6 @@ export default function Imersao({ user }: ImersaoProps) {
               <option value="12">12</option>
             </InputSelect>
 
-            {/* <Radio
-            label={'Next.js & React'}
-            setValue={setValue}
-            name={'nextJsReact'}
-            error={errors.nextJsReact}
-            errorText="A habilidade é obrigatória"
-          ></Radio> */}
             <div className="col-span-2">
               <HabilidadesSelect
                 contentName="habilidades"
@@ -155,6 +157,8 @@ export default function Imersao({ user }: ImersaoProps) {
                 fields={fields}
                 append={append}
                 remove={remove}
+                experiencias={experienciaUser}
+                experienceRefetch={refetchExperiencias}
               />
             </div>
           </div>
