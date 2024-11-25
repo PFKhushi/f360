@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 const telefoneRegex = /^\(\d{2}\)\d{4,5}-\d{4}$/
 
-function isValidCPF(cpf: string) {
+export function isValidCPF(cpf: string) {
   cpf = cpf.replace(/[^\d]+/g, '') // Remove caracteres não numéricos
 
   if (cpf.length !== 11) {

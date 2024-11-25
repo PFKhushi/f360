@@ -6,6 +6,8 @@ import { BiSolidEdit } from 'react-icons/bi'
 import { MdBlock } from 'react-icons/md'
 import ChangeUser from '../ChangeUser/ChangeUser'
 import CreateUser from '../CreateUser/CreateUser'
+import { habilidadesGet } from '@/hook/habilidadesGet'
+import BlockUser from '../BlockUser/BlockUser'
 
 interface UsersTableProps {
   users: User[]
@@ -23,6 +25,9 @@ export default function Manageusuario({ users, userRefetch }: UsersTableProps) {
   const [usuario, setUsuario] = useState<User | null>(null)
   const [isOpenEditar, setIsOpenEditar] = useState(false)
   const [isOpenCriar, setIsOpenCriar] = useState(false)
+  const [isOpenDelete, setIsOpenDelete] = useState(false)
+
+  const { habilidades } = habilidadesGet()
 
   useEffect(() => {
     const handleResize = () => {
@@ -75,6 +80,11 @@ export default function Manageusuario({ users, userRefetch }: UsersTableProps) {
   const openEditModal = (usuario: User) => {
     setUsuario(usuario)
     setIsOpenEditar(true)
+  }
+
+  const openDeleteModal = (usuario: User) => {
+    setUsuario(usuario)
+    setIsOpenDelete(true)
   }
 
   return (
@@ -182,13 +192,21 @@ export default function Manageusuario({ users, userRefetch }: UsersTableProps) {
           </div>
           <div className="flex flex-col justify-center items-center">
             <label className="text-dark-yellow font-bold">Especialidade</label>
-            <input
-              type="text"
-              placeholder="Filtrar por especialidade"
+            <select
               value={especialidadeFiltro}
               onChange={(e) => setEspecialidadeFiltro(e.target.value)}
-              className="w-full bg-white text-black p-2 rounded-xl text-sm"
-            />
+              className={`w-full min-w-32 bg-white ${cargoFiltro !== '' ? 'text-black' : 'text-gray-500'} p-2 rounded-xl text-sm`}
+            >
+              <option value="" hidden>
+                Filtrar Especialidade
+              </option>
+              <option value="">Nenhum</option>
+              {habilidades.map((habilidade) => (
+                <option value={habilidade.id} key={habilidade.id}>
+                  {habilidade.nome}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
       </div>
@@ -247,7 +265,10 @@ export default function Manageusuario({ users, userRefetch }: UsersTableProps) {
                         className="text-2xl cursor-pointer"
                         onClick={() => openEditModal(usuario)}
                       />
-                      <MdBlock className="text-2xl" />
+                      <MdBlock
+                        className="text-2xl cursor-pointer"
+                        onClick={() => openDeleteModal(usuario)}
+                      />
                     </div>
                   </td>
                 </tr>
@@ -309,15 +330,20 @@ export default function Manageusuario({ users, userRefetch }: UsersTableProps) {
                   <p className="bg-dark-purple rounded-lg w-full text-center self-center">
                     Especialidade
                   </p>
-                  {/* <p className="p-4 w-full">{usuario.especialidade}</p> */}
+                  <p className="p-4 w-full">
+                    {/* {usuario?.habilidades?.[0]?.tecnologias ?? 'N/A'} */}
+                  </p>
                 </div>
 
                 <div className="flex items-center justify-end gap-3 px-10 py-4">
                   <BiSolidEdit
-                    className="text-2xl"
+                    className="text-2xl cursor-pointer"
                     onClick={() => openEditModal(usuario)}
                   />
-                  <MdBlock className="text-2xl" />
+                  <MdBlock
+                    className="text-2xl cursor-pointer"
+                    onClick={() => openDeleteModal(usuario)}
+                  />
                 </div>
               </div>
             </div>
@@ -341,6 +367,25 @@ export default function Manageusuario({ users, userRefetch }: UsersTableProps) {
         className="mt-10 h-[660px] w-full max-w-6xl transform overflow-auto rounded-2xl p-1 px-8 text-left align-middle shadow-xl transition-all !scrollbar-none !scrollbar-track-transparent !scrollbar-thumb-black md:h-[600px] md:w-9/12 lg:h-[80vh]"
       >
         <CreateUser setIsOpen={setIsOpenCriar} userRefetch={userRefetch} />
+      </Modal>
+      <Modal
+        isOpen={isOpenCriar}
+        setModalOpened={setIsOpenCriar}
+        className="mt-10 h-[660px] w-full max-w-6xl transform overflow-auto rounded-2xl p-1 px-8 text-left align-middle shadow-xl transition-all !scrollbar-none !scrollbar-track-transparent !scrollbar-thumb-black md:h-[600px] md:w-9/12 lg:h-[80vh]"
+      >
+        <CreateUser setIsOpen={setIsOpenCriar} userRefetch={userRefetch} />
+      </Modal>
+
+      <Modal
+        isOpen={isOpenDelete}
+        setModalOpened={setIsOpenDelete}
+        className="py-10 px-4 h-auto w-[550px] transform overflow-auto rounded-2xl text-left align-middle shadow-xl transition-all !scrollbar-none !scrollbar-track-transparent !scrollbar-thumb-black"
+      >
+        <BlockUser
+          setIsOpen={setIsOpenDelete}
+          userRefetch={userRefetch}
+          user={usuario || undefined}
+        />
       </Modal>
     </div>
   )

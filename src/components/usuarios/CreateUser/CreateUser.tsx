@@ -24,8 +24,10 @@ export default function CreateUser({
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<CreateUserFormSchemaType>({
+    mode: 'all',
     resolver: zodResolver(createUserFormSchema),
   })
 
@@ -33,15 +35,17 @@ export default function CreateUser({
     setIsOpen(false)
   }
 
-  console.log(errors)
+  const cargo = watch('cargo')
+  const curso = watch('curso')
 
   const onSubmit = (data: CreateUserFormSchemaType) => {
     PostData({
-      url: `/usuario/usuarios`,
+      url: `/usuario/usuarios/`,
       data: { ...data, username: data.email_institucional },
       onSuccess: () => {
         toast.success('Usuário criado com sucesso')
         userRefetch()
+        closeModal()
       },
       onError: (error) => {
         toast.error('Erro ao criar usuário')
@@ -82,6 +86,7 @@ export default function CreateUser({
                     error={errors.nome}
                     register={register('nome')}
                   />
+
                   <InputText
                     label="E-mail Institucional"
                     placeholder="Digite o E-mail Instituicional do usuário"
@@ -98,6 +103,22 @@ export default function CreateUser({
                     register={register('rgm')}
                   />
 
+                  <InputText
+                    label="CPF"
+                    placeholder="Digite o CPF do usuário"
+                    type="text"
+                    error={errors.cpf}
+                    register={register('cpf')}
+                  />
+
+                  <InputText
+                    label="Telefone"
+                    placeholder="Digite o Telefone do usuário"
+                    type="text"
+                    error={errors.telefone}
+                    register={register('telefone')}
+                  />
+
                   <InputSelect
                     label="Cargo"
                     register={register('cargo')}
@@ -111,13 +132,43 @@ export default function CreateUser({
                     <option value="VETERANO">Veterano</option>
                   </InputSelect>
 
-                  <InputText
-                    label="Telefone"
-                    placeholder="Digite o Telefone do usuário"
-                    type="text"
-                    error={errors.telefone}
-                    register={register('telefone')}
-                  />
+                  {cargo !== 'GESTOR' && cargo !== '' && (
+                    <div>
+                      <InputSelect
+                        label="Curso"
+                        register={register('curso')}
+                        error={errors.curso}
+                      >
+                        <option value="" hidden>
+                          Selecione um curso
+                        </option>
+                        <option value="Análise e Desenvolvimento de Sistemas">
+                          Análise e Desenvolvimento de Sistemas
+                        </option>
+                        <option value="Ciência da Computação">
+                          Ciência da Computação
+                        </option>
+                        <option value="Sistemas para Internet">
+                          Sistemas para Internet
+                        </option>
+                        <option value="Ciência de Dados">
+                          Ciência de Dados
+                        </option>
+                        <option value="Outros">Outros</option>
+                      </InputSelect>
+                    </div>
+                  )}
+                  {curso === 'Outros' && (
+                    <div>
+                      <InputText
+                        label="Curso - Outros"
+                        placeholder="Insira seu curso"
+                        type="text"
+                        register={register('outros_cursos')}
+                        error={errors.outros_cursos}
+                      />
+                    </div>
+                  )}
 
                   <InputSelect
                     label="Setor"
@@ -158,15 +209,15 @@ export default function CreateUser({
                     <option value="12">12</option>
                   </InputSelect>
                 </div>
+                <div className="w-full flex justify-center items-center">
+                  <button
+                    type="submit"
+                    className="mt-7 bg-white py-5 px-12 xl:px-20 text-xl whitespace-nowrap text-light-purple font-extrabold rounded-md shadow-md hover:text-white hover:bg-yellow-400 active:bg-yellow-500 duration-200"
+                  >
+                    CADASTRAR USUÁRIO
+                  </button>
+                </div>
               </form>
-              <div className="w-full flex justify-center items-center">
-                <button
-                  type="submit"
-                  className="mt-7 bg-white py-5 px-12 xl:px-20 text-xl whitespace-nowrap text-light-purple font-extrabold rounded-md shadow-md hover:text-white hover:bg-yellow-400 active:bg-yellow-500 duration-200"
-                >
-                  CADASTRAR USUÁRIO
-                </button>
-              </div>
             </div>
           </div>
         </div>

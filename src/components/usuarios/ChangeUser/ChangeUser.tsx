@@ -2,7 +2,6 @@
 import { User } from '@/@types'
 import { DialogTitle } from '@headlessui/react'
 import { Dispatch, SetStateAction, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import {
   changeUserFormSchema,
   ChangeUserFormSchemaType,
@@ -34,12 +33,11 @@ export default function ChangeUser({
     handleSubmit,
     setValue,
     formState: { errors },
+    watch,
   } = useForm<ChangeUserFormSchemaType>({
     mode: 'all',
     resolver: zodResolver(changeUserFormSchema),
   })
-
-  const router = useRouter()
 
   useEffect(() => {
     if (user) {
@@ -51,6 +49,9 @@ export default function ChangeUser({
       setValue('cargo', user?.cargo || '')
       setValue('setor', user?.setor || '')
       setValue('periodo', String(user?.periodo) || '')
+      setValue('curso', user?.curso || '')
+      setValue('outros_cursos', user?.outros_cursos || '')
+      setValue('cpf', user?.cpf || '')
     }
   }, [user, setValue])
 
@@ -60,7 +61,8 @@ export default function ChangeUser({
       data: { ...data },
       onSuccess: () => {
         toast.success('Atualização realizada com sucesso')
-        router.push('/acesso/usuarios')
+        userRefetch()
+        closeModal()
       },
       onError: (error) =>
         toast.error(
@@ -70,6 +72,9 @@ export default function ChangeUser({
     })
     userRefetch()
   }
+
+  const cargo = watch('cargo')
+  const curso = watch('curso')
 
   return (
     <div>
@@ -121,6 +126,30 @@ export default function ChangeUser({
                     register={register('email_institucional')}
                   />
 
+                  <InputText
+                    label="RGM"
+                    placeholder="Digite o RGM do usuário"
+                    type="text"
+                    error={errors.rgm}
+                    register={register('rgm')}
+                  />
+
+                  <InputText
+                    label="CPF"
+                    placeholder="Digite o CPF do usuário"
+                    type="text"
+                    error={errors.cpf}
+                    register={register('cpf')}
+                  />
+
+                  <InputText
+                    label="Telefone"
+                    placeholder="Digite o Telefone do usuário"
+                    type="text"
+                    error={errors.telefone}
+                    register={register('telefone')}
+                  />
+
                   <InputSelect
                     label="Cargo"
                     register={register('cargo')}
@@ -134,33 +163,44 @@ export default function ChangeUser({
                     <option value="VETERANO">Veterano</option>
                   </InputSelect>
 
-                  <InputText
-                    label="Telefone"
-                    placeholder="Digite o telefone do usuário"
-                    type="text"
-                    error={errors.telefone}
-                    register={register('telefone')}
-                  />
+                  {cargo !== 'GESTOR' && cargo !== '' && (
+                    <div>
+                      <InputSelect
+                        label="Curso"
+                        register={register('curso')}
+                        error={errors.curso}
+                      >
+                        <option value="" hidden>
+                          Selecione um curso
+                        </option>
+                        <option value="Análise e Desenvolvimento de Sistemas">
+                          Análise e Desenvolvimento de Sistemas
+                        </option>
+                        <option value="Ciência da Computação">
+                          Ciência da Computação
+                        </option>
+                        <option value="Sistemas para Internet">
+                          Sistemas para Internet
+                        </option>
+                        <option value="Ciência de Dados">
+                          Ciência de Dados
+                        </option>
+                        <option value="Outros">Outros</option>
+                      </InputSelect>
+                    </div>
+                  )}
+                  {curso === 'Outros' && (
+                    <div>
+                      <InputText
+                        label="Curso - Outros"
+                        placeholder="Insira seu curso"
+                        type="text"
+                        register={register('outros_cursos')}
+                        error={errors.outros_cursos}
+                      />
+                    </div>
+                  )}
 
-                  <InputSelect
-                    label="Periodo"
-                    register={register('periodo')}
-                    error={errors.periodo}
-                  >
-                    <option value="">Nenhum</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                    <option value="11">11</option>
-                    <option value="12">12</option>
-                  </InputSelect>
                   <InputSelect
                     label="Setor"
                     register={register('setor')}
@@ -180,12 +220,33 @@ export default function ChangeUser({
                     <option value="UIUX">UI/UX</option>
                   </InputSelect>
                 </div>
+
+                <InputSelect
+                  label="Periodo"
+                  register={register('periodo')}
+                  error={errors.periodo}
+                >
+                  <option value="">Nenhum</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                </InputSelect>
+
                 <div className="w-full flex justify-center items-center">
                   <button
                     type="submit"
                     className="mt-7 bg-white py-5 px-12 xl:px-20 text-xl whitespace-nowrap text-light-purple font-extrabold rounded-md shadow-md hover:text-white hover:bg-yellow-400 active:bg-yellow-500 duration-200"
                   >
-                    Editar Usuário
+                    EDITAR USUÁRIO
                   </button>
                 </div>
               </form>

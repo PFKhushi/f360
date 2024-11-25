@@ -1,6 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReactNode } from 'react'
 
+export type Habilidade = {
+  id: number
+  nome: string
+}
+
+export interface Experiencia {
+  id: number
+  senioridade: string
+  descricao: string
+  data_criacao: string
+  data_atualizacao: string
+  usuario: number
+  tecnologias: number
+}
+
 export type User = {
   id: number
   nome: string
@@ -25,9 +40,4 @@ export type User = {
 
 export type ReactQueryProviderProps = {
   children: ReactNode
-}
-
-export type Habilidade = {
-  id: number
-  nome: string
 }

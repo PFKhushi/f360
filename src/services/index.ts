@@ -26,3 +26,16 @@ export const getHabilidades = async () => {
 
   return response.data
 }
+
+export const getExperiencias = async () => {
+  const session = await getSession()
+  const token = session?.user?.access
+  const response = await axios.get(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/usuario/experiencias/`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  )
+
+  return response.data
+}
