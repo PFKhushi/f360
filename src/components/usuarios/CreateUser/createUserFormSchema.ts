@@ -3,9 +3,9 @@ import { z } from 'zod'
 
 const telefoneRegex = /^\(\d{2}\)\d{4,5}-\d{4}$/
 
-export const changeUserFormSchema = z.object({
+export const createUserFormSchema = z.object({
   nome: z.string().min(1, 'Preencha seu nome completo'),
-  periodo: z.string().optional(),
+  periodo: z.string(),
   cargo: z.string().min(2, 'O cargo é obrigatório'),
   setor: z.string().min(2, 'Escolha o setor'),
   rgm: z.string().length(8, 'É necessário que o RGM contenha 8 dígitos'),
@@ -26,4 +26,4 @@ export const changeUserFormSchema = z.object({
     }),
 })
 
-export type ChangeUserFormSchemaType = z.infer<typeof changeUserFormSchema>
+export type CreateUserFormSchemaType = z.infer<typeof createUserFormSchema>

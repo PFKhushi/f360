@@ -1,74 +1,53 @@
 'use client'
-import { User } from '@/@types'
 import { DialogTitle } from '@headlessui/react'
-import { Dispatch, SetStateAction, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import {
-  changeUserFormSchema,
-  ChangeUserFormSchemaType,
-} from './ChangeUserFormSchema'
+import { Dispatch, SetStateAction } from 'react'
 import { useForm } from 'react-hook-form'
+import { PostData } from '@/services/axios'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { PatchData } from '@/services/axios'
+import toast from 'react-hot-toast'
 import InputText from '../../Inputs/InputText'
 import InputSelect from '../../Inputs/InputSelect'
-import toast from 'react-hot-toast'
+import {
+  CreateUserFormSchemaType,
+  createUserFormSchema,
+} from './createUserFormSchema'
 
 interface UpdateModalProps {
-  user: User | null
   setIsOpen: Dispatch<SetStateAction<boolean>>
   userRefetch: () => void
 }
 
-export default function ChangeUser({
-  user,
+export default function CreateUser({
   setIsOpen,
   userRefetch,
 }: UpdateModalProps) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<CreateUserFormSchemaType>({
+    resolver: zodResolver(createUserFormSchema),
+  })
+
   function closeModal() {
     setIsOpen(false)
   }
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<ChangeUserFormSchemaType>({
-    mode: 'all',
-    resolver: zodResolver(changeUserFormSchema),
-  })
+  console.log(errors)
 
-  const router = useRouter()
-
-  useEffect(() => {
-    if (user) {
-      setValue('nome', user?.nome || '')
-      setValue('rgm', user?.rgm || '')
-      setValue('telefone', user?.telefone || '')
-      setValue('username', user?.username || '')
-      setValue('email_institucional', user?.email_institucional || '')
-      setValue('cargo', user?.cargo || '')
-      setValue('setor', user?.setor || '')
-      setValue('periodo', String(user?.periodo) || '')
-    }
-  }, [user, setValue])
-
-  const handleForm = async (data: ChangeUserFormSchemaType) => {
-    PatchData({
-      url: `/usuario/usuarios/${user?.id}/`,
-      data: { ...data },
+  const onSubmit = (data: CreateUserFormSchemaType) => {
+    PostData({
+      url: `/usuario/usuarios`,
+      data: { ...data, username: data.email_institucional },
       onSuccess: () => {
-        toast.success('Atualização realizada com sucesso')
-        router.push('/acesso/usuarios')
+        toast.success('Usuário criado com sucesso')
+        userRefetch()
       },
-      onError: (error) =>
-        toast.error(
-          'Erro ao atualizar cadastro',
-          error.response?.data || error.message,
-        ),
+      onError: (error) => {
+        toast.error('Erro ao criar usuário')
+        console.error('Erro ao criar usuário', error)
+      },
     })
-    userRefetch()
   }
 
   return (
@@ -84,19 +63,18 @@ export default function ChangeUser({
           </button>
         </div>
       </DialogTitle>
-
       <div className="mt-2">
         <div className="mx-auto sm:px-2 lg:py-2">
           <div className="mx-auto max-w-4xl">
             <div className="mb-16 mt-28 text-start md:flex md:flex-row items-center gap-x-10">
               <h2 className="max-[420px]:text-2xl font-semibold py-5 text-white text-3xl md:text-4xl -mt-10 md:-mt-20">
-                Editar usuário {user?.nome}
+                Criar novo usuário
               </h2>
             </div>
 
-            <div className="rounded-x relative mt-1 w-full text-white">
-              <form onSubmit={handleSubmit(handleForm)}>
-                <div className="grid grid-cols-2 gap-y-4">
+            <div className="rounded-x relative mt-1 w-full">
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="flex flex-col gap-4 text-white md:grid grid-cols-2">
                   <InputText
                     label="Nome"
                     placeholder="Digite o nome do usuário"
@@ -104,21 +82,20 @@ export default function ChangeUser({
                     error={errors.nome}
                     register={register('nome')}
                   />
-
-                  <InputText
-                    label="Email de login"
-                    placeholder="Digite o email do usuário"
-                    type="text"
-                    error={errors.username}
-                    register={register('username')}
-                  />
-
                   <InputText
                     label="E-mail Institucional"
-                    placeholder="Digite o E-mail Institucional do usuário"
+                    placeholder="Digite o E-mail Instituicional do usuário"
                     type="email"
                     error={errors.email_institucional}
                     register={register('email_institucional')}
+                  />
+
+                  <InputText
+                    label="RGM"
+                    placeholder="Digite o RGM do usuário"
+                    type="text"
+                    error={errors.rgm}
+                    register={register('rgm')}
                   />
 
                   <InputSelect
@@ -136,11 +113,30 @@ export default function ChangeUser({
 
                   <InputText
                     label="Telefone"
-                    placeholder="Digite o telefone do usuário"
+                    placeholder="Digite o Telefone do usuário"
                     type="text"
                     error={errors.telefone}
                     register={register('telefone')}
                   />
+
+                  <InputSelect
+                    label="Setor"
+                    register={register('setor')}
+                    error={errors.setor}
+                  >
+                    <option value="">Nenhum</option>
+                    <option value="GESTAO">Gestão</option>
+                    <option value="BACK">Back-end</option>
+                    <option value="DADOS">Dados</option>
+                    <option value="DEVOPS">DevOps</option>
+                    <option value="FRONT">Front-end</option>
+                    <option value="IA">Inteligência Artificial</option>
+                    <option value="JOGOS">Jogos</option>
+                    <option value="MOBILE">Mobile</option>
+                    <option value="PO">Product Owner</option>
+                    <option value="QA">Quality Assurance</option>
+                    <option value="UIUX">UI/UX</option>
+                  </InputSelect>
 
                   <InputSelect
                     label="Periodo"
@@ -161,34 +157,16 @@ export default function ChangeUser({
                     <option value="11">11</option>
                     <option value="12">12</option>
                   </InputSelect>
-                  <InputSelect
-                    label="Setor"
-                    register={register('setor')}
-                    error={errors.setor}
-                  >
-                    <option value="">Nenhum</option>
-                    <option value="GESTAO">Gestão</option>
-                    <option value="BACK">Back-End</option>
-                    <option value="DADOS">Dados</option>
-                    <option value="DEVOPS">DevOps</option>
-                    <option value="FRONT">Front-End</option>
-                    <option value="IA">Inteligência Artificial</option>
-                    <option value="JOGOS">Jogos</option>
-                    <option value="MOBILE">Mobile</option>
-                    <option value="PO">Product Owner</option>
-                    <option value="QA">Quality Assurance</option>
-                    <option value="UIUX">UI/UX</option>
-                  </InputSelect>
-                </div>
-                <div className="w-full flex justify-center items-center">
-                  <button
-                    type="submit"
-                    className="mt-7 bg-white py-5 px-12 xl:px-20 text-xl whitespace-nowrap text-light-purple font-extrabold rounded-md shadow-md hover:text-white hover:bg-yellow-400 active:bg-yellow-500 duration-200"
-                  >
-                    Editar Usuário
-                  </button>
                 </div>
               </form>
+              <div className="w-full flex justify-center items-center">
+                <button
+                  type="submit"
+                  className="mt-7 bg-white py-5 px-12 xl:px-20 text-xl whitespace-nowrap text-light-purple font-extrabold rounded-md shadow-md hover:text-white hover:bg-yellow-400 active:bg-yellow-500 duration-200"
+                >
+                  CADASTRAR USUÁRIO
+                </button>
+              </div>
             </div>
           </div>
         </div>

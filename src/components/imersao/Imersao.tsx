@@ -52,7 +52,7 @@ export default function Imersao({ user }: ImersaoProps) {
 
           data.habilidades.forEach((habilidade) => {
             PostData({
-              url: `/usuario/habilidades/`,
+              url: `/usuario/experiencias/`,
               data: {
                 usuario: user.id,
                 tecnologias: habilidade.tecnologias,

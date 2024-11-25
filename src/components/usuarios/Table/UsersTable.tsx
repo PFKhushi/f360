@@ -5,19 +5,19 @@ import React, { useEffect, useState } from 'react'
 import { BiSolidEdit } from 'react-icons/bi'
 import { MdBlock } from 'react-icons/md'
 import ChangeUser from '../ChangeUser/ChangeUser'
-import CreateUser from '../CreateUser/CreateUserSchema'
+import CreateUser from '../CreateUser/CreateUser'
 
 interface UsersTableProps {
-  users: User[],
+  users: User[]
   userRefetch: () => void
 }
 
-export default function Manageusuario({ users, userRefetch}: UsersTableProps) {
+export default function Manageusuario({ users, userRefetch }: UsersTableProps) {
   const [isMobile, setIsMobile] = useState(false)
   const [nomeFiltro, setNomeFiltro] = useState('')
   const [periodoFiltro, setPeriodoFiltro] = useState('')
   const [cargoFiltro, setCargoFiltro] = useState('')
-  const [projetosFiltro, setProjetosFiltro] = useState('')
+  // const [projetosFiltro, setProjetosFiltro] = useState('')
   const [areaFiltro, setAreaFiltro] = useState('')
   const [especialidadeFiltro, setEspecialidadeFiltro] = useState('')
   const [usuario, setUsuario] = useState<User | null>(null)
@@ -49,10 +49,10 @@ export default function Manageusuario({ users, userRefetch}: UsersTableProps) {
     return (
       (nomeFiltro === '' ||
         normalizeString(usuario.nome).includes(normalizeString(nomeFiltro))) &&
-      // (periodoFiltro === '' ||
-      //   normalizeString(usuario.periodo).includes(
-      //     normalizeString(periodoFiltro),
-      //   )) &&
+      (periodoFiltro === '' ||
+        normalizeString(String(usuario.periodo)).includes(
+          normalizeString(periodoFiltro),
+        )) &&
       (cargoFiltro === '' ||
         normalizeString(usuario.cargo).includes(
           normalizeString(cargoFiltro),
@@ -146,7 +146,7 @@ export default function Manageusuario({ users, userRefetch}: UsersTableProps) {
               <option value="VETERANO">Veterano</option>
             </select>
           </div>
-          <div className="flex flex-col justify-center items-center">
+          {/* <div className="flex flex-col justify-center items-center">
             <label className="text-dark-yellow font-bold">Projetos</label>
             <input
               type="text"
@@ -155,7 +155,7 @@ export default function Manageusuario({ users, userRefetch}: UsersTableProps) {
               onChange={(e) => setProjetosFiltro(e.target.value)}
               className="w-full bg-white text-black p-2 rounded-xl text-sm"
             />
-          </div>
+          </div> */}
           <div className="flex flex-col justify-center items-center">
             <label className="text-dark-yellow font-bold">Área</label>
             <select
@@ -204,8 +204,6 @@ export default function Manageusuario({ users, userRefetch}: UsersTableProps) {
                 <th className="lg:p-2 p-1">Projetos</th>
                 <th className="lg:p-2 p-1">Área</th>
                 <th className="lg:p-2 p-1">Especialidade</th>
-                <th className="lg:p-2 p-1">RGM</th>
-                <th className="lg:p-2 p-1">Email institucional</th>
                 <th className="lg:p-2 p-1"></th>
               </tr>
             </thead>
@@ -215,9 +213,7 @@ export default function Manageusuario({ users, userRefetch}: UsersTableProps) {
                   <td className="lg:p-4 p-2 text-center">{usuario.nome}</td>
                   <td>
                     <p className="lg:p-4 p-2 text-center">
-                      {/* {usuario.periodo === 'N/A'
-                        ? 'N/A'
-                        : `${usuario.periodo}º`} */}
+                      {usuario.periodo ? `${usuario.periodo}º` : 'N/A'}
                     </p>
                   </td>
                   <td className="max-h-44">
@@ -333,14 +329,18 @@ export default function Manageusuario({ users, userRefetch}: UsersTableProps) {
         setModalOpened={setIsOpenEditar}
         className="mt-10 h-[660px] w-full max-w-6xl transform overflow-auto rounded-2xl p-1 px-8 text-left align-middle shadow-xl transition-all !scrollbar-none !scrollbar-track-transparent !scrollbar-thumb-black md:h-[600px] md:w-9/12 lg:h-[80vh]"
       >
-        <ChangeUser setIsOpen={setIsOpenEditar} user={usuario} userRefetch={userRefetch}/>
+        <ChangeUser
+          setIsOpen={setIsOpenEditar}
+          user={usuario}
+          userRefetch={userRefetch}
+        />
       </Modal>
       <Modal
         isOpen={isOpenCriar}
         setModalOpened={setIsOpenCriar}
         className="mt-10 h-[660px] w-full max-w-6xl transform overflow-auto rounded-2xl p-1 px-8 text-left align-middle shadow-xl transition-all !scrollbar-none !scrollbar-track-transparent !scrollbar-thumb-black md:h-[600px] md:w-9/12 lg:h-[80vh]"
       >
-        <CreateUser setIsOpen={setIsOpenCriar} userRefetch={userRefetch}/>
+        <CreateUser setIsOpen={setIsOpenCriar} userRefetch={userRefetch} />
       </Modal>
     </div>
   )
