@@ -34,7 +34,7 @@ export default function Login() {
         toast.error('Email ou senha incorretos')
       } else {
         toast.success('Login realizado com sucesso')
-        router.push('/acesso/usuarios')
+        router.push('/acesso/inicio')
       }
     } catch (error) {
       console.error(error)

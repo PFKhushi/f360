@@ -5,7 +5,7 @@ import { FaBars, FaUsers } from 'react-icons/fa'
 import { HiOutlineHome } from 'react-icons/hi'
 import { LuUserCircle2 } from 'react-icons/lu'
 import { MdExitToApp } from 'react-icons/md'
-import { signOut } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import ButtonNav from './ButtonNav'
 import { useRouter } from 'next/navigation'
 
@@ -27,6 +27,9 @@ export default function NavBar({ click, navbar, closeNav }: PropsNavBar) {
       router.push('/')
     }
   }
+
+  const session = useSession()
+  const cargo = session?.data?.user?.cargo
 
   return (
     <aside
@@ -54,13 +57,18 @@ export default function NavBar({ click, navbar, closeNav }: PropsNavBar) {
             icon={<HiOutlineHome className="w-5 h-5" />}
           />
 
-          <ButtonNav
-            click={click}
-            closeNav={closeNav}
-            title="Usuários"
-            href="/acesso/usuarios"
-            icon={<FaUsers className="w-5 h-5" />}
-          />
+
+          {cargo === 'GESTOR' && (
+              <ButtonNav
+              click={click}
+              closeNav={closeNav}
+              title="Usuários"
+              href="/acesso/usuarios"
+              icon={<FaUsers className="w-5 h-5" />}
+            />
+            )
+          }
+
         </ul>
 
         <ul

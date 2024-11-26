@@ -2,7 +2,7 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 import Link from 'next/link'
-import { signOut } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import { FaBars, FaUsers } from 'react-icons/fa'
 import { HiOutlineHome } from 'react-icons/hi'
 import { LuUserCircle2 } from 'react-icons/lu'
@@ -32,6 +32,9 @@ export default function NavBarMobile() {
   function openModal() {
     setIsOpen(true)
   }
+
+  const session = useSession()
+  const cargo = session?.data?.user?.cargo
 
   return (
     <>
@@ -91,12 +94,16 @@ export default function NavBarMobile() {
                             href="/acesso/inicio"
                             icon={<HiOutlineHome className="w-5 h-5" />}
                           />
-                          <ButtonNavMobile
+
+                          {cargo === 'GESTOR' && (
+                            <ButtonNavMobile
                             closeModal={closeModal}
                             title="Usuários"
                             href="/acesso/usuarios"
                             icon={<FaUsers className="w-5 h-5" />}
-                          />
+                            />
+                          )}
+
                         </ul>
 
                         <ul className="space-y-2 font-medium border-t pt-2 mt-4 ">

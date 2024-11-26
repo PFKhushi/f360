@@ -55,16 +55,16 @@ export default function BlockUser({
             Deseja mesmo bloquear o usuário {user?.nome}?
           </h2>
           <div className="text-start flex flex-col justify-end items-center gap-x-10 mt-8">
-            <div className="w-full flex gap-4 justify-center items-center">
+            <div className="w-full flex flex-wrap gap-4 justify-center items-center mt-7">
               <button
                 onClick={closeModal}
-                className="mt-7 bg-light-grey py-4 px-10 xl:px-12  text-lg whitespace-nowrap text-dark-purple font-extrabold rounded-md shadow-md duration-200"
+                className="bg-light-grey py-4 px-10 xl:px-12  text-lg whitespace-nowrap text-dark-purple font-extrabold rounded-md shadow-md duration-200"
               >
                 CANCELAR
               </button>
               <button
                 onClick={handleBlock}
-                className="mt-7 bg-red-500 py-4 px-10 xl:px-12 text-lg whitespace-nowrap text-white font-extrabold rounded-md shadow-md hover:text-white duration-200"
+                className="bg-red-500 py-4 px-10 xl:px-12 text-lg whitespace-nowrap text-white font-extrabold rounded-md shadow-md hover:text-white duration-200"
               >
                 BLOQUEAR
               </button>

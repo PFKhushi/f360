@@ -101,7 +101,7 @@ export default function ChangeUser({
 
             <div className="rounded-x relative mt-1 w-full text-white">
               <form onSubmit={handleSubmit(handleForm)}>
-                <div className="grid grid-cols-2 gap-y-4">
+                <div className="flex flex-col gap-4 text-white md:grid grid-cols-2">
                   <InputText
                     label="Nome"
                     placeholder="Digite o nome do usuário"
@@ -244,7 +244,7 @@ export default function ChangeUser({
                 <div className="w-full flex justify-center items-center">
                   <button
                     type="submit"
-                    className="mt-7 bg-white py-5 px-12 xl:px-20 text-xl whitespace-nowrap text-light-purple font-extrabold rounded-md shadow-md hover:text-white hover:bg-yellow-400 active:bg-yellow-500 duration-200"
+                    className="mt-7 mb-10 bg-white py-5 px-12 xl:px-20 text-xl whitespace-nowrap text-light-purple font-extrabold rounded-md shadow-md hover:text-white hover:bg-yellow-400 active:bg-yellow-500 duration-200"
                   >
                     EDITAR USUÁRIO
                   </button>

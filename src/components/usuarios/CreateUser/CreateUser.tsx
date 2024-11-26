@@ -212,7 +212,7 @@ export default function CreateUser({
                 <div className="w-full flex justify-center items-center">
                   <button
                     type="submit"
-                    className="mt-7 bg-white py-5 px-12 xl:px-20 text-xl whitespace-nowrap text-light-purple font-extrabold rounded-md shadow-md hover:text-white hover:bg-yellow-400 active:bg-yellow-500 duration-200"
+                    className="mt-7 mb-10 bg-white py-5 px-12 xl:px-20 text-xl whitespace-nowrap text-light-purple font-extrabold rounded-md shadow-md hover:text-white hover:bg-yellow-400 active:bg-yellow-500 duration-200"
                   >
                     CADASTRAR USUÁRIO
                   </button>
