@@ -18,6 +18,8 @@ interface AtualizarPerfilFormSchemaType {
   curso: string
   cargo: string
   setor: string
+  periodo: number
+  telefone:number
 }
 
 export default function MyProfile({ user }: AtualizarPerfil) {
@@ -80,7 +82,7 @@ export default function MyProfile({ user }: AtualizarPerfil) {
         />
         <InputText
           label="EMAIL INSTITUCIONAL"
-          placeholder="Insira seu EMAIL INSTITUCIONAL"
+          placeholder="Insira seu email institucional"
           type="text"
           register={register('email_institucional')}
           error={errors.email_institucional}
@@ -88,7 +90,7 @@ export default function MyProfile({ user }: AtualizarPerfil) {
         />
         <InputText
           label="CURSO"
-          placeholder="Insira seu CURSO"
+          placeholder="Insira seu curso"
           type="text"
           register={register('curso')}
           error={errors.curso}
@@ -96,7 +98,7 @@ export default function MyProfile({ user }: AtualizarPerfil) {
         />
         <InputText
           label="CARGO"
-          placeholder="Insira seu CARGO"
+          placeholder="Insira seu cargo"
           type="text"
           register={register('cargo')}
           error={errors.cargo}
@@ -104,11 +106,27 @@ export default function MyProfile({ user }: AtualizarPerfil) {
         />
         <InputText
           label="SETOR"
-          placeholder="Insira seu SETOR"
+          placeholder="Insira seu setor"
           type="text"
           register={register('setor')}
           error={errors.setor}
           defaultValue={user?.setor}
+        />
+         <InputText
+          label="PERIODO"
+          placeholder="Insira seu periodo"
+          type="text"
+          register={register('periodo')}
+          error={errors.periodo}
+          defaultValue={user?.periodo}
+        />
+         <InputText
+          label="TELEFONE"
+          placeholder="Insira seu telefone"
+          type="text"
+          register={register('telefone')}
+          error={errors.telefone}
+          defaultValue={user?.telefone}
         />
       </div>
       <button
