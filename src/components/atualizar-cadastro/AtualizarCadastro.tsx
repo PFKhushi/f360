@@ -49,7 +49,7 @@ export default function AtualizarCadastro({ user }: AtualizarCadastroProps) {
       data: { ...data },
       onSuccess: () => {
         toast.success('Atualização realizada com sucesso')
-        router.push('/acesso/usuarios')
+        router.push('/acesso/inicio')
       },
       onError: (error) =>
         toast.error(

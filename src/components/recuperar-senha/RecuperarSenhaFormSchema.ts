@@ -1,16 +1,7 @@
-'use client'
 import { z } from 'zod'
 
-export const registroFormSchema = z
+export const RecuperarSenhaFormSchema = z
   .object({
-    nome: z.string().min(1, 'Preencha seu nome completo!'),
-    email: z
-      .string()
-      .min(1, 'O email é obrigatório')
-      .regex(
-        /^[a-zA-Z0-9._%+-]+@cs\.unipe\.edu\.br$/,
-        'O email institucional deve seguir o formato @cs.unipe.edu.br',
-      ),
     senha: z
       .string()
       .min(8, 'A senha deve ter no mínimo 8 caracteres')
@@ -32,4 +23,6 @@ export const registroFormSchema = z
     message: 'As senhas não são iguais',
   })
 
-export type RegistroFormSchemaType = z.infer<typeof registroFormSchema>
+export type RecuperarSenhaFormSchemaType = z.infer<
+  typeof RecuperarSenhaFormSchema
+>

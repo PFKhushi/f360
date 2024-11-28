@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import { FiUser } from 'react-icons/fi'
 import { GoLock } from 'react-icons/go'
 import Image from 'next/image'
@@ -10,6 +10,8 @@ import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
+import EsqueceuSenha from './EsqueceuSenha'
+import Modal from '../modal/Modal'
 
 export default function Login() {
   const router = useRouter()
@@ -20,6 +22,7 @@ export default function Login() {
   } = useForm<LoginFormSchemaType>({
     resolver: zodResolver(loginFormSchema),
   })
+  const [isOpen, setIsOpen] = useState(false)
 
   const onSubmit = async (data: LoginFormSchemaType) => {
     try {
@@ -93,12 +96,19 @@ export default function Login() {
                 {errors.password.message}
               </span>
             )}
-            <a href="#" className="text-light-purple font-semibold text-lg">
+            <button
+              type="button"
+              className="text-light-purple font-semibold text-lg"
+              onClick={() => setIsOpen(true)}
+            >
               Esqueceu a senha?
-            </a>
+            </button>
           </article>
 
-          <button className="bg-light-purple text-white text-xl font-bold py-5 px-20 rounded-lg shadow-md hover:bg-yellow-400 active:bg-yellow-500 duration-200">
+          <button
+            type="submit"
+            className="bg-light-purple text-white text-xl font-bold py-5 px-20 rounded-lg shadow-md hover:bg-yellow-400 active:bg-yellow-500 duration-200"
+          >
             ENTRE
           </button>
         </form>
@@ -113,6 +123,13 @@ export default function Login() {
           CADASTRE-SE
         </Link>
       </div>
+      <Modal
+        isOpen={isOpen}
+        setModalOpened={setIsOpen}
+        className="py-10 px-4 h-auto w-[550px] transform overflow-auto rounded-2xl text-left align-middle shadow-xl transition-all !scrollbar-none !scrollbar-track-transparent !scrollbar-thumb-black"
+      >
+        <EsqueceuSenha setIsOpen={setIsOpen} />
+      </Modal>
     </main>
   )
 }

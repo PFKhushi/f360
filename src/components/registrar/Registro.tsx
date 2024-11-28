@@ -58,7 +58,7 @@ export default function Registro() {
         />
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-2 p-2 mt-4 items-center"
+          className="flex flex-col gap-2 p-2 mt-4 items-center md:grid grid-cols-2 md:gap-12"
         >
           <InputText
             label="Nome Completo"
@@ -74,9 +74,29 @@ export default function Registro() {
             error={errors.email}
             register={register('email')}
           />
-          <button className=" bg-white p-3 mt-4 text-light-purple font-extrabold rounded-md w-2/3 flex justify-center ">
-            CADASTRE-SE
-          </button>
+          <div>
+            <InputText
+              label="Senha"
+              placeholder="Insira sua senha"
+              type="text"
+              register={register('senha')}
+              error={errors.senha}
+            />
+          </div>
+          <div>
+            <InputText
+              label="Confirmar Senha"
+              placeholder="Insira sua senha novamente"
+              type="text"
+              register={register('confirmarSenha')}
+              error={errors.confirmarSenha}
+            />
+          </div>
+          <div className="col-span-2 w-full flex justify-center items-center">
+            <button className="bg-white p-3 mt-4 text-light-purple font-extrabold rounded-md w-72 flex justify-center ">
+              CADASTRE-SE
+            </button>
+          </div>
         </form>
       </div>
     </div>

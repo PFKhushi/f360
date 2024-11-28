@@ -4,7 +4,6 @@ import { PatchData } from '@/services/axios'
 import { User } from '@/@types'
 import toast from 'react-hot-toast'
 import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import InputText from '../Inputs/InputText'
 import InputSelect from '../Inputs/InputSelect'
 import { AtualizarPerfilFormSchema } from '@/components/meu-perfil/AtualizarPerfilFormSchema'
@@ -20,7 +19,7 @@ interface AtualizarPerfilFormSchemaType {
   cargo: string
   setor: string
   periodo: number
-  telefone:number
+  telefone: number
 }
 
 export default function MyProfile({ user }: AtualizarPerfil) {
@@ -40,8 +39,6 @@ export default function MyProfile({ user }: AtualizarPerfil) {
     },
   })
 
-  const router = useRouter()
-
   useEffect(() => {
     if (user) {
       setValue('nome', user.nome || '')
@@ -58,12 +55,8 @@ export default function MyProfile({ user }: AtualizarPerfil) {
       data: { ...data },
       onSuccess: () => {
         toast.success('Atualização realizada com sucesso')
-        router.push('/acesso/usuarios')
       },
-      onError: (error) =>
-        toast.error(
-          'Erro ao atualizar perfil: ' + (error.response?.data || error.message),
-        ),
+      onError: () => toast.error('Erro ao atualizar perfil'),
     })
   }
   return (
@@ -101,12 +94,8 @@ export default function MyProfile({ user }: AtualizarPerfil) {
           <option value="Análise e Desenvolvimento de Sistemas">
             Análise e Desenvolvimento de Sistemas
           </option>
-          <option value="Ciência da Computação">
-            Ciência da Computação
-          </option>
-          <option value="Sistemas para Internet">
-            Sistemas para Internet
-          </option>
+          <option value="Ciência da Computação">Ciência da Computação</option>
+          <option value="Sistemas para Internet">Sistemas para Internet</option>
           <option value="Ciência de Dados">Ciência de Dados</option>
           <option value="Outros">Outros</option>
         </InputSelect>
@@ -146,28 +135,28 @@ export default function MyProfile({ user }: AtualizarPerfil) {
           <option value="IA">Inteligência Artificial</option>
           <option value="JOGOS">Jogos</option>
         </InputSelect>
-        
+
         <InputSelect
-            label="Período"
-            register={register('periodo')}
-            error={errors.periodo}
-            valueDefault={errors?.periodo?.message}
-          >
-            <option value="" hidden>
-              Selecione um período
-            </option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-            <option value="11">11</option>
-            <option value="12">12</option>
+          label="Período"
+          register={register('periodo')}
+          error={errors.periodo}
+          valueDefault={errors?.periodo?.message}
+        >
+          <option value="" hidden>
+            Selecione um período
+          </option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
         </InputSelect>
         <InputText
           label="TELEFONE"
@@ -176,7 +165,7 @@ export default function MyProfile({ user }: AtualizarPerfil) {
           register={register('telefone')}
           error={errors.telefone}
           defaultValue={user?.telefone}
-        /> 
+        />
       </div>
       <button
         type="submit"
