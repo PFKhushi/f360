@@ -48,7 +48,7 @@ export default function ChangeUser({
       setValue('email_institucional', user?.email_institucional || '')
       setValue('cargo', user?.cargo || '')
       setValue('setor', user?.setor || '')
-      setValue('periodo', String(user?.periodo) || '')
+      setValue('periodo', user?.periodo?.toLocaleString() || '')
       setValue('curso', user?.curso || '')
       setValue('outros_cursos', user?.outros_cursos || '')
       setValue('cpf', user?.cpf || '')
@@ -101,7 +101,7 @@ export default function ChangeUser({
 
             <div className="rounded-x relative mt-1 w-full text-white">
               <form onSubmit={handleSubmit(handleForm)}>
-                <div className="flex flex-col gap-4 text-white md:grid grid-cols-2">
+                <div className="flex flex-col gap-4 text-white justify-center items-center xl:grid grid-cols-2">
                   <InputText
                     label="Nome"
                     placeholder="Digite o nome do usuário"
@@ -157,10 +157,11 @@ export default function ChangeUser({
                   >
                     <option value="">Nenhum</option>
                     <option value="GESTOR">Gestor</option>
-                    <option value="IMERSIONISTA">Imersionista</option>
-                    <option value="NOVATO">Novato</option>
                     <option value="TECH_LEADER">Tech Leader</option>
                     <option value="VETERANO">Veterano</option>
+                    <option value="NOVATO">Novato</option>
+                    <option value="IMERSIONISTA">Imersionista</option>
+                    <option value="REGISTRADO">Registrado</option>
                   </InputSelect>
 
                   {cargo !== 'GESTOR' && cargo !== '' && (
@@ -225,6 +226,9 @@ export default function ChangeUser({
                     register={register('periodo')}
                     error={errors.periodo}
                   >
+                    <option value="" hidden>
+                      Selecione um período
+                    </option>
                     <option value="">Nenhum</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
@@ -244,7 +248,7 @@ export default function ChangeUser({
                 <div className="w-full flex justify-center items-center">
                   <button
                     type="submit"
-                    className="mt-7 mb-10 bg-white py-5 px-12 xl:px-20 text-xl whitespace-nowrap text-light-purple font-extrabold rounded-md shadow-md hover:text-white hover:bg-yellow-400 active:bg-yellow-500 duration-200"
+                    className="max-w-64 md:max-w-none mt-7 mb-10 bg-white py-5 px-4 xl:px-20 text-xl whitespace-nowrap text-light-purple font-extrabold rounded-md shadow-md hover:text-white hover:bg-yellow-400 active:bg-yellow-500 duration-200"
                   >
                     EDITAR USUÁRIO
                   </button>

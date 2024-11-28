@@ -16,10 +16,10 @@ export default function InputText({
   error,
 }: InputTextProps) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 justify-center items-start">
       <p className="font-bold text-xl md:text-2xl">{label}</p>
       <select
-        className="w-64 md:w-72 lg:w-96 h-9 rounded-md text-gray-800 p-2 font-semibold"
+        className="w-60 sm:max-w-none md:w-72 lg:w-96 h-9 rounded-md text-gray-800 p-2 font-semibold"
         defaultValue={valueDefault}
         {...register}
       >

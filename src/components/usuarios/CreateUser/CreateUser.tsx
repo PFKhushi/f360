@@ -78,7 +78,7 @@ export default function CreateUser({
 
             <div className="rounded-x relative mt-1 w-full">
               <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="flex flex-col gap-4 text-white md:grid grid-cols-2">
+                <div className="flex flex-col gap-4 text-white justify-center items-center xl:grid grid-cols-2">
                   <InputText
                     label="Nome"
                     placeholder="Digite o nome do usuário"
@@ -126,10 +126,11 @@ export default function CreateUser({
                   >
                     <option value="">Nenhum</option>
                     <option value="GESTOR">Gestor</option>
-                    <option value="IMERSIONISTA">Imersionista</option>
-                    <option value="NOVATO">Novato</option>
                     <option value="TECH_LEADER">Tech Leader</option>
                     <option value="VETERANO">Veterano</option>
+                    <option value="NOVATO">Novato</option>
+                    <option value="IMERSIONISTA">Imersionista</option>
+                    <option value="REGISTRADO">Registrado</option>
                   </InputSelect>
 
                   {cargo !== 'GESTOR' && cargo !== '' && (
@@ -212,7 +213,7 @@ export default function CreateUser({
                 <div className="w-full flex justify-center items-center">
                   <button
                     type="submit"
-                    className="mt-7 mb-10 bg-white py-5 px-12 xl:px-20 text-xl whitespace-nowrap text-light-purple font-extrabold rounded-md shadow-md hover:text-white hover:bg-yellow-400 active:bg-yellow-500 duration-200"
+                    className="max-w-64 md:max-w-none text-center mt-7 mb-10 bg-white py-5 px-4 xl:px-20 text-xl whitespace-nowrap text-light-purple font-extrabold rounded-md shadow-md hover:text-white hover:bg-yellow-400 active:bg-yellow-500 duration-200"
                   >
                     CADASTRAR USUÁRIO
                   </button>

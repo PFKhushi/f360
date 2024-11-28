@@ -89,7 +89,7 @@ export default function MyProfile({ user }: AtualizarPerfil) {
   return (
     <form
       onSubmit={handleSubmit(handleForm)}
-      className="mt-4 sm:p-8 flex flex-col gap-8 justify-center items-center bg-dark-purple rounded-xl text-white w-full"
+      className="pt-10 sm:p-8 flex flex-col gap-8 justify-center items-center bg-dark-purple rounded-xl text-white w-full"
     >
       <div className="flex flex-col md:flex-row gap-2 md:gap-4 justify-center items-center">
         <LuUserCircle2 className="w-20 h-20 md:w-14 md:h-14" />
