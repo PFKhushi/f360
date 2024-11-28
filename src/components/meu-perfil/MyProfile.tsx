@@ -6,20 +6,14 @@ import toast from 'react-hot-toast'
 import { useEffect } from 'react'
 import InputText from '../Inputs/InputText'
 import InputSelect from '../Inputs/InputSelect'
-import { AtualizarPerfilFormSchema } from '@/components/meu-perfil/AtualizarPerfilFormSchema'
+import {
+  AtualizarPerfilFormSchema,
+  AtualizarPerfilFormSchemaType,
+} from '@/components/meu-perfil/AtualizarPerfilFormSchema'
+import { LuUserCircle2 } from 'react-icons/lu'
 
 interface AtualizarPerfil {
   user: User
-}
-
-interface AtualizarPerfilFormSchemaType {
-  nome: string
-  email_institucional: string
-  curso: string
-  cargo: string
-  setor: string
-  periodo: number
-  telefone: number
 }
 
 export default function MyProfile({ user }: AtualizarPerfil) {
@@ -30,22 +24,16 @@ export default function MyProfile({ user }: AtualizarPerfil) {
     formState: { errors },
   } = useForm<AtualizarPerfilFormSchemaType>({
     resolver: zodResolver(AtualizarPerfilFormSchema),
-    defaultValues: {
-      nome: '',
-      email_institucional: '',
-      curso: '',
-      cargo: '',
-      setor: '',
-    },
   })
 
   useEffect(() => {
     if (user) {
       setValue('nome', user.nome || '')
+      setValue('username', user.username || '')
       setValue('email_institucional', user.username || '')
       setValue('curso', user.curso || '')
-      setValue('cargo', user.cargo || '')
-      setValue('setor', user.setor || '')
+      setValue('periodo', String(user.periodo) || '')
+      setValue('telefone', user.telefone || '')
     }
   }, [user, setValue])
 
@@ -62,26 +50,42 @@ export default function MyProfile({ user }: AtualizarPerfil) {
   return (
     <form
       onSubmit={handleSubmit(handleForm)}
-      className="-ml-2 md:-ml-0 w-80 md:w-full md:p-4 flex flex-col justify-center items-center bg-dark-purple rounded-xl text-white"
+      className="p-4 md:p-8 flex flex-col gap-8 justify-center items-center bg-dark-purple rounded-xl text-white"
     >
-      <h1 className="md:text-3xl mb-8 mt-8">Editar Perfil</h1>
-      <div className="flex flex-col md:grid grid-cols-2 justify-center items-center gap-4 md:gap-12">
+      <div className="flex flex-col md:flex-row gap-2 md:gap-4 justify-center items-center">
+        <LuUserCircle2 className="w-20 h-20 md:w-14 md:h-14" />
+        <h1 className="text-3xl md:text-4xl md:my-8 font-bold">
+          Editar Perfil
+        </h1>
+      </div>
+      <div className="flex flex-row flex-wrap justify-center max-w-[1500px] mx-auto w-full items-center gap-4 md:gap-12">
         <InputText
-          label="NOME"
-          placeholder="Insira seu NOME"
+          label="Nome completo"
+          placeholder="Insira seu nome completo"
           type="text"
           register={register('nome')}
           error={errors.nome}
           defaultValue={user?.nome}
         />
+
         <InputText
-          label="EMAIL INSTITUCIONAL"
+          label="Email de Login"
+          placeholder="Insira seu email de login"
+          type="text"
+          register={register('username')}
+          error={errors.username}
+          defaultValue={user?.username}
+        />
+
+        <InputText
+          label="Email Institucional"
           placeholder="Insira seu email institucional"
           type="text"
           register={register('email_institucional')}
           error={errors.email_institucional}
           defaultValue={user?.email_institucional}
         />
+
         <InputSelect
           label="Curso"
           register={register('curso')}
@@ -99,42 +103,6 @@ export default function MyProfile({ user }: AtualizarPerfil) {
           <option value="Ciência de Dados">Ciência de Dados</option>
           <option value="Outros">Outros</option>
         </InputSelect>
-        <InputSelect
-          label="CARGO"
-          register={register('cargo')}
-          error={errors.cargo}
-          valueDefault={user?.cargo}
-        >
-          <option value="" hidden>
-            Selecione um cargo
-          </option>
-          <option value="NENHUM">Nenhum</option>
-          <option value="GESTOR">Gestor</option>
-          <option value="IMERSIONISTA">Imersionista</option>
-          <option value="NOVATO">Novato</option>
-          <option value="TECH LEADER">Tech Leader</option>
-          <option value="VETERANO">Veterano</option>
-        </InputSelect>
-        <InputSelect
-          label="SETOR"
-          register={register('setor')}
-          error={errors.setor}
-          valueDefault={user?.setor}
-        >
-          <option value="" hidden>
-            Selecione uma função
-          </option>
-          <option value="BACK">Back-End</option>
-          <option value="FRONT">Front-End</option>
-          <option value="PO">PO</option>
-          <option value="DADOS">Dados</option>
-          <option value="QA">Quality Assurance</option>
-          <option value="UIUX">UI/UX</option>
-          <option value="DEVOPS">DevOps</option>
-          <option value="MOBILE">Mobile</option>
-          <option value="IA">Inteligência Artificial</option>
-          <option value="JOGOS">Jogos</option>
-        </InputSelect>
 
         <InputSelect
           label="Período"
@@ -145,6 +113,7 @@ export default function MyProfile({ user }: AtualizarPerfil) {
           <option value="" hidden>
             Selecione um período
           </option>
+          <option value="">Nenhum</option>
           <option value="1">1</option>
           <option value="2">2</option>
           <option value="3">3</option>
@@ -158,8 +127,9 @@ export default function MyProfile({ user }: AtualizarPerfil) {
           <option value="11">11</option>
           <option value="12">12</option>
         </InputSelect>
+
         <InputText
-          label="TELEFONE"
+          label="Telefone"
           placeholder="Insira seu telefone"
           type="text"
           register={register('telefone')}
@@ -169,9 +139,9 @@ export default function MyProfile({ user }: AtualizarPerfil) {
       </div>
       <button
         type="submit"
-        className="text-secondary font-bold text-xl bg-light-grey flex items-center justify-center m-auto p-4 rounded-md mt-12 md:mt-16 md:w-60"
+        className="text-secondary font-bold text-xl bg-light-grey flex items-center justify-center m-auto mb-6 p-4 rounded-md mt-12 md:mt-16 md:w-60"
       >
-        ATUALIZAR
+        ATUALIZAR PERFIL
       </button>
     </form>
   )

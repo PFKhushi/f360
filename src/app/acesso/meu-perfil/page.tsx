@@ -9,8 +9,8 @@ export default function Update() {
   const id = session?.data?.user?.id
   const { userId } = usersGet(id)
   return (
-    <main className="p-4">
-      <MyProfile  user={userId[0]}/>
+    <main className="md:p-4 pt-4 px-1">
+      <MyProfile user={userId[0]} />
     </main>
   )
 }

@@ -49,6 +49,7 @@ export default function Imersao({ user }: ImersaoProps) {
       data: {
         periodo: data.periodo,
         setor: data.setor,
+        cargo: 'IMERSIONISTA',
       },
       onSuccess: () => {
         if (!data?.habilidades || data.habilidades.length === 0) {

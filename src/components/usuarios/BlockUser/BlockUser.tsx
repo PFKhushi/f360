@@ -1,6 +1,6 @@
 'use client'
 import { DialogTitle } from '@headlessui/react'
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import { PatchData } from '@/services/axios'
 import toast from 'react-hot-toast'
 import { User } from '@/@types'
@@ -16,24 +16,35 @@ export default function BlockUser({
   userRefetch,
   user,
 }: BlockModalProps) {
+  const [isLoading, setIsLoading] = useState(false)
+
   function closeModal() {
     setIsOpen(false)
   }
 
   const handleBlock = () => {
+    setIsLoading(true)
     PatchData({
       url: `/usuario/usuarios/${user?.id}/`,
-      data: { is_active: false },
+      data: { is_active: !user?.is_active },
       onSuccess: () => {
-        toast.success('Usuário bloqueado com sucesso')
+        toast.success(
+          `Usuário ${user?.is_active ? 'bloqueado' : 'desbloqueado'} com sucesso`,
+        )
         userRefetch()
         closeModal()
       },
       onError: (error) => {
-        toast.error('Erro ao bloquear usuário')
-        console.error('Erro ao deletar usuário', error)
+        toast.error(
+          `Erro ao ${user?.is_active ? 'bloquear' : 'desbloquear'} usuário`,
+        )
+        console.error(
+          `Erro ao ${user?.is_active ? 'bloquear' : 'desbloquear'} usuário`,
+          error,
+        )
       },
     })
+    setIsLoading(false)
   }
 
   return (
@@ -52,7 +63,8 @@ export default function BlockUser({
       <div className="mt-2">
         <div>
           <h2 className="text-3xl font-semibold py-5 text-white mt-10 px-10 text-center">
-            Deseja mesmo bloquear o usuário {user?.nome}?
+            Deseja mesmo {user?.is_active ? 'bloquear' : 'desbloquear'} o
+            usuário {user?.nome}?
           </h2>
           <div className="text-start flex flex-col justify-end items-center gap-x-10 mt-8">
             <div className="w-full flex flex-wrap gap-4 justify-center items-center mt-7">
@@ -64,9 +76,13 @@ export default function BlockUser({
               </button>
               <button
                 onClick={handleBlock}
-                className="bg-red-500 py-4 px-10 xl:px-12 text-lg whitespace-nowrap text-white font-extrabold rounded-md shadow-md hover:text-white duration-200"
+                className={`${!user?.is_active ? 'bg-green-500' : 'bg-red-500'} py-4 px-10 xl:px-12 text-lg whitespace-nowrap text-white font-extrabold rounded-md shadow-md hover:text-white duration-200`}
               >
-                BLOQUEAR
+                {isLoading
+                  ? 'PROCESSANDO...'
+                  : user?.is_active
+                    ? 'BLOQUEAR'
+                    : 'DESBLOQUEAR'}
               </button>
             </div>
           </div>

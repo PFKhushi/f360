@@ -16,6 +16,21 @@ export interface Experiencia {
   tecnologias: number
 }
 
+export interface Tecnologia {
+  nome: string
+}
+
+export interface ExperienciaList {
+  id: number
+  senioridade: string
+  descricao: string
+  data_criacao: string
+  data_atualizacao: string
+  usuario: number
+  tecnologias: number
+  tecnologia: Tecnologia
+}
+
 export type User = {
   id: number
   nome: string
@@ -36,6 +51,12 @@ export type User = {
   data_criacao: string
   data_atualizacao: string
   aceita_termo: boolean
+  is_active: boolean
+}
+
+export interface UsersWithHabilities {
+  usuario: User
+  experiencias: ExperienciaList[]
 }
 
 export type ReactQueryProviderProps = {

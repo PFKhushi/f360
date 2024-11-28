@@ -57,18 +57,15 @@ export default function NavBar({ click, navbar, closeNav }: PropsNavBar) {
             icon={<HiOutlineHome className="w-5 h-5" />}
           />
 
-
           {cargo === 'GESTOR' && (
-              <ButtonNav
+            <ButtonNav
               click={click}
               closeNav={closeNav}
               title="Usuários"
               href="/acesso/usuarios"
               icon={<FaUsers className="w-5 h-5" />}
             />
-            )
-          }
-
+          )}
         </ul>
 
         <ul

@@ -1,5 +1,5 @@
 'use client'
-import { User } from '@/@types'
+import { User, UsersWithHabilities } from '@/@types'
 import Modal from '@/components/modal/Modal'
 import React, { useEffect, useState } from 'react'
 import { BiSolidEdit } from 'react-icons/bi'
@@ -10,7 +10,7 @@ import { habilidadesGet } from '@/hook/habilidadesGet'
 import BlockUser from '../BlockUser/BlockUser'
 
 interface UsersTableProps {
-  users: User[]
+  users: UsersWithHabilities[]
   userRefetch: () => void
 }
 
@@ -53,13 +53,15 @@ export default function Manageusuario({ users, userRefetch }: UsersTableProps) {
   const usuariosFiltrados = users.filter((usuario) => {
     return (
       (nomeFiltro === '' ||
-        normalizeString(usuario.nome).includes(normalizeString(nomeFiltro))) &&
+        normalizeString(usuario.usuario.nome).includes(
+          normalizeString(nomeFiltro),
+        )) &&
       (periodoFiltro === '' ||
-        normalizeString(String(usuario.periodo)).includes(
+        normalizeString(String(usuario.usuario.periodo)).includes(
           normalizeString(periodoFiltro),
         )) &&
       (cargoFiltro === '' ||
-        normalizeString(usuario.cargo).includes(
+        normalizeString(usuario.usuario.cargo).includes(
           normalizeString(cargoFiltro),
         )) &&
       // (projetosFiltro === '' ||
@@ -67,13 +69,11 @@ export default function Manageusuario({ users, userRefetch }: UsersTableProps) {
       //     normalizeString(projeto).includes(normalizeString(projetosFiltro)),
       //   )) &&
       (areaFiltro === '' ||
-        normalizeString(usuario.setor || '').includes(
+        normalizeString(usuario.usuario.setor || '').includes(
           normalizeString(areaFiltro),
-        ))
-      // (especialidadeFiltro === '' ||
-      //   normalizeString(usuario.especialidade).includes(
-      //     normalizeString(especialidadeFiltro),
-      //   ))
+        )) &&
+      (especialidadeFiltro === '' ||
+        usuario.experiencias[0]?.tecnologias === Number(especialidadeFiltro))
     )
   })
 
@@ -228,15 +228,21 @@ export default function Manageusuario({ users, userRefetch }: UsersTableProps) {
             <tbody className="bg-light-purple rounded-b-lg">
               {usuariosFiltrados.map((usuario, index) => (
                 <tr key={index} className="border-b-4 border-[#3a2484]">
-                  <td className="lg:p-4 p-2 text-center">{usuario.nome}</td>
+                  <td className="lg:p-4 p-2 text-center">
+                    {usuario.usuario.nome}
+                  </td>
                   <td>
                     <p className="lg:p-4 p-2 text-center">
-                      {usuario.periodo ? `${usuario.periodo}º` : 'N/A'}
+                      {usuario.usuario.periodo
+                        ? `${usuario.usuario.periodo}º`
+                        : 'N/A'}
                     </p>
                   </td>
                   <td className="max-h-44">
                     <p className="lg:p-4 p-2 text-center">
-                      {usuario.cargo === '' ? 'N/A' : usuario.cargo}
+                      {usuario.usuario.cargo === ''
+                        ? 'N/A'
+                        : usuario.usuario.cargo}
                     </p>
                   </td>
                   <td className="max-h-44">
@@ -250,24 +256,24 @@ export default function Manageusuario({ users, userRefetch }: UsersTableProps) {
                   </td>
 
                   <td className="max-h-44">
-                    <p className="lg:p-4 p-2 text-center">{usuario.setor}</p>
+                    <p className="lg:p-4 p-2 text-center">
+                      {usuario.usuario.setor}
+                    </p>
                   </td>
                   <td>
                     <p className="lg:p-4 p-2 text-center">
-                      {/* {usuario.especialidade === ''
-                        ? 'N/A'
-                        : usuario.especialidade} */}
+                      {usuario.experiencias[0]?.tecnologia.nome ?? 'N/A'}
                     </p>
                   </td>
                   <td>
                     <div className="flex justify-center items-center gap-2">
                       <BiSolidEdit
                         className="text-2xl cursor-pointer"
-                        onClick={() => openEditModal(usuario)}
+                        onClick={() => openEditModal(usuario.usuario)}
                       />
                       <MdBlock
                         className="text-2xl cursor-pointer"
-                        onClick={() => openDeleteModal(usuario)}
+                        onClick={() => openDeleteModal(usuario.usuario)}
                       />
                     </div>
                   </td>
@@ -288,7 +294,7 @@ export default function Manageusuario({ users, userRefetch }: UsersTableProps) {
                   <p className="bg-dark-purple rounded-lg text-center self-center">
                     Nome
                   </p>
-                  <p className="p-4">{usuario.nome}</p>
+                  <p className="p-4">{usuario.usuario.nome}</p>
                 </div>
 
                 <div className="items-center text-center w-full">
@@ -304,7 +310,9 @@ export default function Manageusuario({ users, userRefetch }: UsersTableProps) {
                     Cargo
                   </p>
                   <p className="p-4 w-full">
-                    {usuario.cargo === '' ? 'N/A' : usuario.cargo}
+                    {usuario.usuario.cargo === ''
+                      ? 'N/A'
+                      : usuario.usuario.cargo}
                   </p>
                 </div>
 
@@ -324,7 +332,7 @@ export default function Manageusuario({ users, userRefetch }: UsersTableProps) {
                   <p className="bg-dark-purple rounded-lg w-full text-center self-center">
                     Área
                   </p>
-                  <p className="p-4 w-full">{usuario.setor}</p>
+                  <p className="p-4 w-full">{usuario.usuario.setor}</p>
                 </div>
                 <div className="w-full">
                   <p className="bg-dark-purple rounded-lg w-full text-center self-center">
@@ -338,11 +346,11 @@ export default function Manageusuario({ users, userRefetch }: UsersTableProps) {
                 <div className="flex items-center justify-end gap-3 px-10 py-4">
                   <BiSolidEdit
                     className="text-2xl cursor-pointer"
-                    onClick={() => openEditModal(usuario)}
+                    onClick={() => openEditModal(usuario.usuario)}
                   />
                   <MdBlock
                     className="text-2xl cursor-pointer"
-                    onClick={() => openDeleteModal(usuario)}
+                    onClick={() => openDeleteModal(usuario.usuario)}
                   />
                 </div>
               </div>
