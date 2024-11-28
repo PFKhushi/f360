@@ -1,6 +1,6 @@
-import { useForm } from 'react-hook-form'
+import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { PatchData } from '@/services/axios'
+import { PatchData, PostData } from '@/services/axios'
 import { User } from '@/@types'
 import toast from 'react-hot-toast'
 import { useEffect } from 'react'
@@ -11,6 +11,8 @@ import {
   AtualizarPerfilFormSchemaType,
 } from '@/components/meu-perfil/AtualizarPerfilFormSchema'
 import { LuUserCircle2 } from 'react-icons/lu'
+import HabilidadesSelect from '../imersao/HabilidadesSelect'
+import { useExperiencias } from '@/hook/experienciaUserGet'
 
 interface AtualizarPerfil {
   user: User
@@ -18,13 +20,22 @@ interface AtualizarPerfil {
 
 export default function MyProfile({ user }: AtualizarPerfil) {
   const {
+    control,
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<AtualizarPerfilFormSchemaType>({
     resolver: zodResolver(AtualizarPerfilFormSchema),
   })
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'habilidades',
+  })
+
+  const { experienciaUser, refetchExperiencias } = useExperiencias(user?.id)
 
   useEffect(() => {
     if (user) {
@@ -42,7 +53,35 @@ export default function MyProfile({ user }: AtualizarPerfil) {
       url: `/usuario/usuarios/${user.id}/`,
       data: { ...data },
       onSuccess: () => {
-        toast.success('Atualização realizada com sucesso')
+        if (!data?.habilidades || data.habilidades.length === 0) {
+          toast.success('Atualização realizada com sucesso')
+        } else {
+          let processedCount = 0
+          const totalHabilidades = data.habilidades.length
+
+          data.habilidades.forEach((habilidade) => {
+            PostData({
+              url: `/usuario/experiencias/`,
+              data: {
+                usuario: user.id,
+                tecnologias: habilidade.tecnologias,
+                senioridade: habilidade.senioridade,
+                descricao: 'Nenhuma',
+              },
+              onSuccess: () => {
+                processedCount++
+                if (processedCount === totalHabilidades) {
+                  toast.success('Atualização realizada com sucesso')
+                  window.location.reload()
+                }
+              },
+              onError: (error) => {
+                toast.error('Erro ao atualizar perfil')
+                console.error(error)
+              },
+            })
+          })
+        }
       },
       onError: () => toast.error('Erro ao atualizar perfil'),
     })
@@ -50,7 +89,7 @@ export default function MyProfile({ user }: AtualizarPerfil) {
   return (
     <form
       onSubmit={handleSubmit(handleForm)}
-      className="p-4 md:p-8 flex flex-col gap-8 justify-center items-center bg-dark-purple rounded-xl text-white"
+      className="mt-4 sm:p-8 flex flex-col gap-8 justify-center items-center bg-dark-purple rounded-xl text-white w-full"
     >
       <div className="flex flex-col md:flex-row gap-2 md:gap-4 justify-center items-center">
         <LuUserCircle2 className="w-20 h-20 md:w-14 md:h-14" />
@@ -136,6 +175,22 @@ export default function MyProfile({ user }: AtualizarPerfil) {
           error={errors.telefone}
           defaultValue={user?.telefone}
         />
+
+        <div>
+          <HabilidadesSelect
+            contentName="habilidades"
+            errors={errors}
+            label="Habilidades"
+            setValue={setValue}
+            watch={watch}
+            defaultHabilidades={[]}
+            fields={fields}
+            append={append}
+            remove={remove}
+            experiencias={experienciaUser}
+            experienceRefetch={refetchExperiencias}
+          />
+        </div>
       </div>
       <button
         type="submit"

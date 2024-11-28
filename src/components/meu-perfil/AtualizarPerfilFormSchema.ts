@@ -27,6 +27,15 @@ export const AtualizarPerfilFormSchema = z.object({
       message:
         'O telefone deve estar no formato (XX)XXXXX-XXXX ou (XX)XXXX-XXXX',
     }),
+  habilidades: z
+    .array(
+      z.object({
+        id: z.number().optional(),
+        senioridade: z.string().min(1, 'A senioridade é obrigatória.'),
+        tecnologias: z.number(),
+      }),
+    )
+    .optional(),
 })
 
 export type AtualizarPerfilFormSchemaType = z.infer<

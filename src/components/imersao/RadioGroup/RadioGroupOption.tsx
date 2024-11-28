@@ -14,7 +14,7 @@ export default function RadioGroupOption({
     <RadioGroup.Option value={value}>
       {({ checked }) => (
         <span
-          className={`border py-4 md:py-14 w-16 md:w-28 lg:w-44 h-16 rounded-md relative flex items-center justify-center  hover:bg-hover-primary cursor-pointer ${
+          className={`border min-h-14 sm:min-h-none md:py-14 min-w-14 sm:w-16 md:w-28 lg:w-44 rounded-md relative flex items-center justify-center  hover:bg-hover-primary cursor-pointer ${
             checked ? 'bg-light-purple' : ''
           }`}
         >

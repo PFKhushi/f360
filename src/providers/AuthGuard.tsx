@@ -1,19 +1,29 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { getSession, signOut } from 'next-auth/react'
+import { getSession, signOut, useSession } from 'next-auth/react'
 import axios from 'axios'
+import Image from 'next/image'
 
 interface AuthGuardProps {
   children: ReactNode
 }
 
 export default function AuthGuard({ children }: AuthGuardProps) {
+  const { data: session, status } = useSession()
   const router = useRouter()
 
-  async function checkSession() {
-    const session = await getSession()
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (status === 'loading') return // Ainda está carregando a sessão
 
+      checkSession()
+      checkTerms()
+    }
+  }, [router])
+
+  async function checkSession() {
     if (!session) {
       router.push('/')
       return
@@ -32,8 +42,6 @@ export default function AuthGuard({ children }: AuthGuardProps) {
       }
     }
   }
-
-  checkSession()
 
   async function checkTerms() {
     const session = await getSession()
@@ -54,7 +62,20 @@ export default function AuthGuard({ children }: AuthGuardProps) {
     }
   }
 
-  checkTerms()
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen w-full flex flex-col gap-4 justify-center items-center font-bold animate-blink">
+        <Image
+          src="/img/LOGO-ROXA-LETREIRO-HORIZONTAL.png"
+          alt="Logo"
+          width={400}
+          height={147}
+          className="animate-blink mx-4 px-4"
+        />
+        <p className="text-2xl text-dark-purple">Carregando...</p>
+      </div>
+    )
+  }
 
   return <>{children}</>
 }

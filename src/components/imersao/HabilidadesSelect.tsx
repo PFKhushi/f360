@@ -118,9 +118,11 @@ export default function HabilidadesSelect({
           onChange={setSelectedHabilidadeId}
         >
           <Combobox.Label>
-            <p className="font-bold text-xl md:text-2xl">{label}</p>
+            <p className="font-bold text-xl md:text-2xl md:mx-auto mx-4">
+              {label}
+            </p>
           </Combobox.Label>
-          <div className="flex justify-start items-center gap-2">
+          <div className="flex justify-center sm:justify-start items-center gap-2 md:mx-auto mx-4">
             <Combobox.Input
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Pesquise uma habilidade"
@@ -130,13 +132,13 @@ export default function HabilidadesSelect({
                 )
                 return selectedHabilidade ? selectedHabilidade.nome : ''
               }}
-              className={` w-80 md:w-72 lg:w-96 h-9 rounded-md text-black p-2 border mt-2`}
+              className={`w-full max-w-60 md:max-w-none md:w-72 lg:w-96 h-9 rounded-md text-black p-2 border mt-2`}
             />
             <div>
               <button
                 onClick={handleAddOption}
                 type="button"
-                className="bg-light-grey text-dark-purple rounded-md p-2 mt-2 flex items-center justify-center h-10 w-10"
+                className="bg-light-grey text-dark-purple rounded-md p-2 mt-2 flex items-center justify-center w-8 h-8 sm:h-10 sm:w-10"
               >
                 <FaPlus className="h-5 w-5" />
               </button>
@@ -175,13 +177,13 @@ export default function HabilidadesSelect({
         </Combobox>
       </div>
 
-      <div className="mt-2 col-span-2">
+      <div className="mt-2 col-span-2 md:mx-auto mx-4">
         <p className="mb-2 font-semibold">Suas habilidades:</p>
         <div className="col-span-2 p-4 bg-light-purple rounded-md">
           <h3 className="text-lg font-bold mb-2 text-dark-yellow">
             Níveis de Senioridade
           </h3>
-          <ul className="list-disc list-inside text-white">
+          <ul className="list-disc list-inside text-white text-sm md:text-base">
             <li>
               <strong>TRAINEE</strong>: Menos de 3 meses de experiência
             </li>
