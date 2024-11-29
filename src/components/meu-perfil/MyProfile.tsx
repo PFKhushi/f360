@@ -35,6 +35,8 @@ export default function MyProfile({ user }: AtualizarPerfil) {
     name: 'habilidades',
   })
 
+  const curso = watch('curso')
+
   const { experienciaUser, refetchExperiencias } = useExperiencias(user?.id)
 
   useEffect(() => {
@@ -143,6 +145,18 @@ export default function MyProfile({ user }: AtualizarPerfil) {
           <option value="Outros">Outros</option>
         </InputSelect>
 
+        {curso === 'Outros' && (
+          <div>
+            <InputText
+              label="Curso - Outros"
+              placeholder="Insira seu curso"
+              type="text"
+              register={register('outros_cursos')}
+              error={errors.outros_cursos}
+            />
+          </div>
+        )}
+
         <InputSelect
           label="Período"
           register={register('periodo')}
@@ -175,22 +189,21 @@ export default function MyProfile({ user }: AtualizarPerfil) {
           error={errors.telefone}
           defaultValue={user?.telefone}
         />
-
-        <div>
-          <HabilidadesSelect
-            contentName="habilidades"
-            errors={errors}
-            label="Habilidades"
-            setValue={setValue}
-            watch={watch}
-            defaultHabilidades={[]}
-            fields={fields}
-            append={append}
-            remove={remove}
-            experiencias={experienciaUser}
-            experienceRefetch={refetchExperiencias}
-          />
-        </div>
+      </div>
+      <div>
+        <HabilidadesSelect
+          contentName="habilidades"
+          errors={errors}
+          label="Habilidades"
+          setValue={setValue}
+          watch={watch}
+          defaultHabilidades={[]}
+          fields={fields}
+          append={append}
+          remove={remove}
+          experiencias={experienciaUser}
+          experienceRefetch={refetchExperiencias}
+        />
       </div>
       <button
         type="submit"

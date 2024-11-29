@@ -6,12 +6,14 @@ import {
   changeUserFormSchema,
   ChangeUserFormSchemaType,
 } from './ChangeUserFormSchema'
-import { useForm } from 'react-hook-form'
+import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { PatchData } from '@/services/axios'
+import { PatchData, PostData } from '@/services/axios'
 import InputText from '../../Inputs/InputText'
 import InputSelect from '../../Inputs/InputSelect'
 import toast from 'react-hot-toast'
+import HabilidadesSelect from '@/components/imersao/HabilidadesSelect'
+import { useExperiencias } from '@/hook/experienciaUserGet'
 
 interface UpdateModalProps {
   user: User | null
@@ -29,15 +31,23 @@ export default function ChangeUser({
   }
 
   const {
+    control,
     register,
     handleSubmit,
     setValue,
-    formState: { errors },
     watch,
+    formState: { errors },
   } = useForm<ChangeUserFormSchemaType>({
     mode: 'all',
     resolver: zodResolver(changeUserFormSchema),
   })
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'habilidades',
+  })
+
+  const { experienciaUser, refetchExperiencias } = useExperiencias(user?.id)
 
   useEffect(() => {
     if (user) {
@@ -60,17 +70,45 @@ export default function ChangeUser({
       url: `/usuario/usuarios/${user?.id}/`,
       data: { ...data },
       onSuccess: () => {
-        toast.success('Atualização realizada com sucesso')
-        userRefetch()
-        closeModal()
+        if (!data?.habilidades || data.habilidades.length === 0) {
+          toast.success('Atualização realizada com sucesso')
+          userRefetch()
+          closeModal()
+        } else {
+          let processedCount = 0
+          const totalHabilidades = data.habilidades.length
+
+          data.habilidades.forEach((habilidade) => {
+            PostData({
+              url: `/usuario/experiencias/`,
+              data: {
+                usuario: user?.id,
+                tecnologias: habilidade.tecnologias,
+                senioridade: habilidade.senioridade,
+                descricao: 'Nenhuma',
+              },
+              onSuccess: () => {
+                processedCount++
+                if (processedCount === totalHabilidades) {
+                  toast.success('Atualização realizada com sucesso')
+                  userRefetch()
+                  refetchExperiencias()
+                  closeModal()
+                }
+              },
+              onError: (error) => {
+                toast.error('Erro ao atualizar perfil')
+                console.error(error)
+              },
+            })
+          })
+        }
       },
-      onError: (error) =>
-        toast.error(
-          'Erro ao atualizar cadastro',
-          error.response?.data || error.message,
-        ),
+      onError: (error) => {
+        toast.error('Erro ao atualizar cadastro')
+        console.error(error)
+      },
     })
-    userRefetch()
   }
 
   const cargo = watch('cargo')
@@ -243,6 +281,22 @@ export default function ChangeUser({
                     <option value="11">11</option>
                     <option value="12">12</option>
                   </InputSelect>
+
+                  <div className="col-span-2">
+                    <HabilidadesSelect
+                      contentName="habilidades"
+                      errors={errors}
+                      label="Habilidades"
+                      setValue={setValue}
+                      watch={watch}
+                      defaultHabilidades={[]}
+                      fields={fields}
+                      append={append}
+                      remove={remove}
+                      experiencias={experienciaUser}
+                      experienceRefetch={refetchExperiencias}
+                    />
+                  </div>
                 </div>
 
                 <div className="w-full flex justify-center items-center">

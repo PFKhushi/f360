@@ -44,7 +44,12 @@ export default function HomePage() {
             </Link>
           </div>
         )}
-        {userId[0]?.cargo === 'IMERSIONISTA' && <div>Você já é um Imersionista</div>}
+        {userId[0]?.cargo === 'IMERSIONISTA' && (
+          <div className="text-xl font-bold text-dark-blackpurple">
+            Você já é um Imersionista, acompanhe às notícias e novidades através
+            do email
+          </div>
+        )}
       </div>
     </main>
   )

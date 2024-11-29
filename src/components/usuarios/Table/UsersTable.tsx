@@ -57,9 +57,8 @@ export default function Manageusuario({ users, userRefetch }: UsersTableProps) {
           normalizeString(nomeFiltro),
         )) &&
       (periodoFiltro === '' ||
-        normalizeString(String(usuario.usuario.periodo)).includes(
-          normalizeString(periodoFiltro),
-        )) &&
+        normalizeString(String(usuario.usuario.periodo)) ===
+          normalizeString(periodoFiltro)) &&
       (cargoFiltro === '' ||
         normalizeString(usuario.usuario.cargo).includes(
           normalizeString(cargoFiltro),
@@ -150,10 +149,11 @@ export default function Manageusuario({ users, userRefetch }: UsersTableProps) {
               </option>
               <option value="">Nenhum</option>
               <option value="GESTOR">Gestor</option>
-              <option value="IMERSIONISTA">Imersionista</option>
-              <option value="NOVATO">Novato</option>
               <option value="TECH_LEADER">Tech Leader</option>
               <option value="VETERANO">Veterano</option>
+              <option value="NOVATO">Novato</option>
+              <option value="IMERSIONISTA">Imersionista</option>
+              <option value="REGISTRADO">Registrado</option>
             </select>
           </div>
           {/* <div className="flex flex-col justify-center items-center">
@@ -302,7 +302,9 @@ export default function Manageusuario({ users, userRefetch }: UsersTableProps) {
                     Período
                   </p>
                   <p className="p-4">
-                    {/* {usuario.periodo === 'N/A' ? 'N/A' : `${usuario.periodo}º`} */}
+                    {usuario.usuario.periodo
+                      ? `${usuario.usuario.periodo}º`
+                      : 'N/A'}
                   </p>
                 </div>
                 <div className="mb-2 max-h-56 overflow-y-scroll w-full">
@@ -332,14 +334,14 @@ export default function Manageusuario({ users, userRefetch }: UsersTableProps) {
                   <p className="bg-dark-purple rounded-lg w-full text-center self-center">
                     Área
                   </p>
-                  <p className="p-4 w-full">{usuario.usuario.setor}</p>
+                  <p className="p-4 w-full">{usuario.usuario.setor ?? 'N/A'}</p>
                 </div>
                 <div className="w-full">
                   <p className="bg-dark-purple rounded-lg w-full text-center self-center">
                     Especialidade
                   </p>
                   <p className="p-4 w-full">
-                    {/* {usuario?.habilidades?.[0]?.tecnologias ?? 'N/A'} */}
+                    {usuario.experiencias[0]?.tecnologia.nome ?? 'N/A'}
                   </p>
                 </div>
 

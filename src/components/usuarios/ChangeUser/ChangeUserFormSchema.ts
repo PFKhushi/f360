@@ -38,6 +38,13 @@ export const changeUserFormSchema = z
         message:
           'O telefone deve estar no formato (XX)XXXXX-XXXX ou (XX)XXXX-XXXX',
       }),
+    habilidades: z.array(
+      z.object({
+        id: z.number().optional(),
+        senioridade: z.string().min(1, 'A senioridade é obrigatória.'),
+        tecnologias: z.number(),
+      }),
+    ),
   })
   .refine(
     (data) => {
@@ -53,14 +60,14 @@ export const changeUserFormSchema = z
   )
   .refine(
     (data) => {
-      if (data.cargo === 'GESTAO') {
+      if (data.cargo !== 'GESTAO') {
         return data.curso && data.curso.trim() !== ''
       }
       return true
     },
     {
       path: ['curso'],
-      message: 'O campo "curso" é obrigatório quando o cargo é "GESTAO"',
+      message: 'O campo "curso" é obrigatório para este cargo',
     },
   )
 

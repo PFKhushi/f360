@@ -52,14 +52,14 @@ export const createUserFormSchema = z
   )
   .refine(
     (data) => {
-      if (data.cargo === 'GESTAO') {
+      if (data.cargo !== 'GESTAO') {
         return data.curso && data.curso.trim() !== ''
       }
       return true
     },
     {
       path: ['curso'],
-      message: 'O campo "curso" é obrigatório quando o cargo é "GESTAO"',
+      message: 'O campo "curso" é obrigatório para este cargo',
     },
   )
 
