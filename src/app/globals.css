@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Estiliza a barra de rolagem */
+::-webkit-scrollbar {
+  width: 8px;
+  /* Largura da barra de rolagem */
+}
+
+/* Estiliza o trilho da barra de rolagem */
+::-webkit-scrollbar-track {
+  background-color: transparent;
+  /* Cor de fundo do trilho */
+}
+
+/* Estiliza o polegar (handle) da barra de rolagem */
+::-webkit-scrollbar-thumb {
+  background-color: #482DA5;
+  /* Cor do polegar (handle) */
+  border-radius: 9999px;
+  /* Borda arredondada do polegar para torná-lo mais arredondado */
+}
+
+/* Estiliza o canto inferior direito da barra de rolagem (aparece quando há conteúdo oculto) */
+::-webkit-scrollbar-corner {
+  background-color: transparent;
+  /* Cor de fundo do canto */
+}
+
+* {
+  scrollbar-width: auto; /* Firefox */
+  scrollbar-color: #482DA5 transparent; /* Firefox */
+}
+
+/* Estilos personalizados para a barra de rolagem branca */
+.custom-white-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-white-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #FFFFFF;
+  border-radius: 9999px;
+}
+
+.custom-white-scrollbar {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #FFFFFF transparent; /* Firefox */
+}
