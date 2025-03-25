@@ -1,33 +1,33 @@
 # ex2025_1_F360_Walace
 
-# Clonar repositório
+## Clonar repositório
 
  git clone git@gitlab.com:repositoriodafabrica/ex2025_1_f360_walace.git
 
 
-### Criar ambiente virtual
+## Criar ambiente virtual
 
-(Windows)
-python -m venv venv
+(Windows)<br />
+python -m venv venv<br />
 venv\Scripts\activate
 
-(Linux)
-python3 -m venv venv
+(Linux)<br />
+python3 -m venv venv<br />
 source venv/bin/activate
 
-### Instalar dependencias
+## Instalar dependencias
 
 pip install -r requirements.txt
 
-### Aplicar migrações do banco de dados
+## Aplicar migrações do banco de dados
 
 python manage.py migrate
 
-### Criar superusuário
+## Criar superusuário
 
 python manage.py createsuperuser
 
-### Rodar servidor django
+## Rodar servidor django
 
 python manage.py runserver
 
