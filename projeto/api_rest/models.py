@@ -8,3 +8,11 @@ class Candidato(models.Model):
 
     def __str__(self):
         return f'{self.nome_de_usuario} ({self.cpf})'
+    
+class Admin(models.Model):
+    nome_admin = models.CharField(max_length=50, default='')
+    email = models.CharField(max_length=50, default='')
+    def __str__(self):
+        return f'{self.nome_admin}'
+
+    
