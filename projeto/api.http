@@ -1,0 +1,94 @@
+POST http://localhost:8000/token/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "be@be.com",
+    "password": "senhauser"
+}
+
+###
+POST http://localhost:8000/token/refresh/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0MzY4MDQzNiwiaWF0IjoxNzQzNTk0MDM2LCJqdGkiOiIyNDAxYmNkNzhlMGM0ZjljOGE4NWYwODkxMDA4NGY2YSIsInVzZXJfaWQiOjJ9.tSAxQjKDnw62lsPvt0-O1SaoV_oh6cy_fUWOky_yu-U"
+}
+
+###
+GET http://localhost:8000/api/user/list/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQzNTk4OTYxLCJpYXQiOjE3NDM1OTUzNjEsImp0aSI6ImJlYTBhNGQ3M2RmMjQyMTY5M2E4YmNiOTJkYWE0NDlkIiwidXNlcl9pZCI6MX0.L_X9HkDf1uv-0MTOMC8BOhOGgKyyBnPigCQ1Hez0G3E
+
+{
+
+}
+
+###
+POST http://localhost:8000/api/user/login/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "p@p.com",
+    "password": "pedro"
+}
+
+###
+POST http://localhost:8000/api/user/register/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "cpf": "11111112111",
+    "username": "usuario@usa.com",
+    "nome": "marsia",
+    "email_institucional": "usuario@usa.com",
+    "rgm": "22222223",
+    "password" : "senha"
+}
+
+###
+PATCH http://localhost:8000/api/user/be@be.com/edit/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQzNTk5NDQxLCJpYXQiOjE3NDM1OTU4NDEsImp0aSI6IjE4MDQ3MjA4NzkzZjRmMDJiM2Y2MDA1YWM5OGUwODA3IiwidXNlcl9pZCI6MX0.2ylQeAaUfx_6HqoG6Ktkoy7FP9TAmyfBm27Ssz99d7c
+
+{
+    "nome": "martia",
+    "cpf": "11131112111",
+    "username": "usuardio@usda.com",
+    "email_institucional": "usudario@usda.com",
+    "rgm": "22242223",
+    "telefone": "23452436",
+    "genero": "NI",
+    "curso": "CC",
+    "cargo": null,
+    "ingresso_fab": null,
+    "setor": null,
+    "situacao": null,
+    "is_bolsista": false,
+    "is_estagiario": false
+
+}
+
+###
+PUT http://localhost:8000/api/user/usuardio@usda.com/edit/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQzNTk5NDQxLCJpYXQiOjE3NDM1OTU4NDEsImp0aSI6IjE4MDQ3MjA4NzkzZjRmMDJiM2Y2MDA1YWM5OGUwODA3IiwidXNlcl9pZCI6MX0.2ylQeAaUfx_6HqoG6Ktkoy7FP9TAmyfBm27Ssz99d7c
+
+{
+    "nome": "martia",
+    "cpf": "11131112111",
+    "username": "usuardio@usda.com",
+    "email_institucional": "usudario@usda.com",
+    "rgm": "22242223",
+    "telefone": "23452436",
+    "genero": "NI",
+    "curso": "CC",
+    "cargo": null,
+    "ingresso_fab": null,
+    "setor": null,
+    "situacao": null,
+    "is_bolsista": false,
+    "is_estagiario": false,
+    "password": "senha"
+
+}
+

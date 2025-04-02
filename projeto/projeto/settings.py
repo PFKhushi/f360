@@ -132,6 +132,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
     ]
 }
 
@@ -140,4 +141,5 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
-AUTH_USER_MODEL = 'api_rest.Usuarios'
+# AUTH_USER_MODEL = 'api_rest.Usuarios'
+AUTH_USER_MODEL = 'api_rest.Usuario'
