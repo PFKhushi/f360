@@ -1,20 +1,16 @@
-# Data Analysis - F360
+# Data Analysis - F360 - 📈
+> Última Atualização do READme: <b>03/04/2025</b>
 
-## Objetivo: 
+## 📌 Objetivo: 
 - Criação de um sistema que irá facilitar o processo seletivo de imersionistas e extensionitas, além de proporcionar otimização na análise administrativa por meio de dados estruturados sobre a fábrica e o workshop.
 
+
 ## Tarefas:
-1. Dashboard do administrador:
-Deverá conter os dados dos imersionistas, por nome, email, tipo de login, curso, e mais filtros que o administrador poderá escolher aplicar, esses filtros devem permitir a busca através de qualquer um deles, diferenciando por cor aqueles que são veteranos ou novatos.
+### 1. Diagrama Entidade-Relacionamento - DER:
+- A equipe de dados conseguiu finalizar a Modelagem do Banco de dados que servirá como base para este projeto. Conforme as demandas forem surgindo, pequenas mudanças podem surgir, porém muito provável que não afetará a lógica de negócio. Existe alguns pontos que iremos definir com mais cautela, como os tipos e valores exatos que cada coluna deve ter no modelo físico assim como atributos que deveriam aparecer ou não em determinada tabela.
 
-2. Diagrama Entidade-Relacionamento:
-Pepresentação visual de um banco de dados, destacando as principais entidades do sistema.
+<div align='center'>
 
-...
+<a href='ModelagemF360/README.md'>Clique Aqui para ler o README da Modelagem</a>
 
-Mais informações a serem adicionadas
-
-
-
-
-
+</div>
