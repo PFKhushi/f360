@@ -128,18 +128,25 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
     ],
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # Tudo bloqueado por padrão
     ]
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60), 
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Token expira em 30min
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),    # Refresh expira em 1 dia
+    'ROTATE_REFRESH_TOKENS': True,  # Gera novo refresh token a cada login
+    'BLACKLIST_AFTER_ROTATION': True,  # Invalida tokens antigos
+    'UPDATE_LAST_LOGIN': True,  # Atualiza último login no model
+    
+    # Configurações técnicas
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
 # AUTH_USER_MODEL = 'api_rest.Usuarios'
 AUTH_USER_MODEL = 'api_rest.Usuario'
+

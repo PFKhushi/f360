@@ -1,9 +1,10 @@
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework import generics, permissions, status
 from rest_framework.response import Response
-from rest_framework import status
-from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import authenticate
+from .models import Usuario
+from .serializers import UsuarioSerializer
+from django.shortcuts import get_object_or_404
 # from .models import Usuarios
 # from .serializers import UsuariosSerializer
 
@@ -72,107 +73,107 @@ from rest_framework_simplejwt.tokens import RefreshToken
 #         return Response({"message": "Usuário deletado com sucesso!"}, status=status.HTTP_204_NO_CONTENT)
 
 
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import authenticate
+from .models import Usuario
+from .serializers import UsuarioSerializer
 from django.shortcuts import get_object_or_404
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from api_rest.serializers import UsuarioSerializer
-from api_rest.models import Usuario
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class UsuarioList(generics.ListAPIView):
-
-    serializer_class = UsuarioSerializer
-    permission_classes = [IsAdminUser]
-    
-    def get_queryset(self):
-
-        return Usuario.objects.all()
-    
-class CriarUsuario(generics.CreateAPIView):
-    
+    """Lista todos os usuários (apenas para administradores)"""
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
-    permission_classes = [AllowAny]
-    
-    def perform_create(self, serializer):
-        
-        password = serializer.validated_data.get('password')
-        user = serializer.save()
-        if password:
-            user.set_password(password)
-            user.save()
-        
-    def create(self, request, *args, **kwargs):
+    permission_classes = [permissions.IsAdminUser]
 
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        
-        response_data = {
-            'status': 'success',
-            'user': serializer.data,
-            'message': 'Usuário criado com sucesso!'
-        }
-        
-        return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
-        
+class CriarUsuario(generics.CreateAPIView):
+    """Endpoint para registro de novos usuários"""
+    queryset = Usuario.objects.all()
+    serializer_class = UsuarioSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def perform_create(self, serializer):
+        """Garante que a senha seja criptografada"""
+        user = serializer.save()
+        if 'password' in self.request.data:
+            user.set_password(self.request.data['password'])
+            user.save()
 
 class LoginUsuario(generics.GenericAPIView):
-    serializer_class = TokenObtainPairSerializer
-    permission_classes = [AllowAny]  # Permitir que qualquer usuário faça login
+    """Endpoint para autenticação JWT"""
+    serializer_class = UsuarioSerializer
+    permission_classes = [permissions.AllowAny]
 
-    def post(self, request, *args, **kwargs):
-        username = request.data.get("username")
-        password = request.data.get("password")
-
+    def post(self, request):
+        """Valida credenciais e retorna tokens JWT"""
+        username = request.data.get('username')
+        password = request.data.get('password')
         user = authenticate(username=username, password=password)
-        if user is not None:
-            serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-
-            return Response(
-                {
-                    "status": "success",
-                    "message": "Login realizado com sucesso!",
-                    "access": serializer.validated_data["access"],
-                    "refresh": serializer.validated_data["refresh"],
-                },
-                status=status.HTTP_200_OK,
-            )
-
+        
+        if user:
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'access': str(refresh.access_token),
+                'refresh': str(refresh),
+                'user': UsuarioSerializer(user).data
+            })
         return Response(
-            {"error": "Credenciais inválidas."},
-            status=status.HTTP_401_UNAUTHORIZED,
+            {'error': 'Credenciais inválidas'},
+            status=status.HTTP_401_UNAUTHORIZED
         )
-    
+
 class EditarUsuario(generics.UpdateAPIView):
-    
+    """Endpoint para edição de usuários usando ID"""
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
-    permission_classes = [permissions.IsAuthenticated]  
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
-        username = self.kwargs.get("username")  
-        user = get_object_or_404(Usuario, username=username)
+        """Obtém usuário por ID"""
+        obj = get_object_or_404(Usuario, id=self.kwargs['id'])
+        self.check_object_permissions(self.request, obj)
+        return obj
 
-        if self.request.user == user or self.request.user.is_staff:
-            return user
+class UsuarioAtual(generics.RetrieveAPIView):
+    """
+    Retorna dados do usuário logado, impedindo que o mesmo saiba o seu próprio ID, ficando apenas a disposição
+    dos dev's/ADM
+    """
+    serializer_class = UsuarioSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-        self.permission_denied(
-            self.request,
-            message="Você não tem permissão para modificar este usuário."
-        )
+    def get_object(self):
+        return self.request.user
+
+class AlterarSenha(generics.UpdateAPIView):
+    """Endpoint seguro para alteração de senha"""
+    permission_classes = [permissions.IsAuthenticated]
 
     def update(self, request, *args, **kwargs):
-        partial = kwargs.pop("partial", False)  
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
+        user = request.user
+        if not user.check_password(request.data.get('senha_atual')):
+            return Response(
+                {'error': 'Senha atual incorreta'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        user.set_password(request.data.get('nova_senha'))
+        user.save()
+        return Response({'message': 'Senha atualizada com sucesso'})
 
-        return Response(
-            {"status": "success", "message": "Usuário atualizado com sucesso!", "user": serializer.data},
-            status=status.HTTP_200_OK
-        )
+class LogoutUsuario(generics.GenericAPIView):
+    """Invalidar token JWT (logout), e impede o reuso de tokens após logout"""
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        try:
+            refresh_token = request.data.get('refresh_token')
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({'message': 'Logout realizado com sucesso'})
+        except Exception:
+            return Response(
+                {'error': 'Token inválido'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
     

@@ -1,8 +1,8 @@
-from django.contrib import admin
-from django.urls import path, include
-
-
+from django.urls import path
 from . import views
+
+
+
 
 # urlpatterns = [
 #     path('login', views.login_user, name='login_user'),
@@ -11,13 +11,20 @@ from . import views
 #     path('user/<int:user_id>', views.manage_user_by_id, name='manage_user_by_id'),
 # ]
 
+from django.urls import path
+from . import views
+
 urlpatterns = [
-    path("user/list/",views.UsuarioList.as_view(), name="lista_usuario" ),
-    path("user/login/",views.LoginUsuario.as_view(), name="logar_usuario" ),
-    path('user/register/', views.CriarUsuario.as_view(), name="registrar_usuario" ),
-    path('user/<str:username>/edit/', views.EditarUsuario.as_view(), name="editar_usuario" ),
-    # talvez uma rota para deletar usuário, mas 
-    # imagino q as boas praticas digam para manter o 
-    # usuário e só desativar o acesso
-    
+    # Rotas de Autenticação
+    path('user/login/', views.LoginUsuario.as_view(), name='login_usuario'),
+    path('user/logout/', views.LogoutUsuario.as_view(), name='logout_usuario'),#Invalida sessões JWT
+
+    # CRUD de Usuários
+    path('user/register/', views.CriarUsuario.as_view(), name='registrar_usuario'),
+    path('user/list/', views.UsuarioList.as_view(), name='lista_usuario'),
+    path('user/<int:id>/edit/', views.EditarUsuario.as_view(), name='editar_usuario'),  
+
+    # Perfil do Usuário
+    path('user/me/', views.UsuarioAtual.as_view(), name='usuario_atual'), #Substitui a necessidade de passar ID/Username
+    path('user/password/', views.AlterarSenha.as_view(), name='alterar_senha'),#Fluxo seguro de troca de senha
 ]
