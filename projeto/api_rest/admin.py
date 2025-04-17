@@ -4,6 +4,6 @@ from .models import Usuario
 
 
 class CustomUserAdmin(UserAdmin):
- pass
+    pass
 
 #admin.site.register(Usuario, CustomUserAdmin)

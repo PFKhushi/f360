@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'api_rest',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
@@ -137,7 +138,7 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Token expira em 30min
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),    # Refresh expira em 1 dia
-    'ROTATE_REFRESH_TOKENS': True,  # Gera novo refresh token a cada login
+    'ROTATE_REFRESH_TOKENS': False,  # Gera novo refresh token a cada login
     'BLACKLIST_AFTER_ROTATION': True,  # Invalida tokens antigos
     'UPDATE_LAST_LOGIN': True,  # Atualiza último login no model
     

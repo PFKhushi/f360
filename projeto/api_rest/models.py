@@ -6,14 +6,13 @@ from django.core.exceptions import ValidationError
 
 
 class UsuarioManager(BaseUserManager):
-    """Gerenciador customizado para o modelo Usuario"""
     
     def get_by_natural_key(self, username):
-        """Permite login com case-insensitive"""
+
         return self.get(**{f"{self.model.USERNAME_FIELD}__iexact": username})
     
     def create_user(self, nome, username, password, **extra_fields):
-        """Cria e salva um usuário padrão com os campos obrigatórios"""
+        
         if not username:
             raise ValueError(_('O email deve ser fornecido'))
         if not password:
@@ -23,27 +22,38 @@ class UsuarioManager(BaseUserManager):
 
         username = self.normalize_email(username).lower()
         
+        extra_fields.setdefault('is_active', True)
+        
         user = self.model(
             nome=nome, 
             username=username,
             **extra_fields
         )
+        
         user.set_password(password)
+        
         try:
+            
             user.save(using=self._db)
+            
         except IntegrityError:
+            
             raise IntegrityError("Violação de campo único (Email já existente)")
+        
         return user
     
     def create_superuser(self, username, nome, password, **extra_fields):
-        """Cria um superusuário com permissões administrativas"""
+        
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
         
         if extra_fields.get('is_staff') is not True:
+            
             raise ValueError(_("Superusuário deve ter is_staff=True"))
+        
         if extra_fields.get('is_superuser') is not True:
+            
             raise ValueError(_("Superusuário deve ter is_superuser=True"))
         
         return self.create_user(
@@ -121,7 +131,6 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         return f"{self.nome} ({self.username})"
     
     def get_tipo_usuario(self):
-        """Retorna o tipo de usuário baseado nos perfis associados"""
         if hasattr(self, 'participante'):
             return self.TipoUsuario.PARTICIPANTE
         elif hasattr(self, 'empresa'):
@@ -134,7 +143,6 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         
     @staticmethod
     def criar_participante(nome, email, senha, cpf, curso, email_institucional, **extras):
-        """Método de conveniência para criar um participante"""
         usuario = Usuario.objects.create_user(
             nome=nome,
             username=email,
@@ -151,7 +159,6 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
     @staticmethod
     def criar_empresa(nome, email, senha, cnpj, representante, **extras):
-        """Método de conveniência para criar uma empresa"""
         usuario = Usuario.objects.create_user(
             nome=nome,
             username=email,
@@ -167,7 +174,6 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
     @staticmethod
     def criar_techleader(nome, email, senha, codigo, especialidade, **extras):
-        """Método de conveniência para criar um tech leader"""
         usuario = Usuario.objects.create_user(
             nome=nome,
             username=email,
@@ -183,17 +189,14 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     
     @property
     def is_participante(self):
-        """Verifica se o usuário tem perfil de participante"""
         return hasattr(self, 'participante')
     
     @property
     def is_empresa(self):
-        """Verifica se o usuário tem perfil de empresa"""
         return hasattr(self, 'empresa')
     
     @property
     def is_techleader(self):
-        """Verifica se o usuário tem perfil de tech leader"""
         return hasattr(self, 'techleader')
 
 
@@ -246,13 +249,19 @@ class Participante(models.Model):
     class Meta:
         verbose_name = "Participante"
         verbose_name_plural = "Participantes"
+        permissions = [
+            ("ver_todos_participantes", "Pode ver todos os participantes"),
+            # ("",""),
+        ]
 
     def __str__(self):
+        
         return f"Participante: {self.usuario.nome}"
     
     def save(self, *args, **kwargs):
-        """Verificar se o usuário já tem outro perfil"""
+        
         if hasattr(self.usuario, 'empresa') or hasattr(self.usuario, 'techleader'):
+            
             raise ValidationError(
                 "Este usuário já está registrado com outro perfil."
             )
@@ -283,13 +292,18 @@ class Empresa(models.Model):
     class Meta:
         verbose_name = "Empresa"
         verbose_name_plural = "Empresas"
+        permissions = [
+            ("ver_todas_empresas", "Pode ver todos os participantes"),
+            # ("",""),
+        ]
 
     def __str__(self):
         return f"Empresa: {self.usuario.nome}"
     
     def save(self, *args, **kwargs):
-        """Verificar se o usuário já tem outro perfil"""
+        
         if hasattr(self.usuario, 'participante') or hasattr(self.usuario, 'techleader'):
+            
             raise ValidationError( 
                 "Este usuário já está registrado com outro perfil."
             )
@@ -324,13 +338,18 @@ class TechLeader(models.Model):
     class Meta:
         verbose_name = "Tech Leader"
         verbose_name_plural = "Tech Leaders"
+        permissions = [
+            ("ver_todos_techleaders", "Pode ver todos os tech leaders"),
+        ]
 
     def __str__(self):
+        
         return f"Tech Leader: {self.usuario.nome}"
     
     def save(self, *args, **kwargs):
-        """Verificar se o usuário já tem outro perfil"""
+        
         if hasattr(self.usuario, 'participante') or hasattr(self.usuario, 'empresa'):
+            
             raise ValidationError(
                 "Este usuário já está registrado com outro perfil."
             )

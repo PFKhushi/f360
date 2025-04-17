@@ -1,94 +1,230 @@
-POST http://localhost:8000/token/ HTTP/1.1
+###
+POST http://localhost:8000/api/login/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "be@be.com",
-    "password": "senhauser"
+    "username": "teste@teste.com",
+    "password": "teste"
 }
 
 ###
-POST http://localhost:8000/token/refresh/ HTTP/1.1
+POST http://localhost:8000/api/auth/token/refresh/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0MzY4MDQzNiwiaWF0IjoxNzQzNTk0MDM2LCJqdGkiOiIyNDAxYmNkNzhlMGM0ZjljOGE4NWYwODkxMDA4NGY2YSIsInVzZXJfaWQiOjJ9.tSAxQjKDnw62lsPvt0-O1SaoV_oh6cy_fUWOky_yu-U"
+    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0NDkzODQ2NiwiaWF0IjoxNzQ0ODUyMDY2LCJqdGkiOiI2Yjk4NzFmMzVkOTA0MTlhODBhZjUzOGQzMzlhYjZkYyIsInVzZXJfaWQiOjN9.Tro-5xaWCclT7N-d_-8hcXL6buAgY8ID7Ma-K-175io"
 }
 
 ###
-GET http://localhost:8000/api/user/list/ HTTP/1.1
+POST http://localhost:8000/api/logout/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQzNTk4OTYxLCJpYXQiOjE3NDM1OTUzNjEsImp0aSI6ImJlYTBhNGQ3M2RmMjQyMTY5M2E4YmNiOTJkYWE0NDlkIiwidXNlcl9pZCI6MX0.L_X9HkDf1uv-0MTOMC8BOhOGgKyyBnPigCQ1Hez0G3E
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0ODUxNTUxLCJpYXQiOjE3NDQ4NDk3NTEsImp0aSI6IjQ3MTdmZGIzZmYwODQ0NDk4MGMyNDg4MzU0OWM5NmQxIiwidXNlcl9pZCI6Mn0.WttvRjcdi-YF9Ozdi9aiMGwifXroPvpROIgucu7hT48
 
 {
-
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0NDkzNjE1MSwiaWF0IjoxNzQ0ODQ5NzUxLCJqdGkiOiI5MTY5YTc4Y2Q5NDY0MTQyYjY1N2FiOTZmY2RiNzI2YSIsInVzZXJfaWQiOjJ9._duQgGpstXDzXgmozMIdpHKU2Iu4_4w3mbd2kecU7cM"
 }
 
 ###
-POST http://localhost:8000/api/user/login/ HTTP/1.1
+GET http://localhost:8000/api/participante/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0ODU0MTY0LCJpYXQiOjE3NDQ4NTIwNjYsImp0aSI6IjQ5MGZjNWQwNWNiZDQ4YmM5MzM2MGQ3OWExZGYwZDQxIiwidXNlcl9pZCI6M30.4-33FZJBB6737GQlASBxQpdx12OckZD2l8YJE4Q7EwM
+
+###
+GET http://localhost:8000/api/participante/2 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0ODUyMzA0LCJpYXQiOjE3NDQ4NTA1MDQsImp0aSI6ImZjYjQ5OTQ3YjJmMTQ5NTBhMDQ5NmM0Y2YzZWM5NzFmIiwidXNlcl9pZCI6Mn0.qBP2jW8-y51Mw6nDnB60KDoVlmWwykZJ8qgb6earmgo
+
+###
+POST http://localhost:8000/api/login/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "p@p.com",
-    "password": "pedro"
+    "username": "participantes@exemplo.com",
+    "password": "senha123"
 }
 
 ###
-POST http://localhost:8000/api/user/register/ HTTP/1.1
+POST http://localhost:8000/api/participante/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "cpf": "11111112111",
-    "username": "usuario@usa.com",
-    "nome": "marsia",
-    "email_institucional": "usuario@usa.com",
-    "rgm": "22222223",
-    "password" : "senha"
+    "usuario": {
+        "nome": "Exemplos Participantes",
+        "username": "participantes@exemplo.com",
+        "password": "senha123",
+        "telefone": "11998999999"
+    },
+    "cpf": "00000000001",
+    "curso": "ADS",
+    "email_institucional": "novos@exemplo.com.br"
 }
 
 ###
-PATCH http://localhost:8000/api/user/be@be.com/edit/ HTTP/1.1
+
+PUT http://localhost:8000/api/participante/3/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQzNTk5NDQxLCJpYXQiOjE3NDM1OTU4NDEsImp0aSI6IjE4MDQ3MjA4NzkzZjRmMDJiM2Y2MDA1YWM5OGUwODA3IiwidXNlcl9pZCI6MX0.2ylQeAaUfx_6HqoG6Ktkoy7FP9TAmyfBm27Ssz99d7c
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0ODU0MTY0LCJpYXQiOjE3NDQ4NTIwNjYsImp0aSI6IjQ5MGZjNWQwNWNiZDQ4YmM5MzM2MGQ3OWExZGYwZDQxIiwidXNlcl9pZCI6M30.4-33FZJBB6737GQlASBxQpdx12OckZD2l8YJE4Q7EwM
 
 {
-    "nome": "martia",
-    "cpf": "11131112111",
-    "username": "usuardio@usda.com",
-    "email_institucional": "usudario@usda.com",
-    "rgm": "22242223",
-    "telefone": "23452436",
-    "genero": "NI",
+    "usuario": {
+        "nome": "Participante Atualizado",
+        "username": "novo@participante.com",
+        "password": "teste",
+        "telefone": "11999999999"
+    },
+    "cpf": "12345678902",
     "curso": "CC",
-    "cargo": null,
-    "ingresso_fab": null,
-    "setor": null,
-    "situacao": null,
-    "is_bolsista": false,
-    "is_estagiario": false
+    "email_institucional": "novo@fatec.sp.gov.br"
+}
 
+
+###
+PUT http://localhost:8000/api/participante/2/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0ODUzOTgyLCJpYXQiOjE3NDQ4NTIwNjYsImp0aSI6IjE3ZDk2MGExMzNiMTRjNDVhOTlmZTAwNmQ0YmVjZTQxIiwidXNlcl9pZCI6M30.foZmqgbyyyEsmuyU1e8kAGNs7dEKrQ5H4J6z3aqA6iU
+
+{
+    "usuario": {
+        "id": 3,
+        "nome": "Novo Atual",
+        "username": "novo@participante.com",
+        "telefone": "11999999999"
+    },
+    "cpf": "12345678902",
+    "curso": "CC",
+    "email_institucional": "novo@fatec.sp.gov.br"
+}
+###
+
+PATCH http://localhost:8000/api/participante/3/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0ODU0MTY0LCJpYXQiOjE3NDQ4NTIwNjYsImp0aSI6IjQ5MGZjNWQwNWNiZDQ4YmM5MzM2MGQ3OWExZGYwZDQxIiwidXNlcl9pZCI6M30.4-33FZJBB6737GQlASBxQpdx12OckZD2l8YJE4Q7EwM
+
+{
+    "usuario": {
+        "username": "testudo@teste.com"
+    },
+    "curso": "ADS"
 }
 
 ###
-PUT http://localhost:8000/api/user/usuardio@usda.com/edit/ HTTP/1.1
+
+DELETE http://localhost:8000/api/participante/2/ HTTP/1.1
+Authorization: Bearer {{access_token}}
+
+###
+
+GET http://localhost:8000/api/empresa/ HTTP/1.1
+Authorization: Bearer {{access_token}}
+
+###
+
+GET http://localhost:8000/api/empresa/2/ HTTP/1.1
+Authorization: Bearer {{access_token}}
+
+###
+
+POST http://localhost:8000/api/empresa/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQzNTk5NDQxLCJpYXQiOjE3NDM1OTU4NDEsImp0aSI6IjE4MDQ3MjA4NzkzZjRmMDJiM2Y2MDA1YWM5OGUwODA3IiwidXNlcl9pZCI6MX0.2ylQeAaUfx_6HqoG6Ktkoy7FP9TAmyfBm27Ssz99d7c
 
 {
-    "nome": "martia",
-    "cpf": "11131112111",
-    "username": "usuardio@usda.com",
-    "email_institucional": "usudario@usda.com",
-    "rgm": "22242223",
-    "telefone": "23452436",
-    "genero": "NI",
-    "curso": "CC",
-    "cargo": null,
-    "ingresso_fab": null,
-    "setor": null,
-    "situacao": null,
-    "is_bolsista": false,
-    "is_estagiario": false,
-    "password": "senha"
-
+    "usuario": {
+        "nome": "Nova Empresa",
+        "username": "contato@empresa.com",
+        "password": "senhaEmpresa!",
+        "telefone": "1133333333"
+    },
+    "cnpj": "12345678000199",
+    "representante": "Carlos Andrade"
 }
 
+###
+POST http://localhost:8000/api/login/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "contato@empresa.com",
+        "password": "senhaEmpresa!"
+}
+###
+
+PUT http://localhost:8000/api/empresa/2/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+    "usuario": {
+        "nome": "Empresa Atualizada",
+        "username": "contato@empresa.com",
+        "password": "novaSenhaEmpresa!",
+        "telefone": "1144444444"
+    },
+    "cnpj": "12345678000199",
+    "representante": "Ana Pereira"
+}
+
+###
+
+PATCH http://localhost:8000/api/empresa/2/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+    "representante": "João Souza"
+}
+
+###
+
+# 5.6 Deletar Empresa
+DELETE http://localhost:8000/api/empresa/2/ HTTP/1.1
+Authorization: Bearer {{access_token}}
+
+###
+GET http://localhost:8000/api/techleader/ HTTP/1.1
+Authorization: Bearer {{access_token}}
+
+###
+GET http://localhost:8000/api/techleader/2/ HTTP/1.1
+Authorization: Bearer {{access_token}}
+
+###
+POST http://localhost:8000/api/techleader/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "usuario": {
+        "nome": "Novo TechLeader",
+        "username": "tech@leader.com",
+        "password": "senhaTech!",
+        "telefone": "1155555555"
+    },
+    "codigo": "9999",
+    "especialidade": "Backend"
+}
+
+###
+PUT http://localhost:8000/api/techleader/2/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+    "usuario": {
+        "nome": "TechLeader Atualizado",
+        "username": "tech@leader.com",
+        "password": "novaSenhaTech!",
+        "telefone": "1166666666"
+    },
+    "codigo": "9999",
+    "especialidade": "Fullstack"
+}
+
+###
+PATCH http://localhost:8000/api/techleader/2/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+    "especialidade": "DevOps"
+}
+
+###
+DELETE http://localhost:8000/api/techleader/2/ HTTP/1.1
+Authorization: Bearer {{access_token}}

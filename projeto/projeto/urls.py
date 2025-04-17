@@ -27,14 +27,15 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     
     # Autenticação JWT (Padrão DRF)
-    # path('api/auth/', include([
-    #     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    #     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    #     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    # ])),
+    path('api/auth/', include([
+        path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+        path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+        path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    ])),
+
     
     # API do App 
-    path('api/v1/', include('api_rest.urls')),
+    path('api/', include('api_rest.urls')),
     
     # path('api/docs/', include_docs_urls(title='API Docs')),
 ]
