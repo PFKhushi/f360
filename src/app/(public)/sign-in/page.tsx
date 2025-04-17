@@ -4,10 +4,12 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
 
 const schema = z.object({
   email: z
     .string()
+    .email({message: 'Digite um email válido'})
     .min(1, {message: 'Preenchimento obrigatório'})
     .max(30, {message: 'O campo não deve ter mais que 30 caracteres'}),
   senha: z
@@ -28,8 +30,11 @@ export default function SignIn() {
     resolver: zodResolver(schema),
   })
 
+  const router = useRouter();
+
   function handleLogin(data: FormData){
     console.log(data)
+    router.push('/dashboard')
   }
 
   return (
