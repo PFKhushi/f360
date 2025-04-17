@@ -1,0 +1,15 @@
+✨  Nova funcionalidade	    	       ✨ feat: criar endpoint de login
+🐛	Correção de bug	                    🐛 fix: corrigir erro no serializer
+♻️	Refatoração (sem mudança funcional)	♻️ refactor: remover duplicação
+🔥	Remoção de código ou arquivos	    🔥 remove: deletar model obsoleta
+📝	Atualização de documentação	        📝 docs: adicionar README de rotas
+✅  Adição ou ajuste em testes	       ✅ test: incluir testes de permissão
+🎨	Melhoria de estilo/formatos	        🎨 style: padronizar indentação
+🔒	Ajuste de segurança/autorização	    🔒 fix: validar token antes da ação
+⚙️	Configuração ou setup	            ⚙️ config: atualizar settings.py
+📦	Atualização de dependência	        📦 chore: upgrade Django para 4.2
+🚧	Trabalho em andamento (WIP)	        🚧 wip: ajuste parcial em serializer
+🐳	Coisas relacionadas ao Docker	    🐳 chore: atualizar docker-compose
+📄	Arquivos ou licenças	            📄 add: adicionar LICENSE
+🔍	Melhorias de debug/log	            🔍 debug: logar payload da requisição
+🚑	Hotfix urgente em produção	        🚑 hotfix: corrigir quebra em prod
