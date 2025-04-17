@@ -92,13 +92,17 @@ class TechLeaderSerializer(UpdateUsuarioNestedMixin, serializers.ModelSerializer
         )
         return usuario.techleader  
         
+        
 class CustomTokenSerializer(TokenObtainPairSerializer):
-    def validate(self, attrs):
-        data = super().validate(attrs)
-        data['usuario'] = {
-            'id': self.user.id,
-            'nome': self.user.nome,
-            'email': self.user.username,
-            'tipo_usuario': self.user.get_tipo_usuario(),
-        }
-        return data
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Adiciona informações customizadas ao payload do token
+
+        token['nome'] = user.nome
+        token['email'] = user.username
+        token['tipo_usuario'] = user.get_tipo_usuario()
+
+        return token
+
