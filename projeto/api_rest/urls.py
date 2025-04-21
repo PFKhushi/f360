@@ -8,11 +8,11 @@ router.register('participante', ParticipanteViewSet, basename='participante')
 router.register('empresa', EmpresaViewSet, basename='empresa')
 router.register('techleader', TechLeaderViewSet, basename='techleader')
 
-# Rotas extras (não cobertas pelos ViewSets)
+
 urlpatterns = [
     path('login/', LoginUsuario.as_view(), name='login_usuario'),
     path('logout/', LogoutUsuario.as_view(), name='logout_usuario'),
 ]
 
-# Inclui também as rotas dos ViewSets
+
 urlpatterns += router.urls

@@ -12,7 +12,7 @@ POST http://localhost:8000/api/auth/token/refresh/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0NDkzODQ2NiwiaWF0IjoxNzQ0ODUyMDY2LCJqdGkiOiI2Yjk4NzFmMzVkOTA0MTlhODBhZjUzOGQzMzlhYjZkYyIsInVzZXJfaWQiOjN9.Tro-5xaWCclT7N-d_-8hcXL6buAgY8ID7Ma-K-175io"
+    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1MjAzOTk0LCJpYXQiOjE3NDUyMDIxOTQsImp0aSI6IjZkNTBlZWZmMzljYjQ3ZTU5MzI5M2M2OGEwNGIyY2ZjIiwidXNlcl9pZCI6MSwibm9tZSI6IkV4ZW1wbG9zIFBhcnRpY2lwYW50ZXMiLCJlbWFpbCI6InBhcnRpY2lwYW50ZXNAZXhlbXBsby5jb20iLCJ0aXBvX3VzdWFyaW8iOiJQQVJUIn0.M5N-Nmk9wd2O6Y8vJw6yXgpYM6wdJq2_k_Kh1sfThI8"
 }
 
 ###
@@ -26,7 +26,10 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 
 ###
 GET http://localhost:8000/api/participante/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0ODU0MTY0LCJpYXQiOjE3NDQ4NTIwNjYsImp0aSI6IjQ5MGZjNWQwNWNiZDQ4YmM5MzM2MGQ3OWExZGYwZDQxIiwidXNlcl9pZCI6M30.4-33FZJBB6737GQlASBxQpdx12OckZD2l8YJE4Q7EwM
+
+###
+GET http://localhost:8000/api/participante/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1MjA5OTg5LCJpYXQiOjE3NDUyMDgxODksImp0aSI6ImI4YzU1ZDZhZWZjMDQ1ODBhNzBmNTBjYTc2NGY5NTM0IiwidXNlcl9pZCI6MSwibm9tZSI6IkV4ZW1wbG9zIFBhcnRpY2lwYW50ZXMiLCJlbWFpbCI6InBhcnRpY2lwYW50ZXNAZXhlbXBsby5jb20iLCJ0aXBvX3VzdWFyaW8iOiJQQVJUIn0.ioJjsuyt6Mk6AK_jvzd_rOoWpmdRudIEw19tzkXk-Gc
 
 ###
 GET http://localhost:8000/api/participante/2 HTTP/1.1
@@ -58,15 +61,14 @@ Content-Type: application/json
 }
 
 ###
-
-PUT http://localhost:8000/api/participante/3/ HTTP/1.1
+PUT http://localhost:8000/api/participante/1/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0ODU0MTY0LCJpYXQiOjE3NDQ4NTIwNjYsImp0aSI6IjQ5MGZjNWQwNWNiZDQ4YmM5MzM2MGQ3OWExZGYwZDQxIiwidXNlcl9pZCI6M30.4-33FZJBB6737GQlASBxQpdx12OckZD2l8YJE4Q7EwM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1MjA3ODA5LCJpYXQiOjE3NDUyMDYwMDksImp0aSI6ImNlNzdhMTQ3MmNkNzQyMmI4ZWFhOTkzODBmZWI3MzRmIiwidXNlcl9pZCI6MSwibm9tZSI6IkV4ZW1wbG9zIFBhcnRpY2lwYW50ZXMiLCJlbWFpbCI6InBhcnRpY2lwYW50ZXNAZXhlbXBsby5jb20iLCJ0aXBvX3VzdWFyaW8iOiJQQVJUIn0.pxO8o3BFhN1AFLy9aDAORTrZ5fu26c3-LJAjpyXP8_o
 
 {
     "usuario": {
-        "nome": "Participante Atualizado",
-        "username": "novo@participante.com",
+        "nome": "Particiate Atualizado",
+        "username": "participantes@exemplo.com",
         "password": "teste",
         "telefone": "11999999999"
     },
@@ -107,8 +109,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 
 ###
 
-DELETE http://localhost:8000/api/participante/2/ HTTP/1.1
-Authorization: Bearer {{access_token}}
+DELETE http://localhost:8000/api/participante/1/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1MjA4NTE4LCJpYXQiOjE3NDUyMDY3MTgsImp0aSI6IjBiN2U2MTQzMjkxYTRmYTE5OGMxY2UwYzE2MWNiMTYyIiwidXNlcl9pZCI6MSwibm9tZSI6IkV4ZW1wbG9zIFBhcnRpY2lwYW50ZXMiLCJlbWFpbCI6InBhcnRpY2lwYW50ZXNAZXhlbXBsby5jb20iLCJ0aXBvX3VzdWFyaW8iOiJQQVJUIn0.x72L_2O46waimNWnuKpEiqUULD2Ckakeb0G1fUtnl3g
 
 ###
 

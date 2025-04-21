@@ -3,41 +3,33 @@ from api_rest.models import Usuario, Participante, Empresa, TechLeader
 from django.core.exceptions import ValidationError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-class UsuarioSerializer(serializers.ModelSerializer):
 
+# serializer base do usuario, usado nos perfis
+class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
         fields = ['id','nome', 'username', 'password', 'telefone']
         extra_kwargs = {
-            'password': {'write_only': True},
+            'password': {'write_only': True},  # senha n aparece em leitura
             'username': {'required': True},
             'nome': {'required': True}
         }
 
     def create(self, validated_data):
+        # cria user via manager (usa set_password etc)
         return Usuario.objects.create_user(**validated_data)
-    
 
-class UpdateUsuarioNestedMixin:
-    def update(self, instance, validated_data):
-        usuario_data = validated_data.pop('usuario', None)
-        if usuario_data:
-            usuario_serializer = UsuarioSerializer(
-                instance=instance.usuario,
-                data=usuario_data,
-                partial=True,
-                context=self.context
-            )
-            usuario_serializer.is_valid(raise_exception=True)
-            usuario_serializer.save()
-
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
-        return instance
+    def validadte_username(self, username):
+        # valid unicidade ignorando o proprio user (qnd update)
+        usuario = self.instance
+        if Usuario.objects.filter(username=username).exclude(pk=usuario.pk if usuario else None).exists():
+            raise serializers.ValidationError("Ja existe um usuario com esse username")
+        return username       
     
-class ParticipanteSerializer(UpdateUsuarioNestedMixin, serializers.ModelSerializer):
-    usuario = UsuarioSerializer()
+    
+# serializer aninhado p/ Participante
+class ParticipanteSerializer(serializers.ModelSerializer):
+    usuario = UsuarioSerializer()  # inclui dados do user embutidos
 
     class Meta:
         model = Participante
@@ -45,17 +37,19 @@ class ParticipanteSerializer(UpdateUsuarioNestedMixin, serializers.ModelSerializ
 
     def create(self, validated_data):
         usuario_data = validated_data.pop('usuario')
-        usuario =Usuario.criar_participante(
+        # cria user + perfil de forma encadeada
+        usuario = Usuario.criar_participante(
             nome=usuario_data['nome'],
             email=usuario_data['username'],
             senha=usuario_data['password'],
             telefone=usuario_data.get('telefone'),
             **validated_data
         )
-        return usuario.participante      
-    
+        return usuario.participante    
 
-class EmpresaSerializer(UpdateUsuarioNestedMixin, serializers.ModelSerializer):
+
+# igual ao participante, porem com campos da Empresa
+class EmpresaSerializer(serializers.ModelSerializer):
     usuario = UsuarioSerializer()
 
     class Meta:
@@ -71,10 +65,11 @@ class EmpresaSerializer(UpdateUsuarioNestedMixin, serializers.ModelSerializer):
             telefone=usuario_data.get('telefone'),
             **validated_data
         )
-        return usuario.empresa  
+        return usuario.empresa 
 
 
-class TechLeaderSerializer(UpdateUsuarioNestedMixin, serializers.ModelSerializer):
+# igual aos anteriores, usado p/ techleader
+class TechLeaderSerializer(serializers.ModelSerializer):
     usuario = UsuarioSerializer()
 
     class Meta:
@@ -90,16 +85,16 @@ class TechLeaderSerializer(UpdateUsuarioNestedMixin, serializers.ModelSerializer
             telefone=usuario_data.get('telefone'),
             **validated_data
         )
-        return usuario.techleader  
+        return usuario.techleader
         
         
+# serializer customizado do login p/ JWT
 class CustomTokenSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
 
-        # Adiciona informações customizadas ao payload do token
-
+        # adiciona dados extra no payload do token jwt
         token['nome'] = user.nome
         token['email'] = user.username
         token['tipo_usuario'] = user.get_tipo_usuario()
