@@ -3,6 +3,7 @@ from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.db import models, IntegrityError, transaction
 from django.core.exceptions import ValidationError
+from encrypted_model_fields.fields import EncryptedCharField, EncryptedEmailField
 
 
 class UsuarioManager(BaseUserManager):
@@ -10,6 +11,9 @@ class UsuarioManager(BaseUserManager):
     def get_by_natural_key(self, username):
 
         return self.get(**{f"{self.model.USERNAME_FIELD}__iexact": username})
+    
+    def get_username(self):
+        return self.username
     
     def create_user(self, nome, username, password, **extra_fields):
         
@@ -78,13 +82,13 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         help_text="Nome completo sem abreviações"
     )
 
-    username = models.EmailField(
+    username = models.EmailField( ### Dado sensível
         verbose_name="E-mail", 
         unique=True,
         help_text="E-mail principal para login"
     )
     
-    telefone = models.CharField(
+    telefone = EncryptedCharField( ### Dado sensível
         max_length=15, 
         blank=True, 
         null=True,
@@ -130,6 +134,8 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return f"{self.nome} ({self.username})"
     
+    
+    
     def get_tipo_usuario(self):
         if hasattr(self, 'participante'):
             return self.TipoUsuario.PARTICIPANTE
@@ -142,7 +148,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         return self.TipoUsuario.NAO_DEFINIDO
         
     @staticmethod
-    def criar_participante(nome, email, senha, cpf, curso, email_institucional, **extras):
+    def criar_participante(nome,  email, rgm, senha, cpf, curso, outro_curso, periodo, email_institucional, **extras):
         usuario = Usuario.objects.create_user(
             nome=nome,
             username=email,
@@ -152,7 +158,10 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         Participante.objects.create(
             usuario=usuario,
             cpf=cpf,
+            rgm=rgm,
             curso=curso,
+            outro_curso=outro_curso,
+            periodo=periodo,
             email_institucional=email_institucional
         )
         return usuario
@@ -226,16 +235,36 @@ class Participante(models.Model):
         null=True,
         help_text="Curso matriculado"
     )
+    outro_curso = models.CharField(
+        max_length=100, 
+        blank=True, 
+        null=True,
+        help_text="Caso o curso não esteja listado"
+    )
+    
+    periodo = models.IntegerField(
+        blank=True, 
+        null=True,
+        help_text="Período atual do curso"
+    )
 
-    cpf = models.CharField(
+    cpf = EncryptedCharField( ### Dado sensível
         verbose_name="CPF", 
         max_length=11, 
         unique=True,
         validators=[RegexValidator(r'^\d{11}$', message="CPF deve ter exatamente 11 dígitos")],
         help_text="Apenas números (11 dígitos)"
     )
+    
+    rgm = EncryptedCharField( ### Dado sensível
+        verbose_name="CPF", 
+        max_length=11, 
+        unique=True,
+        validators=[RegexValidator(r'^\d{8}$', message="RGM deve ter exatamente 8 dígitos")],
+        help_text="Apenas números (8 dígitos)"
+    )
 
-    email_institucional = models.EmailField(
+    email_institucional = EncryptedEmailField( ### Dado sensível
         verbose_name="E-mail institucional", 
         unique=True,
         help_text="E-mail acadêmico/institucional"
@@ -282,7 +311,7 @@ class Empresa(models.Model):
         validators=[RegexValidator(r'^\d{14}$', message="CNPJ deve ter exatamente 14 dígitos")],
         help_text="Apenas números (14 dígitos)"
     )
-    
+
     representante = models.CharField(
         verbose_name="Representante da Empresa",
         max_length=250,
@@ -317,7 +346,7 @@ class TechLeader(models.Model):
         on_delete=models.CASCADE, 
         related_name='techleader')
     
-    codigo = models.CharField(
+    codigo = EncryptedCharField(
         verbose_name="Código único que identifica Tech Leader", 
         max_length=20, 
         unique=True,

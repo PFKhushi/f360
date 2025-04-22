@@ -23,6 +23,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-ie0*hb#fi*+79=@$%m77&mueq%155sma^-*$vldg3idu!7$84$'
 
+FIELD_ENCRYPTION_KEY = "YWhwdW8zXzJ3VnFnczVwQXhxeUFLZXFBSW9tdmN2b1g="
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -42,6 +44,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+    'django_extensions',
+    #'django-encrypted-model-fields',
 ]
 
 MIDDLEWARE = [

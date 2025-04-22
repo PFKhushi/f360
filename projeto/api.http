@@ -32,15 +32,15 @@ GET http://localhost:8000/api/participante/ HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1MjA5OTg5LCJpYXQiOjE3NDUyMDgxODksImp0aSI6ImI4YzU1ZDZhZWZjMDQ1ODBhNzBmNTBjYTc2NGY5NTM0IiwidXNlcl9pZCI6MSwibm9tZSI6IkV4ZW1wbG9zIFBhcnRpY2lwYW50ZXMiLCJlbWFpbCI6InBhcnRpY2lwYW50ZXNAZXhlbXBsby5jb20iLCJ0aXBvX3VzdWFyaW8iOiJQQVJUIn0.ioJjsuyt6Mk6AK_jvzd_rOoWpmdRudIEw19tzkXk-Gc
 
 ###
-GET http://localhost:8000/api/participante/2 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0ODUyMzA0LCJpYXQiOjE3NDQ4NTA1MDQsImp0aSI6ImZjYjQ5OTQ3YjJmMTQ5NTBhMDQ5NmM0Y2YzZWM5NzFmIiwidXNlcl9pZCI6Mn0.qBP2jW8-y51Mw6nDnB60KDoVlmWwykZJ8qgb6earmgo
+GET http://localhost:8000/api/participante/1 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1Mjk0MTUyLCJpYXQiOjE3NDUyOTIzNTIsImp0aSI6IjUxZmFhOTQ2YmUxMjQ0ZDdhOWEzNzMwODNlYTZiNmYxIiwidXNlcl9pZCI6MSwibm9tZSI6InFFeGVtcGxvcyBQYXJ0aWNpcGFudGVzIiwiZW1haWwiOiJxcGFydGljaXBhbnRlc0BleGVtcGxvLmNvbSIsInRpcG9fdXN1YXJpbyI6IlBBUlQifQ.ktFei0M42BvafzDhXC1Lf91dZ2LLXG2Ovhtb88gtG-A
 
 ###
 POST http://localhost:8000/api/login/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "participantes@exemplo.com",
+    "username": "qparticipantes@exemplo.com",
     "password": "senha123"
 }
 
@@ -50,20 +50,22 @@ Content-Type: application/json
 
 {
     "usuario": {
-        "nome": "Exemplos Participantes",
-        "username": "participantes@exemplo.com",
+        "nome": "qExemplos Participantes",
+        "username": "qparticipantes@exemplo.com",
         "password": "senha123",
         "telefone": "11998999999"
     },
-    "cpf": "00000000001",
+    "cpf": "90000000001",
     "curso": "ADS",
-    "email_institucional": "novos@exemplo.com.br"
+    "outro_curso": "",
+    "periodo": "4",
+    "email_institucional": "qnovos@exemplo.com.br"
 }
 
 ###
 PUT http://localhost:8000/api/participante/1/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1MjA3ODA5LCJpYXQiOjE3NDUyMDYwMDksImp0aSI6ImNlNzdhMTQ3MmNkNzQyMmI4ZWFhOTkzODBmZWI3MzRmIiwidXNlcl9pZCI6MSwibm9tZSI6IkV4ZW1wbG9zIFBhcnRpY2lwYW50ZXMiLCJlbWFpbCI6InBhcnRpY2lwYW50ZXNAZXhlbXBsby5jb20iLCJ0aXBvX3VzdWFyaW8iOiJQQVJUIn0.pxO8o3BFhN1AFLy9aDAORTrZ5fu26c3-LJAjpyXP8_o
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1Mjk0MTUyLCJpYXQiOjE3NDUyOTIzNTIsImp0aSI6IjUxZmFhOTQ2YmUxMjQ0ZDdhOWEzNzMwODNlYTZiNmYxIiwidXNlcl9pZCI6MSwibm9tZSI6InFFeGVtcGxvcyBQYXJ0aWNpcGFudGVzIiwiZW1haWwiOiJxcGFydGljaXBhbnRlc0BleGVtcGxvLmNvbSIsInRpcG9fdXN1YXJpbyI6IlBBUlQifQ.ktFei0M42BvafzDhXC1Lf91dZ2LLXG2Ovhtb88gtG-A
 
 {
     "usuario": {
@@ -129,12 +131,12 @@ Content-Type: application/json
 
 {
     "usuario": {
-        "nome": "Nova Empresa",
-        "username": "contato@empresa.com",
+        "nome": "3eNova Empresa",
+        "username": "3econtato@empresa.com",
         "password": "senhaEmpresa!",
         "telefone": "1133333333"
     },
-    "cnpj": "12345678000199",
+    "cnpj": "32345678000199",
     "representante": "Carlos Andrade"
 }
 

@@ -92,7 +92,7 @@ class ParticipanteViewSet(viewsets.ModelViewSet):
    def update(self, request, *args, **kwargs):
       participante = self.get_object()
       erro = atualizar_usuario_e_perfil(participante, request, campos_perfil=[
-         'cpf', 'curso', 'email_institucional'
+         'cpf', 'rgm', 'curso', 'outro_curso', 'periodo', 'email_institucional'
       ])
       if erro:
          return erro
@@ -105,14 +105,14 @@ class TechLeaderViewSet(viewsets.ModelViewSet):
    serializer_class = TechLeaderSerializer
    
    def get_permissions(self):
-      
+      # define regras de acesso p/ cada acao
       if self.action == 'create':
-         return [permissions.IsAdminUser]
+         permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
       elif self.action in ['update', 'partial_update', 'destroy']:
-         return [permissions.IsAuthenticated, IsOwnerOrAdmin]
-      elif self.action == 'list':
-         return [permissions.IsAuthenticated, permissions.IsAdminUser]
-      return [permissions.IsAuthenticated, IsOwnerOrAdmin]
+         permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
+      else:
+         permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
+      return [perm() for perm in permission_classes]
 
    def get_queryset(self):
       
@@ -137,14 +137,14 @@ class EmpresaViewSet(viewsets.ModelViewSet):
    serializer_class = EmpresaSerializer
 
    def get_permissions(self):
-      
+      # define regras de acesso p/ cada acao
       if self.action == 'create':
-         return [permissions.IsAdminUser]
+         permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
       elif self.action in ['update', 'partial_update', 'destroy']:
-         return [permissions.IsAuthenticated, IsOwnerOrAdmin]
-      elif self.action == 'list':
-         return [permissions.IsAdminUser]
-      return [permissions.IsAuthenticated, IsOwnerOrAdmin]
+         permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
+      else:
+         permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
+      return [perm() for perm in permission_classes]
 
    def get_queryset(self):
       

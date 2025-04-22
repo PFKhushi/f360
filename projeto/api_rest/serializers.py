@@ -33,7 +33,7 @@ class ParticipanteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Participante
-        fields = ['usuario', 'cpf', 'curso', 'email_institucional']
+        fields = ['usuario', 'cpf', 'rgm', 'curso', 'outro_curso', 'periodo', 'email_institucional']
 
     def create(self, validated_data):
         usuario_data = validated_data.pop('usuario')
