@@ -135,7 +135,6 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         return f"{self.nome} ({self.username})"
     
     
-    
     def get_tipo_usuario(self):
         if hasattr(self, 'participante'):
             return self.TipoUsuario.PARTICIPANTE
@@ -384,3 +383,36 @@ class TechLeader(models.Model):
             )
             
         super().save(*args, **kwargs) 
+        
+
+class Excecao(models.Model):
+    
+    usuario = models.OneToOneField(
+        Usuario, 
+        on_delete=models.CASCADE, 
+        related_name='excecao'
+    )
+    motivo = models.CharField(
+        max_length=255, 
+        help_text="Motivo da exceção"
+    )
+    nota = models.CharField(max_length=255, blank=True, null=True)
+    data_inicio = models.DateField(
+        auto_now_add=True,
+        help_text="Data de início da exceção"
+    )
+    
+
+
+class Extensionistas(models.Model):
+    
+    participante = models.ForeignKey( # Falta app de gestão de projeto para fazer o relacionamento
+        Participante, 
+        on_delete=models.CASCADE, 
+        related_name='extensionista'
+    )
+    excecao = models.ForeignKey(
+        Excecao, 
+        on_delete=models.CASCADE, 
+        related_name='extensionista'
+    )
