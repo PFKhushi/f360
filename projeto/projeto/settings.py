@@ -40,7 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
     'api_rest',
+    'imersao',
+    
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
@@ -112,13 +115,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_TZ = True
+LANGUAGE_CODE = 'pt-br'
+TIME_ZONE = 'America/Recife'
+USE_I18N = True # Permite usar traduções no site.
+USE_L10N = True # Formata datas e números de acordo com a localidade.
+USE_TZ = True   # Django vai salvar todas as datas em UTC no banco. E vai converter automaticamente para TIME_ZONE.
 
 
 # Static files (CSS, JavaScript, Images)
