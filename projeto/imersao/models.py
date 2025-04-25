@@ -46,7 +46,7 @@ class Tecnologia(models.Model):
 
 
 class FormularioInscricao(models.Model):
-    participante = models.OneToOneField(
+    participante = models.ForeignKey(
         Participante, 
         on_delete=models.CASCADE, 
         help_text="Participante que preencheu o formulário"
