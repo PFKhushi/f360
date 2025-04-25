@@ -33,7 +33,7 @@ class InteresseAreaSerializer(serializers.ModelSerializer):
         fields = ['id', 'area', 'area_nome', 'nivel']
 
 
-class FormularioInscricaoListSerializer(serializers.ModelSerializer):
+class FormularioInscricaoListSerializer(serializers.ModelSerializer): # queryset = FormularioInscricao.objects.filter(imersao=<imersao_id>)
     participante_nome   = serializers.ReadOnlyField(source='participante.nome')
     imersao_info        = serializers.ReadOnlyField(source='imersao.__str__')
     primeira_opcao_nome = serializers.ReadOnlyField(source='primeira_opcao.nome')
@@ -46,7 +46,7 @@ class FormularioInscricaoListSerializer(serializers.ModelSerializer):
                 'segunda_opcao', 'segunda_opcao_nome']
 
 
-class FormularioInscricaoDetailSerializer(serializers.ModelSerializer):
+class FormularioInscricaoDetailSerializer(serializers.ModelSerializer): # queryset = FormularioInscricao.objects.prefetch_related('tecnologias', 'interesses').get(id=<formulario_id>)
     participante    = ParticipanteSerializer(read_only=True)
     imersao         = ImersaoSerializer(read_only=True)
     primeira_opcao  = AreaFabricaSerializer(read_only=True)
@@ -212,6 +212,7 @@ class DesempenhoWorkshopSerializer(serializers.ModelSerializer): # queryset = De
         fields = ['id', 'participante', 'participante_nome', 'workshop', 
                 'workshop_titulo', 'desempenho', 'comentario', 'especialidade', 
                 'especialidade_nome', 'classificacao', 'experiencia', 'data_avaliacao']
+
 
 class AtribuicaoWorkshops:
     def atribuir_participantes(self):

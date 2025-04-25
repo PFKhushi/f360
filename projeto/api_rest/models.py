@@ -257,7 +257,7 @@ class Participante(models.Model):
     )
     
     rgm = EncryptedCharField( 
-        verbose_name="CPF", 
+        verbose_name="RGM", 
         max_length=11, 
         unique=True,
         validators=[RegexValidator(r'^\d{8}$', message="RGM deve ter exatamente 8 dígitos")],
