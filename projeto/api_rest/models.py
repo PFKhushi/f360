@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 from django.db import models, IntegrityError, transaction
 from django.core.exceptions import ValidationError
 from encrypted_model_fields.fields import EncryptedCharField, EncryptedEmailField
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class UsuarioManager(BaseUserManager):
@@ -82,13 +83,13 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         help_text="Nome completo sem abreviações"
     )
 
-    username = models.EmailField( ### Dado sensível
+    username = models.EmailField( 
         verbose_name="E-mail", 
         unique=True,
         help_text="E-mail principal para login"
     )
     
-    telefone = EncryptedCharField( ### Dado sensível
+    telefone = EncryptedCharField( 
         max_length=15, 
         blank=True, 
         null=True,
@@ -247,7 +248,7 @@ class Participante(models.Model):
         help_text="Período atual do curso"
     )
 
-    cpf = EncryptedCharField( ### Dado sensível
+    cpf = EncryptedCharField( 
         verbose_name="CPF", 
         max_length=11, 
         unique=True,
@@ -255,7 +256,7 @@ class Participante(models.Model):
         help_text="Apenas números (11 dígitos)"
     )
     
-    rgm = EncryptedCharField( ### Dado sensível
+    rgm = EncryptedCharField( 
         verbose_name="CPF", 
         max_length=11, 
         unique=True,
@@ -263,7 +264,7 @@ class Participante(models.Model):
         help_text="Apenas números (8 dígitos)"
     )
 
-    email_institucional = EncryptedEmailField( ### Dado sensível
+    email_institucional = EncryptedEmailField( 
         verbose_name="E-mail institucional", 
         unique=True,
         help_text="E-mail acadêmico/institucional"
@@ -402,8 +403,7 @@ class Excecao(models.Model):
         help_text="Data de início da exceção"
     )
     
-
-
+    
 class Extensionistas(models.Model):
     
     participante = models.ForeignKey( # Falta app de gestão de projeto para fazer o relacionamento
