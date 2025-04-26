@@ -1,5 +1,5 @@
 # Data Analysis - F360 - 📈
-> Última Atualização do READme: <b>17/04/2025</b>
+> Última Atualização do READme: <b>26/04/2025</b>
 
 ## 📌 Objetivo: 
 - Criação de um sistema que irá facilitar o processo seletivo de imersionistas e extensionitas, além de proporcionar otimização na análise administrativa por meio de dados estruturados sobre a fábrica e o workshop.
