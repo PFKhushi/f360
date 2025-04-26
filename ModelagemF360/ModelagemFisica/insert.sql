@@ -42,12 +42,46 @@ INSERT INTO empresa VALUES(1, 'Fábrica de Software', 'Wallace Bonfim', 'fabrica
 						  (2, 'Amazon', 'Jeff Bezos', 'amazon.contanto@gmail.com', '15436940000103');
 
 					
-INSERT INTO projetos VALUES(1,'Desenvolvimento da funcionalidade principal', '2025-06-30', 'Ativo', 'Levantamento de Requisitos', 'Necessário alocar um designer.', 'Unipê. O sistema visa atender às
-necessidades de alunos, instrutores, administradores e empresas parceiras, proporcionando controle, acompanhamento e automação de processos relacionados à extensão universitária.', 'F360',  '2025-05-30', 1);
+INSERT INTO projetos VALUES	(1, 1,'F360','O sistema visa atender às necessidades de alunos, instrutores, administradores e empresas parceiras, proporcionando controle, acompanhamento e automação de processos relacionados à extensão universitária.','2025-06-30', 'Ativo', 'Desenvolvimento da funcionalidade principal', 'Levantamento de Requisitos', 'Necessário alocar um designer.', '2025-05-30'),
+							(2, 2, 'Amazon Integration v1.0', 'Projeto de integração de serviços com a plataforma da Amazon para otimizar a distribuição.', '2025-08-15', 'Em Andamento', 'Definição da arquitetura para integração com Amazon' , 'Planejamento da Integração', ' Reunião inicial de alinhamento agendada.', '2025-07-20');
 
-DELETE FROM projetos WHERE ID_Projeto=1;
 
-INSERT INTO equipes VALUES (3, 1, 'Analista de Dados', 1),
-							(11, 1, 'Tech Leader', 2),
-                            (4, 1, 'Front-End', 3),
-                            (6, 1, 'Back-End', 4);
+INSERT INTO equipes VALUES (1, 1, 3, 'Analista de Dados', 'Novato'),
+							(2, 1, 11, 'Tech Leader', 'Veterano'),
+                            (3, 1, 4, 'Front-End', 'Veterano'),
+                            (4, 1, 6, 'Back-End', 'Novato'),
+                            (5, 2, 7, 'Analista de Dados', 'Veterano'),
+							(6, 2, 12, 'Tech Leader', 'Veterano'),
+                            (7, 2, 5, 'Front-End', 'Novato'),
+                            (8, 2, 9, 'Back-End', 'Novato');
+                            
+
+INSERT INTO equipes VALUES (1, 1, 3, 'Analista de Dados', 'Novato'),
+							(2, 1, 11, 'Tech Leader', 'Veterano'),
+                            (3, 1, 4, 'Front-End', 'Veterano'),
+                            (4, 1, 6, 'Back-End', 'Novato'),
+                            (5, 2, 7, 'Analista de Dados', 'Veterano'),
+							(6, 2, 12, 'Tech Leader', 'Veterano'),
+                            (7, 2, 5, 'Front-End', 'Novato'),
+                            (8, 2, 9, 'Back-End', 'Novato');
+                            
+INSERT INTO participante VALUES(1, 3,'Sim', 'Ciências da Computação', 3), 
+								(2, 4, 'Sim', 'Análise e Desenvolvimento de Sistemas', 2), 
+                                (3, 5, 'Aguardando', 'Ciências da Computação', 6), 
+                                (4, 6, 'Sim', 'Ciências da Computação', 5), 
+                                (5, 7, 'Sim', 'Ciências da Computação', 2), 
+                                (6, 8, 'Aguardando', 'Análise e Desenvolvimento de Sistemas', 4), 
+                                (7, 9, 'Sim', 'Ciências da Computação', 7), 
+                                (8, 12, 'Não', 'Ciências da Computação', 4);
+                                
+                                
+INSERT INTO imersao VALUES(1, 1,'2024.2'), 
+						  (2, 2,'2023.2'), 
+						  (3, 3, '2025.1'), 
+						  (4, 4, '2022.2'), 
+						  (5, 5, '2024.2'), 
+						  (6, 6, '2017.1'), 
+						  (7, 7, '2023.2'), 
+						  (8, 8, '2012.2');
+                            
+
