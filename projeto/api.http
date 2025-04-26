@@ -232,3 +232,89 @@ Authorization: Bearer {{access_token}}
 ###
 DELETE http://localhost:8000/api/techleader/2/ HTTP/1.1
 Authorization: Bearer {{access_token}}
+
+
+
+############################################################################
+
+
+
+
+###
+POST http://localhost:8000/api/imersao/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "ano": 2025,
+    "semestre": 1
+}
+
+###
+GET http://localhost:8000/api/imersao/ HTTP/1.1
+
+###
+GET http://localhost:8000/api/imersao/1 HTTP/1.1
+
+###
+POST http://localhost:8000/api/area_fabrica/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "Backend",
+    "ativa": "true"
+}
+###
+POST http://localhost:8000/api/area_fabrica/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "Frontend",
+    "ativa": "true"
+}
+
+###
+POST http://localhost:8000/api/area_fabrica/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "Dados",
+    "ativa": "true"
+}
+###
+GET http://localhost:8000/api/area_fabrica/ HTTP/1.1
+
+
+###
+POST http://localhost:8000/api/tecnologia/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "Python",
+    "ativa": "true"
+}
+
+###
+POST http://localhost:8000/api/tecnologia/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "Django",
+    "ativa": "true"
+}
+
+###
+GET http://localhost:8000/api/tecnologia/ HTTP/1.1
+
+###
+POST http://localhost:8000/api/palestra/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "titulo": "Palestra de Teste",
+    "descricao": "Descrição da palestra de teste",
+    "data": "2025-01-01T10:00:00Z",
+    "palestrante": "Pedro",
+    "sala": "Auditório 1",
+    "bloco": "A",
+    "imersao": 1
+}

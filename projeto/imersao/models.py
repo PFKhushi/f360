@@ -30,7 +30,8 @@ class AreaFabrica(models.Model):
 
 
 class Tecnologia(models.Model):
-    nome = models.CharField(max_length=100, unique=True)
+    nome    = models.CharField(max_length=100, unique=True)
+    ativa  = models.BooleanField(default=True)
     
     class Meta:
         verbose_name = 'Tecnologia'
@@ -108,11 +109,11 @@ class InteresseArea(models.Model):
 class Palestra(models.Model):
     imersao     = models.ForeignKey(Imersao, on_delete=models.CASCADE)
     titulo      = models.CharField(max_length=255)
-    descricao   = models.TextField()
-    data        = models.DateTimeField()
+    descricao   = models.TextField(null=True, blank=True)
+    data        = models.DateTimeField(null=True, blank=True)
     palestrante = models.CharField(max_length=255)
-    sala        = models.CharField(max_length=255) 
-    bloco       = models.CharField(max_length=10)
+    sala        = models.CharField(max_length=255, null=True, blank=True) 
+    bloco       = models.CharField(max_length=10, null=True, blank=True)
     
     class Meta:
         verbose_name = 'Palestra'

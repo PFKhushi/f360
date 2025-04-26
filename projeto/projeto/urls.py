@@ -36,6 +36,7 @@ urlpatterns = [
     
     # API do App 
     path('api/', include('api_rest.urls')),
+    path('api/', include('imersao.urls')),
     
     # path('api/docs/', include_docs_urls(title='API Docs')),
 ]
