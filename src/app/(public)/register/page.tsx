@@ -1,17 +1,11 @@
 'use client'
 
-import ClientOnly from '@/app/ClientOnly';
 import Link from "next/link";
-import React, { useEffect } from 'react';
-import {useState} from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import Select from 'react-select';
-import {GroupBase, StylesConfig, ActionMeta, SingleValue} from 'react-select';
-
-type OptionType = { value: string; label: string}; //tipo personalizado em TypeScript
 
 const schema = z.object({
   nome: z
@@ -37,13 +31,11 @@ const schema = z.object({
     .min(1, {message: 'Preenchimento obrigatório'})
     .max(2, {message: 'O Período não deve ter mais que 2 caracteres'}),
   curso: z
-    .custom<OptionType | null>((val) => !!val && !!val.value && !!val.label, {
-      message: 'Selecione um curso',
-    }),
+    .string()
+    .min(1, {message: 'Preenchimento obrigatório'}),
   area: z
-    .custom<OptionType | null>((val) => !!val && !!val.value && !!val.label, {
-      message: 'Selecione uma área de interesse',
-    }),
+    .string()
+    .min(1, {message: 'Preenchimento obrigatório'}),
 })
 
 type FormData = {
@@ -53,8 +45,8 @@ type FormData = {
   telefone: string;
   rgm: string;
   periodo: string;
-  curso: OptionType | null;
-  area: OptionType | null;
+  curso: string;
+  area: string;
 };
 
 export default function Register() {
@@ -63,91 +55,27 @@ export default function Register() {
       register,
       handleSubmit,
       formState: {errors},
+      watch,
       setValue,
   } = useForm<FormData>({
-        resolver: zodResolver(schema),
+         resolver: zodResolver(schema),
   });
 
-  const [curso, setCurso] = useState<OptionType | null>(null); 
-  const [area, setArea] = useState<OptionType | null>(null);
-  //Pode ser uma opção válida (OptionType) Ou null (caso nada esteja selecionado no início)
-
-  useEffect(() => {
-            setValue('curso', curso);
-  }, [curso, setValue]);
-
-  useEffect(() => {
-            setValue('area', area);
-  }, [area, setValue]);
+  const [showCursoInput, setShowCursoInput] = useState(false);
 
   function handleRegister(data: FormData){
     console.log(data)
   }
 
-  const optionsCurso: OptionType[] = [
-    { value: 'ads', label: 'Análise e Desenvolvimento de Sistemas' },
-    { value: 'cc', label: 'Ciência da Computação' },
-    { value: 'gti', label: 'Gestão da Tecnologia da Informação' },
-    { value: 'si', label: 'Sistemas para Internet' },
-    { value: 'cd', label: 'Ciência de Dados' },
-    { value: 'engsoft', label: 'Engenharia de Software' },
-    { value: 'redecomp', label: 'Rede de Computadores' }
-  ];
-
-  const optionsAreaDeInteresse: OptionType[] = [
-    { value : 'backend', label: 'Back-end'},
-    { value: 'dados', label: "Dados"},
-    { value: 'devops', label: "DevOps"},
-    { value: 'frontend', label: "Front-end"},
-    { value: 'mobile', label: "Mobile"},
-    { value: 'po', label: "Product Owner (PO)"},
-    { value: 'qa', label: "QA"},
-    {value: 'uidesigner', label: "UI/Designer"}
-  ];
-
-  // StylesConfig -> um "molde" que já vem da biblioteca react-select e tem três parâmetros genéricos
-  // <OptionType>	-> Diz qual o tipo das opções do select
-  // false ->	Diz que não é multi-select
-  //GroupBase<OptionType>	-> Diz que as opções poderiam estar agrupadas
-  const customStyles :  StylesConfig<OptionType, false, GroupBase<OptionType>> = {
-    control: (base, state) => ({
-      ...base,
-      backgroundColor: '#210E69',
-      borderRadius: '9999px',
-      borderColor: state.isFocused ? '#FFC311' : '#99a1af',
-      boxShadow: 'none', // sem glow
-      padding: '0.375rem 0.75rem',
-      color: 'white',
-      fontSize: '1rem',
-      transition: 'border-color 0.2s ease',
-      '&:hover': {
-        borderColor: state.isFocused ? '#FFC311' : '#99a1af', // mantém a cor no hover se estiver focado
-      },
-    }),
-    valueContainer: (base) => ({ //container onde o texto selecionado aparece
-      ...base,
-      paddingLeft: '0rem', //Remove espaçamento à esquerda
-    }),
-    singleValue: (base) => ({ //texto do valor selecionado 
-      ...base,
-      color: 'white',
-    }),
-    placeholder: (base) => ({ //Estiliza o placeholder
-      ...base,
-      fontSize: '0.875rem',
-      color: 'white',
-    }),
-    menu: (base) => ({ // Menu Dropdown
-      ...base,
-      backgroundColor: '#210E69',
-      color: 'white',
-    }),
-    option: (base, { isFocused }) => ({ //Customiza cada opção individual dentro do menu
-      ...base,
-      backgroundColor: isFocused ? '#FFC311' : 'transparent',
-      color: isFocused ? '#210E69' : 'white',
-      padding: '0.5rem 1rem',
-    }),
+  function handleCursoChange(e: React.ChangeEvent<HTMLSelectElement>){
+    const selectedValue = e.target.value;
+    if(selectedValue === 'outros'){
+      setShowCursoInput(true);
+      setValue('curso', '');
+    } else{
+      setShowCursoInput(false);
+      setValue('curso', selectedValue);
+    }
   }
 
   return (
@@ -234,23 +162,39 @@ export default function Register() {
 
         <div>
           <label className='text-white font-bold text-xl mb-1 block'>Curso</label>
-            <ClientOnly>
-              <Select
-                id="curso"
-                name="curso"
-                styles={customStyles}
-                options={optionsCurso}
-                placeholder="Selecione seu curso"
-                value={curso}
-                onChange={(selected) => setCurso(selected)} // guarda o valor selecionado no estado
-                />
-              </ClientOnly>
-              {errors.curso && (
-                <span 
-                    className='text-secondary-1 text-left block'>
-                    {errors.curso.message?.toString()}
-                </span>
-              )}
+          <select 
+            id="curso"
+            className='peer text-white text-sm bg-primary-4 w-full py-3.5 rounded-full border border-gray-400 px-4  transition-colors duration-200 ease-in-out focus:border-secondary-1 focus:outline-none appearance-none relative'
+            {...register('curso')}
+            defaultValue=""
+            onChange={handleCursoChange}
+          >
+              <option value="" disabled >Selecione seu curso</option>
+              <option value="ads">Análise e Desenvolvimento de Sistemas</option>
+              <option value="ciencomp">Ciência da Computação</option>
+              <option value="ciendados">Ciência de Dados</option>
+              <option value="engsoft">Engenharia de Software</option>
+              <option value="gesttecno">Gestão da Tecnologia da Informação</option>
+              <option value="redescomp">Redes de Computadores</option>
+              <option value="sistinternet">Sistemas para Internet</option>
+              <option value="outros">Outro</option>
+          </select>
+
+          {showCursoInput && (
+            <input 
+              type="text" 
+              placeholder="Digite o seu curso"
+              className="mt-3 peer text-white bg-transparent w-full py-3 rounded-full border transition-colors duration-200 ease-in-out border-gray-400 px-4  placeholder:text-sm placeholder-white  focus:border-secondary-1 focus:outline-none"
+              onChange={(e) => setValue('curso', e.target.value)}
+            />
+          )}
+
+          {errors.curso && (
+            <span 
+              className="text-secondary-1 text-right">
+              {errors.curso.message?.toString()}
+            </span>
+          )}
         </div>
 
         <div>
@@ -289,36 +233,41 @@ export default function Register() {
 
         <div>
           <label className='text-white font-bold text-xl mb-1 block'>Área de Interesse</label>
-            <ClientOnly>
-              <Select
-                id="areadeinteresse"
-                name="areadeinteresse"
-                styles={customStyles}
-                options={optionsAreaDeInteresse}
-                placeholder="Selecione sua área de interesse"
-                value={area}
-                onChange={(selected) => setArea(selected)} // guarda o valor selecionado no estado
-                />
-            </ClientOnly>
-            {errors.area && (
-                <span 
-                    className='text-secondary-1 text-left block'>
-                    {errors.area.message?.toString()}
-                </span>
-              )}
+          <select 
+            id="area"
+            className='peer text-white text-sm bg-primary-4 w-full py-3.5 rounded-full border border-gray-400 px-4  transition-colors duration-200 ease-in-out focus:border-secondary-1 focus:outline-none appearance-none relative'
+            {...register('area')}
+            defaultValue=""
+          >
+              <option value="" disabled >Selecione sua area</option>
+              <option value="back">Back-end</option>
+              <option value="dados">Dados</option>
+              <option value="devops">DevOps</option>
+              <option value="front">Front-end</option>
+              <option value="mobile">Mobile</option>
+              <option value="po">Product Owner (PO)</option>
+              <option value="qa">Qualidade de Software (QA)</option>
+              <option value="uidesigne">UI/Designer</option>
+          </select>
+          {errors.area && (
+            <span 
+              className="text-secondary-1 text-right">
+              {errors.area.message?.toString()}
+            </span>
+          )}
         </div>
 
         <div>
           <label className='text-white font-bold text-xl mb-1 block'>Experiência Prévia</label>
-          <input
-            type="text"
+          <textarea
             id='experienciaprevia'
             placeholder='Insira aqui sua experiência prévia'
-            className='peer text-white bg-transparent w-full py-3 rounded-full border transition-colors duration-200 ease-in-out border-gray-400 px-4  placeholder:text-sm placeholder-white  focus:border-secondary-1 focus:outline-none'
+            className='peer text-white bg-transparent w-full py-3 rounded-2xl border transition-colors duration-200 ease-in-out border-gray-400 px-4 placeholder:text-sm placeholder-white focus:border-secondary-1 focus:outline-none resize-none'
+            rows={4} 
           />
         </div>
 
-        <div className='col-span-2 flex flex-col justify-center items-center mt-10'> 
+        <div className='col-span-2 flex flex-col justify-center items-center mt-2'> 
             <input 
               type="submit" 
               value="Cadastre-se"
