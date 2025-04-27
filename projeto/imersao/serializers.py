@@ -14,15 +14,18 @@ class ImersaoSerializer(serializers.ModelSerializer):
 
 
 class AreaFabricaSerializer(serializers.ModelSerializer):
+    # nome = serializers.ReadOnlyField(source='area.nome')
+    
     class Meta:
         model = AreaFabrica
-        fields = '__all__'
+        fields = ['id', 'nome', 'ativa']
 
 
 class TecnologiaSerializer(serializers.ModelSerializer):
+    # nome = serializers.ReadOnlyField(source='area.nome')
     class Meta:
         model = Tecnologia
-        fields = '__all__'
+        fields = ['id', 'nome', 'ativa']
 
 
 class InteresseAreaSerializer(serializers.ModelSerializer):
@@ -34,16 +37,26 @@ class InteresseAreaSerializer(serializers.ModelSerializer):
 
 
 class FormularioInscricaoListSerializer(serializers.ModelSerializer): # queryset = FormularioInscricao.objects.filter(imersao=<imersao_id>)
-    participante_nome   = serializers.ReadOnlyField(source='participante.nome')
+    participante_nome   = serializers.ReadOnlyField(source='participante.usuario.nome')
     imersao_info        = serializers.ReadOnlyField(source='imersao.__str__')
     primeira_opcao_nome = serializers.ReadOnlyField(source='primeira_opcao.nome')
     segunda_opcao_nome  = serializers.ReadOnlyField(source='segunda_opcao.nome')
+    interesses          = serializers.SerializerMethodField()
     
     class Meta:
         model = FormularioInscricao
         fields = ['id', 'participante', 'participante_nome', 'imersao', 'imersao_info', 
                 'data_inscricao', 'primeira_opcao', 'primeira_opcao_nome', 
-                'segunda_opcao', 'segunda_opcao_nome']
+                'segunda_opcao', 'segunda_opcao_nome', 'interesses']
+    
+    def get_interesses(self, obj):
+        return [
+                {
+                    "area_nome": interesse.area.nome,
+                    "nivel": interesse.nivel
+                }
+                for interesse in obj.interesses.all()
+            ]
 
 
 class FormularioInscricaoDetailSerializer(serializers.ModelSerializer): # queryset = FormularioInscricao.objects.prefetch_related('tecnologias', 'interesses').get(id=<formulario_id>)
@@ -52,12 +65,21 @@ class FormularioInscricaoDetailSerializer(serializers.ModelSerializer): # querys
     primeira_opcao  = AreaFabricaSerializer(read_only=True)
     segunda_opcao   = AreaFabricaSerializer(read_only=True)
     tecnologias     = TecnologiaSerializer(many=True, read_only=True)
-    interesses      = InteresseAreaSerializer(many=True, read_only=True)
+    interesses      = serializers.SerializerMethodField()  
     
     class Meta:
         model = FormularioInscricao
         fields = ['id', 'participante', 'imersao', 'data_inscricao', 
                 'tecnologias', 'primeira_opcao', 'segunda_opcao', 'interesses']
+    
+    def get_interesses(self, obj):
+        return [
+                {
+                    "area_nome": interesse.area.nome,
+                    "nivel": interesse.nivel
+                }
+                for interesse in obj.interesses.all()
+            ]
 
 
 class FormularioInscricaoCreateUpdateSerializer(serializers.ModelSerializer):
@@ -69,6 +91,8 @@ class FormularioInscricaoCreateUpdateSerializer(serializers.ModelSerializer):
                 'segunda_opcao', 'interesses']
     
     def validate(self, data):
+
+        
         participante = data['participante']
         imersao = data['imersao']
         
@@ -98,6 +122,10 @@ class FormularioInscricaoCreateUpdateSerializer(serializers.ModelSerializer):
         return formulario
     
     def update(self, instance, validated_data):
+        
+        if 'participante' in validated_data and validated_data['participante'] != instance.participante:
+            raise serializers.ValidationError("Não é permitido alterar o participante de um formulário de inscrição.")
+        
         interesses_data = validated_data.pop('interesses', [])
         tecnologias_data = validated_data.pop('tecnologias', None)
 

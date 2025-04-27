@@ -81,13 +81,15 @@ class ParticipanteViewSet(viewsets.ModelViewSet):
          permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
       else:
          permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
-      return [perm() for perm in permission_classes]
+      return [permissions.AllowAny()] #############retirar depois###############
+      # return [perm() for perm in permission_classes]
 
    def get_queryset(self):
       user = self.request.user
       if user.is_staff or user.has_perm('api_rest.ver_todos_participantes'):
          return Participante.objects.all()
-      return Participante.objects.filter(usuario=user)  # user so ve seu perfil
+      return Participante.objects.all() #############retirar depois###############
+      # return Participante.objects.filter(usuario=user)  # user so ve seu perfil
 
    def update(self, request, *args, **kwargs):
       participante = self.get_object()
@@ -112,14 +114,16 @@ class TechLeaderViewSet(viewsets.ModelViewSet):
          permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
       else:
          permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
-      return [perm() for perm in permission_classes]
+      return [permissions.AllowAny()] #############retirar depois###############
+      # return [perm() for perm in permission_classes]
 
    def get_queryset(self):
       
       user = self.request.user
       if user.is_staff or user.has_perm('api_rest.ver_todos_techleaders'):
          return TechLeader.objects.all()
-      return TechLeader.objects.filter(usuario=user)
+      return TechLeader.objects.all()#############retirar depois###############
+      # return TechLeader.objects.filter(usuario=user)
    
    def update(self, request, *args, **kwargs):
       techleader = self.get_object()
@@ -144,14 +148,16 @@ class EmpresaViewSet(viewsets.ModelViewSet):
          permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
       else:
          permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
-      return [perm() for perm in permission_classes]
+      return [permissions.AllowAny()] #############retirar depois###############
+      # return [perm() for perm in permission_classes]
 
    def get_queryset(self):
       
       user = self.request.user
       if user.is_staff or user.has_perm('api_rest.ver_todas_empresas'):
          return Empresa.objects.all()
-      return Empresa.objects.filter(usuario=user)
+      return Empresa.objects.all()#############retirar depois###############
+      # return Empresa.objects.filter(usuario=user)
    
    def update(self, request, *args, **kwargs):
       empresa = self.get_object()
