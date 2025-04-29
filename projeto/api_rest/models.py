@@ -196,6 +196,21 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         )
         return usuario
     
+    @staticmethod
+    def criar_excecao(nome, email, senha, motivo, nota, **extras):
+        usuario = Usuario.objects.create_user(
+            nome=nome,
+            username=email,
+            password=senha,
+            **extras
+        )
+        Excecao.objects.create(
+            usuario=usuario,
+            motivo=motivo,
+            nota=nota
+        )
+        return usuario
+    
     @property
     def is_participante(self):
         return hasattr(self, 'participante')
@@ -207,6 +222,10 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     @property
     def is_techleader(self):
         return hasattr(self, 'techleader')
+    
+    @property
+    def is_excecao(self):
+        return hasattr(self, 'excecao')
 
 
 class Participante(models.Model):
@@ -403,16 +422,38 @@ class Excecao(models.Model):
         help_text="Data de início da exceção"
     )
     
+    class Meta:
+        verbose_name = "Exceção"
+        verbose_name_plural = "Exceções"
+        permissions = [
+            ("ver_todas_excecoes", "Pode ver todas as exceções"),
+        ]
     
-class Extensionistas(models.Model):
+    
+class Extensionista(models.Model):
     
     participante = models.ForeignKey( # Falta app de gestão de projeto para fazer o relacionamento
         Participante, 
         on_delete=models.CASCADE, 
-        related_name='extensionista'
+        related_name='extensionista',
+        null=True, blank=True
     )
     excecao = models.ForeignKey(
         Excecao, 
         on_delete=models.CASCADE, 
-        related_name='extensionista'
+        related_name='extensionista',
+        null=True, blank=True
     )
+    veterano = models.BooleanField(
+        default=False,
+        help_text="Indica se o extensionista é veterano"
+    )
+    
+    class Meta:
+        verbose_name = "Extensionista"
+        verbose_name_plural = "Extensionistas"
+        permissions = [
+            ("ver_todos_extensionistas", "Pode ver todos os extensionistas"),
+        ]
+    
+    
