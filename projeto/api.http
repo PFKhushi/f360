@@ -351,3 +351,21 @@ GET http://localhost:8000/api/formulario_inscricao/3/ HTTP/1.1
 
 ###
 DELETE http://localhost:8000/api/formulario_inscricao/2/ HTTP/1.1
+
+###
+GET http://localhost:8000/api/interesse_area/ HTTP/1.1
+
+### 
+POST http://localhost:8000/api/participacao_imersao/ HTTP/1.1
+
+###
+POST http://localhost:8000/api/presenca_palestra/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "participante": 1,
+    "palestra": 1
+}
+
+###
+GET http://localhost:8000/api/presenca_palestra/ HTTP/1.1

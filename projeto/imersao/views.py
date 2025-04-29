@@ -145,27 +145,72 @@ class FormularioInscricaoViewSet(viewsets.ModelViewSet):
         else:  # create, update, partial_update, destroy
             return FormularioInscricaoCreateUpdateSerializer
 
-# class InteresseAreaViewSet(viewsets.ModelViewSet):
+class InteresseAreaViewSet(viewsets.ModelViewSet):
 
-#     queryset = InteresseArea.objects.all()
-#     serializer_class = InteresseAreaSerializer
+    queryset = InteresseArea.objects.all()
+    serializer_class = InteresseAreaSerializer
 
-#     def get_permissions(self):
-#         # define regras de acesso p/ cada acao
-#         if self.action == 'create':
-#             permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
-#         elif self.action in ['update', 'partial_update', 'destroy']:
-#             permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
-#         else:
-#             permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
-#         # return [perm() for perm in permission_classes]
-#         return [permissions.AllowAny()] #############retirar depois###############
+    def get_permissions(self):
+        # define regras de acesso p/ cada acao
+        if self.action == 'create':
+            permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+        else:
+            permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+        # return [perm() for perm in permission_classes]
+        return [permissions.AllowAny()] #############retirar depois###############
 
-#     def get_queryset(self):
-#         user = self.request.user
-#         if user.is_staff or user.has_perm('imersao.ver_todas_interesses_area'):
-#             return InteresseArea.objects.all()
-#         # return AreaFabrica.objects.filter(ativa=True)
-#         return InteresseArea.objects.all()
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_staff or user.has_perm('imersao.ver_todas_interesses_area'):
+            return InteresseArea.objects.all()
+        # return AreaFabrica.objects.filter(ativa=True)
+        return InteresseArea.objects.all()
     
     
+class PresencaPalestraViewSet(viewsets.ModelViewSet):
+
+    queryset = PresencaPalestra.objects.all()
+    serializer_class = PresencaPalestraSerializer
+
+    def get_permissions(self):
+        # define regras de acesso p/ cada acao
+        if self.action == 'create':
+            permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+        else:
+            permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+        # return [perm() for perm in permission_classes]
+        return [permissions.AllowAny()] #############retirar depois###############
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_staff or user.has_perm('imersao.ver_presencas_palestras'):
+            return PresencaPalestra.objects.all()
+        # return Palestra.objects.filter(ativa=True)
+        return PresencaPalestra.objects.all()
+    
+class ParticipacaoImersaoViewSet(viewsets.ModelViewSet):
+
+    queryset = ParticipacaoImersao.objects.all()
+    serializer_class = ParticipacaoImersaoSerializer
+
+    def get_permissions(self):
+        # define regras de acesso p/ cada acao
+        if self.action == 'create':
+            permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+        else:
+            permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+        # return [perm() for perm in permission_classes]
+        return [permissions.AllowAny()] #############retirar depois###############
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_staff or user.has_perm('imersao.ver_participacoes_imersao'):
+            return ParticipacaoImersao.objects.all()
+        # return ParticipacaoImersao.objects.filter(ativa=True)
+        return ParticipacaoImersao.objects.all()

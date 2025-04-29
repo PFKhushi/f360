@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api_rest.models import Usuario, Participante, Empresa, TechLeader
+from api_rest.models import Usuario, Participante, Empresa, TechLeader, Extensionista, Excecao
 from django.core.exceptions import ValidationError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -87,6 +87,38 @@ class TechLeaderSerializer(serializers.ModelSerializer):
         )
         return usuario.techleader
         
+        
+class ExcecaoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Excecao
+        fields = ['usuario', 'motivo', 'nota', 'data_inicio']
+        
+    def create(self, validated_data):
+        usuario_data = validated_data.pop('usuario')
+        usuario = Usuario.criar_excecao(
+            nome=usuario_data['nome'],
+            email=usuario_data['username'],
+            senha=usuario_data['password'],
+            telefone=usuario_data.get('telefone'),
+            **validated_data
+        )
+        return usuario.excecao
+
+class ExtensionistaSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Extensionista
+        fields = ['participante', 'excecao']
+        
+    def validate(self, data):
+        participante = data.get('participante')
+        excecao = data.get('excecao')
+        
+        if participante and excecao:
+            raise serializers.ValidationError("Preencha apenas 'participante' ou 'excecao', nunca ambos.")
+        if not participante and not excecao:
+            raise serializers.ValidationError("Um dos campos ('participante' ou 'excecao') deve ser preenchido.")
+        return data
         
 # serializer customizado do login p/ JWT
 class CustomTokenSerializer(TokenObtainPairSerializer):
