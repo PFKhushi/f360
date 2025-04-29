@@ -21,9 +21,20 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView
 )
 from django.contrib import admin
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from .swagger_info import swagger_info
+
+
+schema_view = get_schema_view(
+   swagger_info,  #swagger_info importado
+   public=True,
+   permission_classes=(permissions.AllowAny,),
+)
 
 urlpatterns = [
-    #Admin
+    # Admin
     path('admin/', admin.site.urls),
     
     # Autenticação JWT (Padrão DRF)
@@ -32,11 +43,16 @@ urlpatterns = [
         path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
         path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     ])),
-
     
     # API do App 
     path('api/', include('api_rest.urls')),
     path('api/', include('imersao.urls')),
     
-    # path('api/docs/', include_docs_urls(title='API Docs')),
+    # Documentação swagger
+    path('swagger<str:format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),  # JSON/YAML
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
+
+
+

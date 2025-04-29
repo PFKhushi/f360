@@ -43,15 +43,19 @@ INSTALLED_APPS = [
     
     'api_rest',
     'imersao',
-    
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'django_extensions',
-    #'django-encrypted-model-fields',
+    'encrypted_model_fields',
+
+    'corsheaders',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', 
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -59,6 +63,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'projeto.urls'
@@ -111,6 +117,28 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    },
+    'USE_SESSION_AUTH': False,
+    'JSON_EDITOR': True,
+    'DEFAULT_INFO': 'projeto.urls.swagger_info',  # Referência ao swagger_info
+    'DEFAULT_API_URL': 'http://localhost:8000',
+    'OPERATIONS_SORTER': 'alpha',
+    'TAGS_SORTER': 'alpha',
+    'DOC_EXPANSION': 'list',
+}
+
+REDOC_SETTINGS = {
+    'LAZY_RENDERING': True,
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
