@@ -18,12 +18,14 @@
 
   --font-roboto: Roboto, sans-serif;
   --font-inter: Inter, sans-serif;
+  --font-louis-george-cafe: Louis George Cafe, sans-serif;
+  --font-coolvetica: Coolvetica, sans-serif;
 
   --color-primary-1: #482EA6;
   --color-primary-2: #3D278C;
   --color-primary-3: #331A8F;
   --color-primary-4: #210E69;
-  --color-primary-5: #271959;
+  --color-primary-5: #17113A;
   --color-primary-6: #0F0B26;
   --color-secondary-1: #FFC311;
   --color-secondary-2: #FFB01C;
@@ -71,6 +73,187 @@
     src: url(/fonts/Inter-Italic-VariableFont_opsz\,wght.ttf) format(truetype);
   }
 
+  /* FONT LOUIS GEORGE CAFE */
+  @font-face {
+    font-family: 'Louis George Cafe';
+    font-style: normal;
+    font-weight: 300;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(/fonts/louis-george-cafe/Louis\ George\ Cafe\ Light.ttf) format(truetype);
+  }
+
+  @font-face {
+    font-family: 'Louis George Cafe';
+    font-style: italic;
+    font-weight: 300;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(/fonts/louis-george-cafe/Louis\ George\ Cafe\ Light\ Italic.ttf) format(truetype);
+  }
+
+  @font-face {
+    font-family: 'Louis George Cafe';
+    font-style: normal;
+    font-weight: 400;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(/fonts/louis-george-cafe/Louis\ George\ Cafe.ttf) format(truetype);
+  }
+
+  @font-face {
+    font-family: 'Louis George Cafe';
+    font-style: italic;
+    font-weight: 400;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(/fonts/louis-george-cafe/Louis\ George\ Cafe\ Light.ttf) format(truetype);
+  }
+
+  @font-face {
+    font-family: 'Louis George Cafe';
+    font-style: normal;
+    font-weight: 700;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(/fonts/louis-george-cafe/Louis\ George\ Cafe\ Bold.ttf) format(truetype);
+  }
+
+  @font-face {
+    font-family: 'Louis George Cafe';
+    font-style: italic;
+    font-weight: 700;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(/fonts/louis-george-cafe/Louis\ George\ Cafe\ Bold\ Italic.ttf) format(truetype);
+  }
+
+  /* FONT COOLVETICA */
+  @font-face {
+    font-family: 'Coolvetica';
+    font-style: normal;
+    font-weight: 100;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(/fonts/coolvetica/CoolveticaUl-Regular.ttf) format(truetype);
+  }
+
+  @font-face {
+    font-family: 'Coolvetica';
+    font-style: italic;
+    font-weight: 100;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(/fonts/coolvetica/CoolveticaUl-Italic.ttf) format(truetype);
+  }
+
+  @font-face {
+    font-family: 'Coolvetica';
+    font-style: normal;
+    font-weight: 200;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(/fonts/coolvetica/CoolveticaEl-Regular.ttf) format(truetype);
+  }
+
+  @font-face {
+    font-family: 'Coolvetica';
+    font-style: italic;
+    font-weight: 200;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(/fonts/coolvetica/CoolveticaEl-Italic.ttf) format(truetype);
+  }
+
+  @font-face {
+    font-family: 'Coolvetica';
+    font-style: normal;
+    font-weight: 300;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(/fonts/coolvetica/CoolveticaLt-Regular.ttf) format(truetype);
+  }
+
+  @font-face {
+    font-family: 'Coolvetica';
+    font-style: italic;
+    font-weight: 300;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(/fonts/coolvetica/CoolveticaLt-Italic.ttf) format(truetype);
+  }
+
+  @font-face {
+    font-family: 'Coolvetica';
+    font-style: normal;
+    font-weight: 400;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(/fonts/coolvetica/CoolveticaBk-Regular.ttf) format(truetype);
+  }
+
+  @font-face {
+    font-family: 'Coolvetica';
+    font-style: italic;
+    font-weight: 400;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(/fonts/coolvetica/CoolveticaBk-Italic.ttf) format(truetype);
+  }
+
+  @font-face {
+    font-family: 'Coolvetica';
+    font-style: normal;
+    font-weight: 500;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(/fonts/coolvetica/CoolveticaRg-Regular.ttf) format(truetype);
+  }
+
+  @font-face {
+    font-family: 'Coolvetica';
+    font-style: italic;
+    font-weight: 500;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(/fonts/coolvetica/CoolveticaRg-Italic.ttf) format(truetype);
+  }
+
+  @font-face {
+    font-family: 'Coolvetica';
+    font-style: normal;
+    font-weight: 700;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(/fonts/coolvetica/CoolveticaRg-Bold.ttf) format(truetype);
+  }
+
+  @font-face {
+    font-family: 'Coolvetica';
+    font-style: italic;
+    font-weight: 700;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(/fonts/coolvetica/CoolveticaRg-BoldItalic.ttf) format(truetype);
+  }
+
+  @font-face {
+    font-family: 'Coolvetica';
+    font-style: normal;
+    font-weight: 800;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(/fonts/coolvetica/CoolveticaHv-Regular.ttf) format(truetype);
+  }
+
+  @font-face {
+    font-family: 'Coolvetica';
+    font-style: italic;
+    font-weight: 800;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(/fonts/coolvetica/CoolveticaHv-Italic.ttf) format(truetype);
+  }
 }
 
 /* @media (prefers-color-scheme: dark) {
