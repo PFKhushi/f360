@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { ReactElement } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 type CardPillarProps = {
   srcImage: string,
   altImage: string,
   title: string,
-  children: React.JSX.Element
+  children: ReactElement | ReactElement[]
   className?: string,
   classNameImage?: string
 }
