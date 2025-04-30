@@ -1,46 +1,21 @@
+import Banner from '@/app/components/Banner'
+import CardHistory from '@/app/components/CardHistory'
+import CardPillar from '@/app/components/CardPillar'
+import CardValues from '@/app/components/CardValues'
 import React from 'react'
 
 export default function LandingPage() {
   return (
     <>
-      <section className='flex w-full h-160'>
-        <div className='hidden lg:flex items-center justify-center bg-gradient-to-r from-primary-5 from-35% via-primary-4 via-75% to-primary-3 w-1/2'>
-
-          <div className='flex flex-col gap-10 text-white max-w-85'>
-            <p className='text-4xl font-coolvetica'>Onde capacitam-se futuros profissionais de trabalho na Unipê</p>
-            <p className='text-xl font-louis-george-cafe'>O futuro do trabalho é agora.</p>
-          </div>
-
-        </div>
-
-        <div className='relative lg:w-1/2'>
-          <div
-            className='hidden lg:block absolute w-10 h-full bg-gradient-to-r from-primary-3 to-transparent'
-          />
-          <picture>
-            <img
-              src="/images/logos/banner-fs-semfundo.png"
-              alt="Banner Fábrica de Software"
-              className='w-full h-full object-cover'
-            />
-          </picture>
-        </div>
-      </section>
+      <Banner/>
       
-      <section className='flex flex-col gap-25 w-full max-w-360 mx-auto p-15 my-10'>
-
-        <div className='flex justify-center items-center gap-8'>
-          
-          <picture className='rounded-3xl overflow-hidden'>
-            <img
-              src="/images/cards/IMG-20240823-WA0031.jpg"
-              alt="Turma de Extensionistas"
-              className='w-150'
-            />
-          </picture>
-
-          <div className='flex flex-col gap-10 text-white w-full max-w-152 text-2xl'>
-            <div className='w-fit *:font-coolvetica *:text-3xl'>
+      <section className='flex flex-col gap-15 lg:gap-25 w-full max-w-360 mx-auto p-5 lg:p-15 my-10'>
+        <CardHistory
+          srcImage='/images/cards/IMG-20240823-WA0031.jpg'
+          altImage='Turma de Extensionistas'
+        >
+          <div className='flex flex-col gap-10 text-white w-full max-w-152 text-lg lg:text-xl xl:text-2xl'>
+            <div className='w-fit *:font-coolvetica *:text-3xl self-center lg:self-auto'>
               <p className='text-right'>História da</p>
               <p>Fábrica de Software</p>
               <div className='w-50 h-1 mt-4 rounded-full justify-self-center bg-secondary-1'/>
@@ -54,20 +29,14 @@ export default function LandingPage() {
               </p>
             </div>
           </div>
+        </CardHistory>
 
-        </div>
-
-        <div className='flex flex-row-reverse justify-center items-center gap-8'>
-          
-          <picture className='rounded-3xl overflow-hidden'>
-            <img
-              src="/images/cards/sala-fabrica.jpg"
-              alt="Sala da Fábrica de Software"
-              className='w-150'
-            />
-          </picture>
-
-          <div className='flex flex-col font-light gap-10 text-justify text-white w-full max-w-152 text-2xl'>
+        <CardHistory
+          srcImage='/images/cards/sala-fabrica.jpg'
+          altImage='Sala da Fábrica de Software'
+          positionImage='right'
+        >
+          <div className='flex flex-col font-light gap-10 text-justify text-white w-full max-w-152 text-lg lg:text-xl xl:text-2xl'>
             <p>
               Ao longo dos anos, dezenas de projetos foram desenvolvidos com empresas reais, preparando centenas de alunos para o mercado de trabalho com uma experiência prática, dinâmica e enriquecedora.
             </p>
@@ -75,121 +44,78 @@ export default function LandingPage() {
               A Fábrica é hoje um dos pilares do aprendizado aplicado na Unipê, sendo reconhecida como um ambiente que simula uma empresa real dentro do contexto acadêmico.
             </p>
           </div>
-          
-        </div>
-
+        </CardHistory>
       </section>
 
-      <section className='bg-primary-1 mx-auto p-8 my-10'>
-        <div className='flex max-w-360 justify-between mx-auto'>
+      <section className='bg-primary-1 mx-auto px-4 xl:px-8 py-8 my-10'>
+        <div className='flex flex-col items-center lg:flex-row gap-10 lg:gap-4 max-w-360 justify-between mx-auto'>
 
-          <div className='flex gap-3 w-full max-w-90'>
-            <picture className='flex bg-[#E8E8E8] px-10 py-8 rounded-3xl'>
-              <img
-                src="/images/icons/missão.svg"
-                alt="Missão"
-                className='min-w-12'
-              />
-            </picture>
-            <div className='flex flex-col justify-between text-white'>
-              <p className='font-coolvetica text-3xl'>Missão</p>
-              <p className='font-louis-george-cafe text-xl'>Preparar os alunos da Unipê para o mercado de trabalho</p>
-            </div>
-          </div>
+          <CardValues
+            srcImage='/images/icons/missão.svg'
+            altImage='Missão'
+            title='Missão'
+            description='Preparar os alunos da Unipê para o mercado de trabalho'
+          />
 
-          <div className='flex gap-3 w-full max-w-90'>
-            <picture className='flex bg-[#E8E8E8] px-10 py-8 rounded-3xl'>
-              <img
-                src="/images/icons/visão.svg"
-                alt="Visão"
-                className='min-w-17'
-              />
-            </picture>
-            <div className='flex flex-col justify-between text-white'>
-              <p className='font-coolvetica text-3xl'>Visão</p>
-              <p className='font-louis-george-cafe text-xl'>Capacitar e mudar o mercado de tecnologia da cidade</p>
-            </div>
-          </div>
+          <CardValues
+            srcImage='/images/icons/visão.svg'
+            altImage='Visão'
+            title='Visão'
+            description='Capacitar e mudar o mercado de tecnologia da cidade'
+            className='px-8.5'
+          />
 
-          <div className='flex gap-3 w-full max-w-90'>
-            <picture className='flex bg-[#E8E8E8] px-10 py-8 rounded-3xl'>
-              <img
-                src="/images/icons/valores.svg"
-                alt="Valores"
-                className='min-w-12'
-              />
-            </picture>
-            <div className='flex flex-col justify-between text-white'>
-              <p className='font-coolvetica text-3xl'>Valores</p>
-              <p className='font-louis-george-cafe text-xl'>Transformação e inovação</p>
-            </div>
-          </div>
+          <CardValues
+            srcImage='/images/icons/valores.svg'
+            altImage='Valores'
+            title='Valores'
+            description='Transformação e inovação'
+          />
 
         </div>
       </section>
 
-      <section className='flex flex-col gap-25 w-full max-w-360 mx-auto p-15 my-10'>
+      <section className='flex flex-col gap-25 w-full max-w-360 mx-auto px-5 py-15 lg:p-15 my-10'>
 
         <div className='flex flex-col gap-2.5 place-self-center text-center text-white'>
           <p className='font-coolvetica text-4xl'>Pilares</p>
           <div className='w-50 h-1 rounded-full bg-secondary-1'/>
         </div>
 
-        <div className='flex justify-between gap-10'>
+        <div className='flex flex-col lg:flex-row items-center lg:items-start justify-between gap-20 lg:gap-10'>
 
-          <div className='flex flex-col items-center max-w-100'>
-
-            <picture className='w-80 h-80 rounded-3xl overflow-hidden drop-shadow-[10px_10px_4px] drop-shadow-black/50'>
-              <img
-                src="/images/cards/fusao-empresas-o-que-e.jpg.png"
-                alt="Empresas Parceiras"
-                className='w-full h-full object-cover'
-              />
-            </picture>
-
-            <div className='flex flex-col gap-10 text-3xl text-white text-center font-light'>
-              <p className='font-medium py-8'>Empresas Parceiras</p>
+          <CardPillar
+            srcImage='/images/cards/fusao-empresas-o-que-e.jpg.png'
+            altImage='Empresas Parceiras'
+            title='Empresas Parceiras'
+          >
+            <>
               <p>Organizações que se conectam com a Fábrica em busca de soluções tecnológicas para suas demandas.</p>
               <p>Essas parcerias fortalecem o elo entre o mercado e a academia.</p>
-            </div>
+            </>
+          </CardPillar>
 
-          </div>
-
-          <div className='flex flex-col items-center max-w-100'>
-
-            <picture className='w-80 h-80 rounded-3xl overflow-hidden drop-shadow-[10px_10px_4px] drop-shadow-black/50'>
-              <img
-                src="/images/cards/jovens trabalhando.jpg"
-                alt="Extensionistas"
-                className='w-full h-full object-cover'
-              />
-            </picture>
-
-            <div className='flex flex-col gap-10 text-3xl text-white text-center font-light'>
-              <p className='font-medium py-8'>Extensionistas</p>
+          <CardPillar
+            srcImage='/images/cards/jovens trabalhando.jpg'
+            altImage='Extensionistas'
+            title='Extensionistas'
+          >
+            <>
               <p>Alunos que, após um processo seletivo, são integrados às equipes de projetos.</p>
               <p>Cada extensionista atua em sua área de especialização, sob a supervisão de professores Tech Leads.</p>
-            </div>
+            </>
+          </CardPillar>
 
-          </div>
-
-          <div className='flex flex-col items-center max-w-100'>
-
-            <picture className='w-80 h-80 rounded-3xl overflow-hidden drop-shadow-[10px_10px_4px] drop-shadow-black/50'>
-              <img
-                src="/images/cards/demandas.jpg"
-                alt="Demandas de Projetos"
-                className='w-full h-full object-cover'
-              />
-            </picture>
-
-            <div className='flex flex-col gap-10 text-3xl text-white text-center font-light'>
-              <p className='font-medium py-8'>Demandas de Projetos</p>
+          <CardPillar
+            srcImage='/images/cards/demandas.jpg'
+            altImage='Demandas de Projetos'
+            title='Demandas de Projetos'
+          >
+            <>
               <p>As necessidades levantadas pelas empresas são transformadas em projetos reais.</p>
               <p>Cada demanda se torna um aprendizado, com equipes formadas sob medida para atender requisitos da solução.</p>
-            </div>
-
-          </div>
+            </>
+          </CardPillar>
 
         </div>
       </section>
