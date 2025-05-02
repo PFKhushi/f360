@@ -5,6 +5,7 @@ from django.db import models, IntegrityError, transaction
 from django.core.exceptions import ValidationError
 from encrypted_model_fields.fields import EncryptedCharField, EncryptedEmailField
 from django.core.validators import MaxValueValidator, MinValueValidator
+import hashlib
 
 
 class UsuarioManager(BaseUserManager):
@@ -44,6 +45,7 @@ class UsuarioManager(BaseUserManager):
         except IntegrityError:
             
             raise IntegrityError("Violação de campo único (Email já existente)")
+
         
         return user
     
@@ -75,6 +77,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         PARTICIPANTE = "PART", "Participante"
         EMPRESA = "EMP", "Empresa"
         TECHLEADER = "TECH", "Tech Leader"
+        EXCECAO = "EXC", "Exceção"
         NAO_DEFINIDO = "ND", "Não Definido"
 
     nome = models.CharField(
@@ -86,6 +89,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     username = models.EmailField( 
         verbose_name="E-mail", 
         unique=True,
+        error_messages={'unique':'Já existe um usuário com esse username'},
         help_text="E-mail principal para login"
     )
     
@@ -143,72 +147,92 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
             return self.TipoUsuario.EMPRESA
         elif hasattr(self, 'techleader'):
             return self.TipoUsuario.TECHLEADER
+        elif hasattr(self, 'excecao'):
+            return self.TipoUsuario.EXCECAO
         elif self.is_staff or self.is_superuser:
             return self.TipoUsuario.ADMIN
         return self.TipoUsuario.NAO_DEFINIDO
         
     @staticmethod
-    def criar_participante(nome,  email, rgm, senha, cpf, curso, outro_curso, periodo, email_institucional, **extras):
-        usuario = Usuario.objects.create_user(
-            nome=nome,
-            username=email,
-            password=senha,
-            **extras
-        )
-        Participante.objects.create(
-            usuario=usuario,
-            cpf=cpf,
-            rgm=rgm,
-            curso=curso,
-            outro_curso=outro_curso,
-            periodo=periodo,
-            email_institucional=email_institucional
-        )
+    def criar_participante(nome, email, rgm, senha, cpf, curso, outro_curso, periodo, email_institucional, **extras):
+        
+        cpf_hash = hashlib.sha256(cpf.encode()).hexdigest()
+        rgm_hash = hashlib.sha256(rgm.encode()).hexdigest()
+        email_institucional_hash = hashlib.sha256(email_institucional.encode()).hexdigest()
+        
+        with transaction.atomic():
+            usuario = Usuario.objects.create_user(
+                nome=nome,
+                username=email,
+                password=senha,
+                **extras
+            )
+            Participante.objects.create(
+                usuario=usuario,
+                cpf=cpf,
+                cpf_hash=cpf_hash,
+                rgm=rgm,
+                rgm_hash=rgm_hash,
+                curso=curso,
+                outro_curso=outro_curso,
+                periodo=periodo,
+                email_institucional=email_institucional,
+                email_institucional_hash=email_institucional_hash
+            )
         return usuario
 
     @staticmethod
     def criar_empresa(nome, email, senha, cnpj, representante, **extras):
-        usuario = Usuario.objects.create_user(
-            nome=nome,
-            username=email,
-            password=senha,
-            **extras
-        )
-        Empresa.objects.create(
-            usuario=usuario,
-            cnpj=cnpj,
-            representante=representante
-        )
+        
+        with transaction.atomic():
+            usuario = Usuario.objects.create_user(
+                nome=nome,
+                username=email,
+                password=senha,
+                **extras
+            )
+            Empresa.objects.create(
+                usuario=usuario,
+                cnpj=cnpj,
+                representante=representante
+            )
         return usuario
 
     @staticmethod
     def criar_techleader(nome, email, senha, codigo, especialidade, **extras):
-        usuario = Usuario.objects.create_user(
-            nome=nome,
-            username=email,
-            password=senha,
-            **extras
-        )
-        TechLeader.objects.create(
-            usuario=usuario,
-            codigo=codigo,
-            especialidade=especialidade
-        )
+        
+        codigo_hash = hashlib.sha256(codigo.encode()).hexdigest()
+        
+        with transaction.atomic():
+            usuario = Usuario.objects.create_user(
+                nome=nome,
+                username=email,
+                password=senha,
+                **extras
+            )
+            TechLeader.objects.create(
+                usuario=usuario,
+                codigo=codigo,
+                codigo_hash=codigo_hash,
+                especialidade=especialidade
+            )
         return usuario
     
     @staticmethod
     def criar_excecao(nome, email, senha, motivo, nota, **extras):
-        usuario = Usuario.objects.create_user(
-            nome=nome,
-            username=email,
-            password=senha,
-            **extras
-        )
-        Excecao.objects.create(
-            usuario=usuario,
-            motivo=motivo,
-            nota=nota
-        )
+        
+        with transaction.atomic():
+            usuario = Usuario.objects.create_user(
+                nome=nome,
+                username=email,
+                password=senha,
+                **extras
+            )
+            Excecao.objects.create(
+                usuario=usuario,
+                motivo=motivo,
+                nota=nota
+            )
         return usuario
     
     @property
@@ -274,6 +298,7 @@ class Participante(models.Model):
         validators=[RegexValidator(r'^\d{11}$', message="CPF deve ter exatamente 11 dígitos")],
         help_text="Apenas números (11 dígitos)"
     )
+    cpf_hash = models.CharField(max_length=64, unique=True, editable=False, null=True)
     
     rgm = EncryptedCharField( 
         verbose_name="RGM", 
@@ -282,12 +307,14 @@ class Participante(models.Model):
         validators=[RegexValidator(r'^\d{8}$', message="RGM deve ter exatamente 8 dígitos")],
         help_text="Apenas números (8 dígitos)"
     )
+    rgm_hash = models.CharField(max_length=64, editable=False, null=True, blank=True)
 
     email_institucional = EncryptedEmailField( 
         verbose_name="E-mail institucional", 
         unique=True,
         help_text="E-mail acadêmico/institucional"
     )
+    email_institucional_hash = models.CharField(max_length=64, editable=False, null=True, blank=True)
 
     ingresso_fab = models.DateField(
         auto_now_add=True,
@@ -297,6 +324,11 @@ class Participante(models.Model):
     class Meta:
         verbose_name = "Participante"
         verbose_name_plural = "Participantes"
+        constraints = [
+            models.UniqueConstraint(fields=['cpf'], name='unique_cpf'),
+            models.UniqueConstraint(fields=['rgm'], name='unique_rgm'),
+            models.UniqueConstraint(fields=['email_institucional'], name='unique_email')
+        ]
         permissions = [
             ("ver_todos_participantes", "Pode ver todos os participantes"),
             # ("",""),
@@ -313,6 +345,21 @@ class Participante(models.Model):
             raise ValidationError(
                 "Este usuário já está registrado com outro perfil."
             )
+            
+        if self.cpf:
+            self.cpf_hash = hashlib.sha256(self.cpf.encode()).hexdigest()
+        if self.rgm:
+            self.rgm_hash = hashlib.sha256(self.rgm.encode()).hexdigest()
+        if self.email_institucional:
+            self.email_institucional_hash = hashlib.sha256(self.email_institucional.lower().encode()).hexdigest()
+            
+        if self.pk is None:
+            if self.cpf_hash and Participante.objects.filter(cpf_hash=self.cpf_hash).exists():
+                raise ValidationError({'cpf': ['Este CPF já está cadastrado']})
+            if self.rgm_hash and Participante.objects.filter(rgm_hash=self.rgm_hash).exists():
+                raise ValidationError({'rgm': ['Este RGM já está cadastrado']})
+            if self.email_institucional_hash and Participante.objects.filter(email_institucional_hash=self.email_institucional_hash).exists():
+                raise ValidationError({'email_institucional': ['Este email institucional já está em uso']})
         
         super().save(*args, **kwargs) 
 
@@ -372,6 +419,7 @@ class TechLeader(models.Model):
         validators=[RegexValidator(r'^\d+$', message="Código deve conter apenas números")],
         help_text="Registro Geral sem pontos ou traços"
     )
+    codigo_hash = models.CharField(max_length=64, editable=False, null=True, blank=True)
     
     data_inicio = models.DateField(
         auto_now_add=True,
@@ -401,6 +449,13 @@ class TechLeader(models.Model):
             raise ValidationError(
                 "Este usuário já está registrado com outro perfil."
             )
+        
+        if self.codigo:
+            self.codigo_hash = hashlib.sha256(self.codigo.encode()).hexdigest()
+            
+        if self.pk is None:
+            if self.codigo_hash and TechLeader.objects.filter(codigo_hash=self.codigo_hash).exists():
+                raise ValidationError({'codigo': ['Este código já está cadastrado']})
             
         super().save(*args, **kwargs) 
         

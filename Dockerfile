@@ -1,38 +1,35 @@
-# Especifica a imagem base para construção da imagem docker
-FROM python:3.12-slim
+FROM python:3.13-slim
 
-# Mentenedores, metadado
-LABEL maintainer=""
+LABEL maintainer="pedrohffirmino@gmail.com"
 
-# Define a variável de ambiente PYTHONUNBUFFERED para que a saída do Python não seja armazenada em buffer (melhora o log)
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED=1
 
-# Copia Origem->Destino
+# Instala dependências do sistema (incluindo adduser)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    build-essential \
+    libpq-dev \
+    adduser \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copia arquivos necessários
 COPY ./requirements.txt /tmp/requirements.txt
 COPY ./projeto /projeto
 
-# Define o dir de trabalho dentro do container
-WORKDIR /Projeto
-# Expõe a porta padrão do Django
+WORKDIR /projeto
 EXPOSE 8000
 
-# Executa um conjunto de comandos no container:
-# 1. Cria um ambiente virtual python em /py.
-# 2. Atualiza o pip.
-# 3. Instala as dependências listadas.
-# 4. Remove o diretório tmp.
-# 5. Cria um usuário "django-user" sem senha e sem diretório pessoal que será usado para executar o aplicativo (não root).
+# Cria e prepara ambiente virtual
 RUN python -m venv /py && \
-    /py/bin/pip install --upgrade pip &&\
-    /py/bin/pip install -r /tmp/requirements.txt &&\
-    rm -rf /tmp && \
-    adduser \
-        --disabled-password \
-        --no-create-home \
-        django-user
+    /py/bin/pip install --upgrade pip && \
+    /py/bin/pip install -r /tmp/requirements.txt && \
+    rm -rf /tmp
 
-# Adiciona bin ao PATH, para q oss executáveis do ambiente virtual possam ser chamados diretamente        
 ENV PATH="/py/bin:$PATH"
 
-# Altera o usuário do container para "django-user", para garantir que o aplicativo seja executado com permissões limitadas (boa prática de segurança)
+# Cria usuário seguro para rodar o app
+RUN adduser --disabled-password --no-create-home django-user
+
 USER django-user
+
+CMD ["sh", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]

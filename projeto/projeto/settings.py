@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,14 +23,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ie0*hb#fi*+79=@$%m77&mueq%155sma^-*$vldg3idu!7$84$'
+SECRET_KEY_TMP = 'django-insecure-ie0*hb#fi*+79=@$%m77&mueq%155sma^-*$vldg3idu!7$84$'
+SECRET_KEY = os.environ.get('SECRET_KEY', SECRET_KEY_TMP)
 
-FIELD_ENCRYPTION_KEY = "YWhwdW8zXzJ3VnFnczVwQXhxeUFLZXFBSW9tdmN2b1g="
+FIELD_ENCRYPTION_KEY_TMP = "YWhwdW8zXzJ3VnFnczVwQXhxeUFLZXFBSW9tdmN2b1g="
+FIELD_ENCRYPTION_KEY = os.environ.get('FIELD_ENCRYPTION_KEY', FIELD_ENCRYPTION_KEY_TMP)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0','f360-latest.onrender.com']
 
 
 # Application definition
@@ -49,6 +53,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'encrypted_model_fields',
 
+    'drf_spectacular',
     'corsheaders',
     'drf_yasg',
 ]
@@ -98,6 +103,8 @@ DATABASES = {
     }
 }
 
+DATABASES['default'] = dj_database_url.parse('postgresql://db_f360_user:6jWfpdOeM63AFrTPCycrpeKmZkXhl1Ut@dpg-d093d8h5pdvs73a2qgh0-a.oregon-postgres.render.com/db_f360')
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -116,7 +123,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 
 SWAGGER_SETTINGS = {

@@ -4,6 +4,20 @@
 
  git clone git@gitlab.com:repositoriodafabrica/ex2025_1_f360_walace.git
 
+## Rodar docker
+
+### Roda separadamente
+```bash
+docker build -t temp-image --no-cache . # Constrói a imagem sem cache
+docker run --rm temp-image # Roda a imagem depois remove container
+docker rmi temp-image # Apaga a imagem
+```
+
+### Roda com comando único
+```bash
+docker build -t temp-image --no-cache . && docker run --rm temp-image && docker rmi temp-image
+```
+#### O Docker tá programado para rodar "makemigrations", "migrate" e "runserver" na porta 0.0.0.0:8000 quando rodar a imagem
 
 ## Criar ambiente virtual
 

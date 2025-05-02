@@ -1,462 +1,407 @@
-from rest_framework import generics, permissions, status, viewsets
+from rest_framework import generics, permissions, status, viewsets, serializers
 from rest_framework.response import Response 
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import APIException, PermissionDenied
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError
+from django.http import Http404
 from django.contrib.auth import authenticate
 from django.shortcuts import get_object_or_404
-from django.core.exceptions import ValidationError
+
+
+from drf_spectacular.utils import extend_schema_view
+
 from rest_framework.views import APIView  
-from rest_framework_simplejwt.views import TokenObtainPairView
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
 from .models import Usuario, Participante, TechLeader, Empresa
-from .serializers import UsuarioSerializer, ParticipanteSerializer, TechLeaderSerializer, EmpresaSerializer, CustomTokenSerializer
+from .serializers import UsuarioSerializer, ParticipanteSerializer, TechLeaderSerializer, EmpresaSerializer, CustomTokenSerializer, AdminCreateSerializer
 from .permissoes import IsOwnerOrAdmin
+from .swagger import (list_participantes_swagger, update_participantes_swagger,
+                    create_participantes_swagger, retrieve_participantes_swagger, 
+                    partial_update_participantes_swagger, delete_participantes_swagger,
+                    
+                    list_techleaders_swagger, update_techleaders_swagger,
+                    create_techleaders_swagger, retrieve_techleaders_swagger,
+                    partial_update_techleaders_swagger, delete_techleaders_swagger,
+                    
+                    list_empresas_swagger, update_empresas_swagger,
+                    create_empresas_swagger, retrieve_empresas_swagger,
+                    partial_update_empresas_swagger, delete_empresas_swagger,
+                    )
+import logging
 
-def atualizar_usuario_e_perfil(instancia_perfil, request, campos_perfil: list):
-    data = request.data.copy()
-    usuario_data = data.pop('usuario', None)
+logger = logging.getLogger(__name__)
 
-    if usuario_data:
-        usuario = instancia_perfil.usuario
-        password = usuario_data.pop('password', None)
-        for attr, value in usuario_data.items():
-            if hasattr(usuario, attr) and getattr(usuario, attr) != value:
-                setattr(usuario, attr, value)
-        if password:
-            usuario.set_password(password)
-        try:
-            usuario.save()
-        except ValidationError as e:
-            return Response({'usuario': e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+class ErrorHandlingMixin:
+    def handle_exception(self, exc):
 
-    for attr in campos_perfil:
-        if attr in data:
-            novo_valor = data[attr]
-            if hasattr(instancia_perfil, attr) and getattr(instancia_perfil, attr) != novo_valor:
-                setattr(instancia_perfil, attr, novo_valor)
+        # Log pra debugging
+        logger.error(
+            f"Erro na requisição {self.request.method} {self.request.path}",
+            exc_info=exc,
+            extra={
+                'user': str(self.request.user),
+                'data': self.request.data
+            }
+        )
 
-    try:
-        instancia_perfil.save()
-    except ValidationError as e:
-        return Response({'perfil': e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+        if isinstance(exc, serializers.ValidationError):
+            return self._handle_validation_error(exc)
+        elif isinstance(exc, ValidationError):  
+            return self._handle_django_validation_error(exc)
+        elif isinstance(exc, IntegrityError):
+            return self._handle_integrity_error(exc)
+        elif isinstance(exc, PermissionDenied):
+            return self._handle_permission_error(exc)
+        elif isinstance(exc, (Http404, NotFound)):
+            return self._handle_not_found_error(exc)    
+        elif isinstance(exc, APIException):
+            return self._handle_api_exception(exc)
+        else:
+            return self._handle_unexpected_error(exc)
 
-    return None
+    def _handle_validation_error(self, exc):
+        return Response(
+            {
+                "erro": "Erro de validação nos dados enviados",
+                "codigo": status.HTTP_400_BAD_REQUEST,
+                "detalhes": exc.detail
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    def _handle_django_validation_error(self, exc):
+        return Response(
+            {
+                "erro": "Erro de validação",
+                "codigo": status.HTTP_400_BAD_REQUEST,
+                "detalhes": exc.message_dict if hasattr(exc, 'message_dict') else str(exc)
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+        
+    def _handle_not_found_error(self, exc):
+        return Response(
+            {
+                "erro": "Recurso não encontrado",
+                "codigo": status.HTTP_404_NOT_FOUND,
+                "detalhes": str(exc)
+            },
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    def _handle_integrity_error(self, exc):
+        error_detail = str(exc)
+        if 'username' in error_detail:
+            detail = {"email": ["Este email já está em uso"]}
+        elif 'cpf' in error_detail:
+            detail = {"cpf": ["Este CPF já está cadastrado"]}
+        elif 'cnpj' in error_detail:
+            detail = {"cnpj": ["Este CNPJ já está cadastrado"]}
+        elif 'rgm' in error_detail:
+            detail = {"rgm": ["Este RGM já está cadastrado"]}
+        elif 'email_institucional' in error_detail:
+            detail = {"email_institucional": ["Este email institucional já está em uso"]}
+        elif 'unique constraint' in error_detail:
+            detail = {"unique": ["Este campo deve ser único"]}
+        else:
+            detail = {"database": ["Violação de restrição no banco de dados"]}
+
+        return Response(
+            {
+                "erro": "Violação de integridade de dados",
+                "codigo": status.HTTP_409_CONFLICT,
+                "detalhes": detail
+            },
+            status=status.HTTP_409_CONFLICT
+        )
+
+    def _handle_permission_error(self, exc):
+        return Response(
+            {
+                "detail": str(exc) or "Você não tem permissão para acessar este recurso."
+            },
+            status=status.HTTP_403_FORBIDDEN
+        )
+
+    def _handle_api_exception(self, exc):
+        return Response(
+            {
+                "erro": exc.default_detail,
+                "codigo": exc.status_code,
+                "detalhes": exc.get_full_details()
+            },
+            status=exc.status_code
+        )
+
+    def _handle_unexpected_error(self, exc):
+        request_id = self.request.META.get('X-Request-ID', 'unknown')
+        
+        return Response(
+            {
+                "erro": "Erro inesperado no servidor",
+                "codigo": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                "requisicao_id": request_id,
+                "detalhes": "Consulte o administrador do sistema com o ID da requisição"
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
 
 class LoginUsuario(TokenObtainPairView):
+    
     serializer_class = CustomTokenSerializer
 
-    @swagger_auto_schema(
-        operation_description="Autenticação de usuário e obtenção de tokens JWT",
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            required=['username', 'password'],
-            properties={
-                'username': openapi.Schema(
-                    type=openapi.TYPE_STRING, 
-                    format=openapi.FORMAT_EMAIL,
-                    description='Email do usuário'
-                ),
-                'password': openapi.Schema(
-                    type=openapi.TYPE_STRING, 
-                    description='Senha do usuário'
-                ),
-            },
-        ),
-        responses={
-            200: openapi.Response(
-                description="Autenticação bem-sucedida",
-                schema=openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'refresh': openapi.Schema(type=openapi.TYPE_STRING),
-                        'access': openapi.Schema(type=openapi.TYPE_STRING),
-                        'nome': openapi.Schema(type=openapi.TYPE_STRING),
-                        'email': openapi.Schema(type=openapi.TYPE_STRING),
-                        'tipo_usuario': openapi.Schema(type=openapi.TYPE_STRING),
-                    }
-                )
-            ),
-            400: "Credenciais inválidas",
-            401: "Não autorizado"
-        },
-        tags=['Autenticação']
-    )
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
 
+# view de logout, invalida o refresh token
 class LogoutUsuario(APIView):
-    @swagger_auto_schema(
-        operation_description="Realiza logout invalidadando o token de refresh",
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            required=['refresh_token'],
-            properties={
-                'refresh_token': openapi.Schema(
-                    type=openapi.TYPE_STRING,
-                    description='Token de refresh a ser invalidado'
-                )
-            },
-        ),
-        responses={
-            200: openapi.Response(
-                description="Logout realizado com sucesso",
-                schema=openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING,
-                            example="Logout realizado com sucesso!"
-                        )
-                    }
-                )
-            ),
-            400: "Token inválido ou não fornecido",
-            401: "Não autenticado"
-        },
-        security=[{'Bearer': []}],
-        tags=['Autenticação']
-    )
     def post(self, request):
         try:
             refresh_token = request.data.get('refresh_token')
             if refresh_token:
                 token = RefreshToken(refresh_token)
-                token.blacklist()
+                token.blacklist()  # invalida token
                 return Response({"detail": "Logout realizado com sucesso!"}, status=status.HTTP_200_OK)
             else:
                 return Response({"detail": "Refresh token nao fornecido."}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({"detail": "Erro ao fazer logout"}, status=status.HTTP_400_BAD_REQUEST)
 
-class ParticipanteViewSet(viewsets.ModelViewSet):
+class AdminCreateView(APIView):
+    permission_classes = [permissions.AllowAny]  # Mude para IsAdminUser após criar o primeiro admin
+
+    def post(self, request):
+        serializer = AdminCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            admin = serializer.save()
+            return Response(serializer.to_representation(admin), status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# view q gerencia CRUD de Participantes
+class ParticipanteViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
     queryset = Participante.objects.all()
     serializer_class = ParticipanteSerializer
-
+    
     def get_permissions(self):
+        # define regras de acesso p/ cada acao
         if self.action == 'create':
             permission_classes = [permissions.AllowAny]
         elif self.action in ['update', 'partial_update', 'destroy']:
             permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
         else:
             permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
-        return [permissions.AllowAny()]  # TODO: Retirar depois
+        # return [permissions.AllowAny()] #############retirar depois###############
+        return [perm() for perm in permission_classes]
 
-    @swagger_auto_schema(
-        operation_description="Lista todos os participantes",
-        manual_parameters=[
-            openapi.Parameter(
-                'curso',
-                openapi.IN_QUERY,
-                description="Filtrar por curso",
-                type=openapi.TYPE_STRING,
-                enum=['ADS', 'CC', 'SI', 'CD', 'OTR']
-            )
-        ],
-        responses={
-            200: ParticipanteSerializer(many=True),
-            401: "Não autenticado",
-            403: "Sem permissão"
-        },
-        tags=['Participantes']
-    )
-    def list(self, request, *args, **kwargs):
+    def get_queryset(self):
         user = self.request.user
         if user.is_staff or user.has_perm('api_rest.ver_todos_participantes'):
-            return super().list(request, *args, **kwargs)
-        return super().list(request, *args, **kwargs)  # TODO: Modificar depois
+            return Participante.objects.all()
+        # return Participante.objects.all() #############retirar depois###############
+        return Participante.objects.filter(usuario=user)  # user so ve seu perfil
 
-    @swagger_auto_schema(
-        operation_description="Cria um novo participante",
-        request_body=ParticipanteSerializer,
-        responses={
-            201: ParticipanteSerializer(),
-            400: "Dados inválidos",
-            401: "Não autenticado"
-        },
-        tags=['Participantes']
-    )
-    def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
+    def _get_participante(self, pk):
+        try:
+            return Participante.objects.get(pk=pk)
+        except Participante.DoesNotExist:
+            raise Http404("Participante não encontrado com o ID fornecido.")
 
-    @swagger_auto_schema(
-        operation_description="Retorna detalhes de um participante",
-        responses={
-            200: ParticipanteSerializer(),
-            401: "Não autenticado",
-            403: "Sem permissão",
-            404: "Não encontrado"
-        },
-        tags=['Participantes']
-    )
-    def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
+    def _handle_serialization(self, participante, data=None, partial=False):
+        serializer = self.get_serializer(participante, data=data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @swagger_auto_schema(
-        operation_description="Atualiza todos os campos de um participante",
-        request_body=ParticipanteSerializer,
-        responses={
-            200: ParticipanteSerializer(),
-            400: "Dados inválidos",
-            401: "Não autenticado",
-            403: "Sem permissão",
-            404: "Não encontrado"
-        },
-        security=[{'Bearer': []}],
-        tags=['Participantes']
-    )
+    # Usando a função genérica para diferentes ações
+    @update_participantes_swagger()
     def update(self, request, *args, **kwargs):
-        participante = self.get_object()
-        erro = atualizar_usuario_e_perfil(participante, request, campos_perfil=[
-            'cpf', 'rgm', 'curso', 'outro_curso', 'periodo', 'email_institucional'
-        ])
-        if erro:
-            return erro
+        participante = self._get_participante(kwargs['pk'])
+        return self._handle_serialization(participante, data=request.data)
+
+    @list_participantes_swagger()
+    def list(self, request, *args, **kwargs):
+        participantes = self.get_queryset() 
+        serializer = self.get_serializer(participantes, many=True)
+        return Response(serializer.data)
+
+    @retrieve_participantes_swagger()
+    def retrieve(self, request, *args, **kwargs):
+        participante = self._get_participante(kwargs['pk'])
         serializer = self.get_serializer(participante)
         return Response(serializer.data)
 
-    @swagger_auto_schema(
-        operation_description="Atualiza campos específicos de um participante",
-        request_body=ParticipanteSerializer,
-        responses={
-            200: ParticipanteSerializer(),
-            400: "Dados inválidos",
-            401: "Não autenticado",
-            403: "Sem permissão",
-            404: "Não encontrado"
-        },
-        security=[{'Bearer': []}],
-        tags=['Participantes']
-    )
+    @partial_update_participantes_swagger()
     def partial_update(self, request, *args, **kwargs):
-        return super().partial_update(request, *args, **kwargs)
+        participante = self._get_participante(kwargs['pk'])
+        return self._handle_serialization(participante, data=request.data, partial=True)
 
-    @swagger_auto_schema(
-        operation_description="Remove um participante",
-        responses={
-            204: "Participante removido com sucesso",
-            401: "Não autenticado",
-            403: "Sem permissão",
-            404: "Não encontrado"
-        },
-        security=[{'Bearer': []}],
-        tags=['Participantes']
-    )
+    @create_participantes_swagger()
+    def create(self, request, *args, **kwargs):
+        return self._handle_serialization(None, data=request.data)
+
+    @delete_participantes_swagger()
     def destroy(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
+        participante = self._get_participante(kwargs['pk'])
+        participante.usuario.delete()
+        participante.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
 
-class TechLeaderViewSet(viewsets.ModelViewSet):
+
+# view p/ techleaders, mesma estrutura da view de participantes
+class TechLeaderViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
+    
     serializer_class = TechLeaderSerializer
     
     def get_permissions(self):
+        # define regras de acesso p/ cada acao
         if self.action == 'create':
             permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
         elif self.action in ['update', 'partial_update', 'destroy']:
             permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
         else:
             permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
-        return [permissions.AllowAny()]  # TODO: Retirar depois
+        # return [permissions.AllowAny()] #############retirar depois###############
+        return [perm() for perm in permission_classes]
 
-    @swagger_auto_schema(
-        operation_description="Lista todos os tech leaders",
-        responses={
-            200: TechLeaderSerializer(many=True),
-            401: "Não autenticado",
-            403: "Sem permissão"
-        },
-        tags=['Tech Leaders']
-    )
-    def list(self, request, *args, **kwargs):
+    def get_queryset(self):
+        
         user = self.request.user
         if user.is_staff or user.has_perm('api_rest.ver_todos_techleaders'):
-            return super().list(request, *args, **kwargs)
-        return super().list(request, *args, **kwargs)  # TODO: Modificar depois
+            return TechLeader.objects.all()
+        # return TechLeader.objects.all()#############retirar depois###############
+        return TechLeader.objects.filter(usuario=user)
+    
+    def _get_techleader(self, pk):
+        try:
+            return TechLeader.objects.get(pk=pk)
+        except TechLeader.DoesNotExist:
+            raise Http404("Tech Leader não encontrado com o ID fornecido.")
 
-    @swagger_auto_schema(
-        operation_description="Cria um novo tech leader (apenas admin)",
-        request_body=TechLeaderSerializer,
-        responses={
-            201: TechLeaderSerializer(),
-            400: "Dados inválidos",
-            401: "Não autenticado",
-            403: "Sem permissão"
-        },
-        security=[{'Bearer': []}],
-        tags=['Tech Leaders']
-    )
-    def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="Retorna detalhes de um tech leader",
-        responses={
-            200: TechLeaderSerializer(),
-            401: "Não autenticado",
-            403: "Sem permissão",
-            404: "Não encontrado"
-        },
-        tags=['Tech Leaders']
-    )
-    def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="Atualiza todos os campos de um tech leader",
-        request_body=TechLeaderSerializer,
-        responses={
-            200: TechLeaderSerializer(),
-            400: "Dados inválidos",
-            401: "Não autenticado",
-            403: "Sem permissão",
-            404: "Não encontrado"
-        },
-        security=[{'Bearer': []}],
-        tags=['Tech Leaders']
-    )
+    def _handle_serialization(self, techleader, data=None, partial=False):
+        serializer = self.get_serializer(techleader, data=data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    @update_techleaders_swagger()
     def update(self, request, *args, **kwargs):
-        techleader = self.get_object()
-        erro = atualizar_usuario_e_perfil(techleader, request, campos_perfil=[
-            'codigo', 'especialidade'
-        ])
-        if erro:
-            return erro
+        
+        techleader = self._get_techleader(kwargs['pk'])
+        return self._handle_serialization(techleader, data=request.data)
+
+    @list_techleaders_swagger()
+    def list(self, request, *args, **kwargs):
+        
+        techleaders = self.get_queryset() 
+        serializer = self.get_serializer(techleaders, many=True)
+        return Response(serializer.data)
+
+    @retrieve_techleaders_swagger()
+    def retrieve(self, request, *args, **kwargs):
+        
+        techleader = self._get_techleader(kwargs['pk'])
         serializer = self.get_serializer(techleader)
         return Response(serializer.data)
 
-    @swagger_auto_schema(
-        operation_description="Atualiza campos específicos de um tech leader",
-        request_body=TechLeaderSerializer,
-        responses={
-            200: TechLeaderSerializer(),
-            400: "Dados inválidos",
-            401: "Não autenticado",
-            403: "Sem permissão",
-            404: "Não encontrado"
-        },
-        security=[{'Bearer': []}],
-        tags=['Tech Leaders']
-    )
+    @partial_update_techleaders_swagger()
     def partial_update(self, request, *args, **kwargs):
-        return super().partial_update(request, *args, **kwargs)
+        
+        techleader = self._get_techleader(kwargs['pk'])
+        return self._handle_serialization(techleader, data=request.data, partial=True)
 
-    @swagger_auto_schema(
-        operation_description="Remove um tech leader",
-        responses={
-            204: "Tech leader removido com sucesso",
-            401: "Não autenticado",
-            403: "Sem permissão",
-            404: "Não encontrado"
-        },
-        security=[{'Bearer': []}],
-        tags=['Tech Leaders']
-    )
+    @create_techleaders_swagger()
+    def create(self, request, *args, **kwargs):
+        
+        return self._handle_serialization(None, data=request.data)
+
+    @delete_techleaders_swagger()
     def destroy(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
-
-class EmpresaViewSet(viewsets.ModelViewSet):
+        
+        techleader = self._get_techleader(kwargs['pk'])
+        techleader.usuario.delete()
+        techleader.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+# view p/ empresas, logica identica mudando os campos do perfil
+class EmpresaViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
+    
     serializer_class = EmpresaSerializer
 
     def get_permissions(self):
+        # define regras de acesso p/ cada acao
         if self.action == 'create':
             permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
         elif self.action in ['update', 'partial_update', 'destroy']:
             permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
         else:
             permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
-        return [permissions.AllowAny()]  # TODO: Retirar depois
+        # return [permissions.AllowAny()] #############retirar depois###############
+        return [perm() for perm in permission_classes]
 
-    @swagger_auto_schema(
-        operation_description="Lista todas as empresas",
-        responses={
-            200: EmpresaSerializer(many=True),
-            401: "Não autenticado",
-            403: "Sem permissão"
-        },
-        tags=['Empresas']
-    )
-    def list(self, request, *args, **kwargs):
+    def get_queryset(self):
+        
         user = self.request.user
         if user.is_staff or user.has_perm('api_rest.ver_todas_empresas'):
-            return super().list(request, *args, **kwargs)
-        return super().list(request, *args, **kwargs)  # TODO: Modificar depois
+            return Empresa.objects.all()
+        # return Empresa.objects.all()#############retirar depois###############
+        return Empresa.objects.filter(usuario=user)
+    
+    def _get_empresa(self, pk):
+        try:
+            return Empresa.objects.get(pk=pk)
+        except Empresa.DoesNotExist:
+            raise Http404("Empresa não encontrado com o ID fornecido.")
 
-    @swagger_auto_schema(
-        operation_description="Cria uma nova empresa (apenas admin)",
-        request_body=EmpresaSerializer,
-        responses={
-            201: EmpresaSerializer(),
-            400: "Dados inválidos",
-            401: "Não autenticado",
-            403: "Sem permissão"
-        },
-        security=[{'Bearer': []}],
-        tags=['Empresas']
-    )
-    def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="Retorna detalhes de uma empresa",
-        responses={
-            200: EmpresaSerializer(),
-            401: "Não autenticado",
-            403: "Sem permissão",
-            404: "Não encontrado"
-        },
-        tags=['Empresas']
-    )
-    def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="Atualiza todos os campos de uma empresa",
-        request_body=EmpresaSerializer,
-        responses={
-            200: EmpresaSerializer(),
-            400: "Dados inválidos",
-            401: "Não autenticado",
-            403: "Sem permissão",
-            404: "Não encontrado"
-        },
-        security=[{'Bearer': []}],
-        tags=['Empresas']
-    )
+    def _handle_serialization(self, empresa, data=None, partial=False):
+        serializer = self.get_serializer(empresa, data=data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    @update_empresas_swagger()
     def update(self, request, *args, **kwargs):
-        empresa = self.get_object()
-        erro = atualizar_usuario_e_perfil(empresa, request, campos_perfil=[
-            'cnpj', 'representante'
-        ])
-        if erro:
-            return erro
+        
+        empresa = self._get_empresa(kwargs['pk'])
+        return self._handle_serialization(empresa, data=request.data)
+
+    @list_empresas_swagger()
+    def list(self, request, *args, **kwargs):
+        
+        empresas = self.get_queryset() 
+        serializer = self.get_serializer(empresas, many=True)
+        return Response(serializer.data)
+
+    @retrieve_empresas_swagger()
+    def retrieve(self, request, *args, **kwargs):
+        
+        empresa = self._get_empresa(kwargs['pk'])
         serializer = self.get_serializer(empresa)
         return Response(serializer.data)
 
-    @swagger_auto_schema(
-        operation_description="Atualiza campos específicos de uma empresa",
-        request_body=EmpresaSerializer,
-        responses={
-            200: EmpresaSerializer(),
-            400: "Dados inválidos",
-            401: "Não autenticado",
-            403: "Sem permissão",
-            404: "Não encontrado"
-        },
-        security=[{'Bearer': []}],
-        tags=['Empresas']
-    )
+    @partial_update_empresas_swagger()
     def partial_update(self, request, *args, **kwargs):
-        return super().partial_update(request, *args, **kwargs)
+        
+        empresa = self._get_empresa(kwargs['pk'])
+        return self._handle_serialization(empresa, data=request.data, partial=True)
 
-    @swagger_auto_schema(
-        operation_description="Remove uma empresa",
-        responses={
-            204: "Empresa removida com sucesso",
-            401: "Não autenticado",
-            403: "Sem permissão",
-            404: "Não encontrado"
-        },
-        security=[{'Bearer': []}],
-        tags=['Empresas']
-    )
+    @create_empresas_swagger()
+    def create(self, request, *args, **kwargs):
+        
+        return self._handle_serialization(None, data=request.data)
+
+    @delete_empresas_swagger()
     def destroy(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
+        
+        empresa = self._get_empresa(kwargs['pk'])
+        empresa.usuario.delete()
+        empresa.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    

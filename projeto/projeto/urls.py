@@ -28,9 +28,9 @@ from .swagger_info import swagger_info
 
 
 schema_view = get_schema_view(
-   swagger_info,  #swagger_info importado
-   public=True,
-   permission_classes=(permissions.AllowAny,),
+    swagger_info,  #swagger_info importado
+    public=True,
+    permission_classes=(permissions.AllowAny,),
 )
 
 urlpatterns = [
