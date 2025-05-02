@@ -16,16 +16,16 @@ export default function Register(){
         <div className='w-[300px] sm:w-[503px] h-[1px] bg-white' />
         <p className='text-center font-roboto text-[24px]'>Qual a classificação do seu perfil?</p>
         <div className='font-roboto pb-[35px] text-[24px] flex flex-col md:flex-row md:pt-[15px] gap-[50px]'>
-          <div className='flex justify-center items-center bg-primary-1 w-[220px] h-[120px] drop-shadow-[5px_5px_4px] drop-shadow-secondary-2 rounded-[20px] transition duration-300 active:translate-x-[3px] active:translate-y-[3px] active:drop-shadow-[1px_1px_4px]'>
-            <Link href={'/register/participante'}>
-              Participante
-            </Link>
-          </div>
-          <div className='flex justify-center items-center bg-primary-1 w-[220px] h-[120px] drop-shadow-[5px_5px_4px] drop-shadow-secondary-2 rounded-[20px] transition duration-300 active:translate-x-[3px] active:translate-y-[3px] active:drop-shadow-[1px_1px_4px]'>
-            <Link href={'/register/empresa'}>
-              Empresa
-            </Link>
-          </div>
+          <Link href={'/register/participante'}>
+            <div className='flex justify-center items-center bg-primary-1 w-[220px] h-[120px] drop-shadow-[5px_5px_4px] drop-shadow-secondary-2 rounded-[20px] transition duration-300 active:translate-x-[3px] active:translate-y-[3px] active:drop-shadow-[1px_1px_4px]'>
+                Participante
+            </div>
+          </Link>
+          <Link href={'/register/empresa'}>
+            <div className='flex justify-center items-center bg-primary-1 w-[220px] h-[120px] drop-shadow-[5px_5px_4px] drop-shadow-secondary-2 rounded-[20px] transition duration-300 active:translate-x-[3px] active:translate-y-[3px] active:drop-shadow-[1px_1px_4px]'>
+                Empresa
+            </div>
+          </Link>
         </div>
       </div>
     </div>
