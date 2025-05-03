@@ -71,19 +71,19 @@ export default function CarrouselCardsSolution() {
     <div className='relative overflow-hidden'>
 
       <button
-        className="absolute z-10 top-0 bottom-0 -left-8 sm:left-0"
+        className="absolute z-1 top-0 bottom-0 -left-8 sm:left-0 bg-gradient-to-l from-transparent to-primary-1"
         aria-label="Previous image"
       >
         <BsChevronCompactLeft
-          className='w-23 h-full text-white'
+          className='w-23 h-full text-white drop-shadow-[2px_2px_0px] drop-shadow-secondary-1 hover:text-secondary-1 transition hover:drop-shadow-white'
         />
       </button>
       <button
-        className="absolute z-10 top-0 bottom-0 -right-8 sm:right-0"
+        className="absolute z-1 top-0 bottom-0 -right-8 sm:right-0 bg-gradient-to-r from-transparent to-primary-1"
         aria-label="Next Image"
       >
         <BsChevronCompactRight
-          className='w-23 h-full text-white'
+          className='w-23 h-full text-white drop-shadow-[2px_2px_0px] drop-shadow-secondary-1 hover:text-secondary-1 transition hover:drop-shadow-white'
         />
       </button>
 

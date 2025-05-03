@@ -29,9 +29,9 @@ export default function NavBarPublic() {
       "fixed top-0 py-5 px-5 w-full mx-auto z-10 transition",
       isDark ? 'bg-primary-5' : 'bg-primary-5/50'
     )}>
-      <div className="flex flex-col md:flex-row items-center justify-between text-white max-w-360 mx-auto gap-6">
+      <div className="flex items-center justify-between text-white max-w-360 mx-auto gap-6">
         
-        <div className="flex items-center gap-10">
+        <div className="flex items-center gap-10 overflow-hidden w-11.5 md:w-fit">
           <Link href={'/'}>
             <picture>
               <img
@@ -72,7 +72,7 @@ export default function NavBarPublic() {
           </Link>
         </ul> */}
 
-        <ul className="flex items-center gap-10">
+        <ul className="flex items-center gap-6 md:gap-10">
           <Link href={'/sign-in'}>
             <li className="text-lg lg:text-xl xl:text-2xl hover:text-secondary-2 transition">
               Entrar
