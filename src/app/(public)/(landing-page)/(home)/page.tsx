@@ -2,6 +2,7 @@ import Banner from '@/app/components/Banner'
 import CardHistory from '@/app/components/CardHistory'
 import CardPillar from '@/app/components/CardPillar'
 import CardValues from '@/app/components/CardValues'
+import CarrouselCardsSolution from '@/app/components/CarrouselCardsSolution'
 import React from 'react'
 
 export default function LandingPage() {
@@ -100,6 +101,22 @@ export default function LandingPage() {
           </CardPillar>
         </div>
 
+      </section>
+
+      <section className='bg-primary-1 px-4 xl:px-8 py-20 my-10'>
+
+        <div className='flex flex-col gap-17 max-w-360 mx-auto'>
+          
+          <div className='flex items-center gap-5 sm:gap-15 md:gap-20 sm:px-7.5 md:px-10 w-full text-center text-white'>
+            <div className='w-full h-1 rounded-full bg-secondary-1'/>
+            <p className='min-w-34 font-coolvetica text-4xl'>Áreas de solução</p>
+            <div className='w-full h-1 rounded-full bg-secondary-1'/>
+          </div>
+
+          <CarrouselCardsSolution />
+
+        </div>
+        
       </section>
     </>
   )
