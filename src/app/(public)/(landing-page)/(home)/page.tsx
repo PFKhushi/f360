@@ -3,6 +3,8 @@ import CardHistory from '@/app/components/CardHistory'
 import CardPillar from '@/app/components/CardPillar'
 import CardValues from '@/app/components/CardValues'
 import CarrouselCardsSolution from '@/app/components/CarrouselCardsSolution'
+import Footer from '@/app/components/Footer'
+import InfiniteScroll from '@/app/components/InfiniteScroll'
 import React from 'react'
 
 export default function LandingPage() {
@@ -118,6 +120,20 @@ export default function LandingPage() {
         </div>
         
       </section>
+
+      <section className='flex flex-col gap-17 max-w-360 mx-auto my-20 md:my-30 lg:my-40 xl:my-50'>
+        
+        <p className='min-w-34 font-coolvetica text-4xl text-center text-white'>Empresas parceiras</p>
+       
+        <InfiniteScroll
+          duration={40}
+          maskStart={10}
+          maskEnd={90}
+          classNameImg='px-5 w-75 sm:w-100 h-50 sm:h-75'
+        />
+      </section>
+
+      <Footer/>
     </>
   )
 }

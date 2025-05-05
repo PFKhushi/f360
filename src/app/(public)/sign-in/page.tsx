@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const schema = z.object({
   email: z
@@ -42,16 +43,21 @@ export default function SignIn() {
         className="absolute inset-0 bg-cover bg-center z-0"
         style={{ backgroundImage: "url('/images/planodefundologin.jpg')" }}
       />
-      <div className="relative z-10 w-full max-w-3xl bg-primary-3 text-white flex flex-col justify-center px-10 py-12 rounded-r-3xl">
+      <div className="relative w-full max-w-3xl bg-primary-3 text-white flex flex-col justify-center px-10 py-12 rounded-r-3xl">
         <div className="mb-10 flex items-center justify-between">
-          <img
-            src="/images/logos/branca-com-preenchimento/branco-com-preenchimento-letreiro.png"
-            alt="Logo"
-            className="h-40 object-contain mb-6"
-          />
-          <a className="text-right text-xl font-roboto" href="/">
+          <Link href={'/'}>
+            <picture>
+              <img
+                src="/images/logos/branca-com-preenchimento/branco-com-preenchimento-letreiro.png"
+                alt="Logo"
+                className="h-40 object-contain mb-6"
+              />
+            </picture>
+          </Link>
+          
+          {/* <a className="text-right text-xl font-roboto" href="/">
             Início
-          </a>
+          </a> */}
         </div>
 
         <h1 className="text-3xl font-bold mb-1 font-coolvetica">Boas vindas.</h1>
