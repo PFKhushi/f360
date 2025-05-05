@@ -1,20 +1,20 @@
 ###
-POST http://localhost:8000/api/login/ HTTP/1.1
+POST https://f360-latest.onrender.com/api/login/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "admin@example.com",
-    "password": "senhaSuperSegura123"
+    "username": "admin@exsample.com",
+    "password": "senhaSupesrSegura123"
 }
 
 ###
-POST http://localhost:8000/api/criar-admin/ HTTP/1.1
+POST https://f360-latest.onrender.com/api/criar-admin/ HTTP/1.1
 Content-Type: application/json
 
 {
     "nome": "Administrador Geral",
-    "username": "admin@example.com",
-    "password": "senhaSuperSegura123"
+    "username": "admin@exsample.com",
+    "password": "senhaSupesrSegura123"
 }
 
 ###

@@ -6,6 +6,8 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 class Imersao(models.Model):
     ano         = models.IntegerField()
     semestre    = models.IntegerField()
+    ativa       = models.BooleanField(default=True)
+    data_inicio = models.DateField(auto_now_add=True)
     
     class Meta:
         verbose_name = 'Imersão'
@@ -224,7 +226,7 @@ class ParticipacaoImersao(models.Model):
         related_name='participantes_imersao',
         help_text="Imersão na qual o participante participou"
     )
-    data_participacao   = models.DateField(auto_now_add=True)
+    data_participacao = models.DateField(auto_now_add=True)
     
     class Meta:
         verbose_name = 'Participação na Imersão'

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from api_rest.models import Usuario, Participante, Empresa, TechLeader, Extensionista, Excecao
+from imersao.models import Imersao
 from django.core.exceptions import ValidationError
 from django.db import models, IntegrityError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -81,10 +82,34 @@ class BasePerfilSerializer(serializers.ModelSerializer):
 # serializer aninhado p/ Participante
 class ParticipanteSerializer(BasePerfilSerializer):
     usuario = UsuarioSerializer()  # inclui dados do user embutidos
+    extensionista = serializers.SerializerMethodField(read_only=True)
+    imersionista = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Participante
-        fields = ['id', 'usuario', 'cpf', 'rgm', 'curso', 'outro_curso', 'periodo', 'email_institucional']
+        fields = ['id', 'usuario', 'cpf', 'rgm', 'curso', 'outro_curso', 'periodo', 'email_institucional', 'extensionista', 'imersionista']
+
+    def get_extensionista(self, participante):
+        if hasattr(participante, 'extensionista'):
+            return {
+                'extensionista': True,
+                'veterano': participante.extensionista.veterano
+            }
+        return False
+
+    def get_imersionista(self, participante):
+        ultima_imersao = Imersao.objects.order_by('-ano', '-semestre').first()
+        if not ultima_imersao:
+            return False
+        
+        participacao = participante.imersoes_participadas.filter(imersao=ultima_imersao).first()
+        if participacao:
+            return {
+                'id_participacao': participacao.id,
+                'id_imersao': ultima_imersao.id,
+            }
+        
+        return False
 
     def validate_cpf(self, value):
         if len(value) != 11:
@@ -98,11 +123,9 @@ class ParticipanteSerializer(BasePerfilSerializer):
             if Participante.objects.filter(cpf_hash=cpf_hash).exists():
                 raise serializers.ValidationError("Este CPF já está cadastrado")
         return value
-        
 
     def validate_rgm(self, value):
         if len(value) != 8:
-            print("hoooollllleee")
             raise serializers.ValidationError("RGM deve ter exatamente 8 dígitos")
         
         rgm_hash = hashlib.sha256(value.encode()).hexdigest()
@@ -124,7 +147,6 @@ class ParticipanteSerializer(BasePerfilSerializer):
                 raise serializers.ValidationError("Este email institucional já está em uso")
         return value
 
-    
     def create(self, validated_data):
         usuario_data = validated_data.pop('usuario')
         # cria user + perfil de forma encadeada
@@ -202,9 +224,36 @@ class TechLeaderSerializer(BasePerfilSerializer):
         
         
 class ExcecaoSerializer(BasePerfilSerializer):
+    
+    usuario = UsuarioSerializer()
+    extensionista = serializers.SerializerMethodField(read_only=True)
+    imersionista = serializers.SerializerMethodField(read_only=True)
+    
     class Meta:
         model = Excecao
         fields = ['id', 'usuario', 'motivo', 'nota', 'data_inicio']
+        
+    def get_extensionista(self, excecao):
+        if hasattr(excecao, 'extensionista'):
+            return {
+                'extensionista': True,
+                'veterano': excecao.extensionista.veterano
+            }
+        return False
+    
+    def get_imersionista(self, excecao):
+        ultima_imersao = Imersao.objects.order_by('-ano', '-semestre').first()
+        if not ultima_imersao or not ultima_imersao.ativa:
+            return False
+        
+        participacao = excecao.imersoes_participadas.filter(imersao=ultima_imersao).first()
+        if participacao:
+            return {
+                'id_participacao': participacao.id,
+                'id_imersao': ultima_imersao.id,
+            }
+        
+        return False
         
     def create(self, validated_data):
         try:
@@ -224,8 +273,27 @@ class ExtensionistaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Extensionista
-        fields = ['id', 'participante', 'excecao']
+        fields = ['id', 'participante', 'excecao', 'vetenaro']
+    
+    def validate_participante(self, value):
         
+        if self.instance:
+            if Extensionista.objects.filter(participante=value).exclude(pk=self.instance.pk).exists():
+                raise serializers.ValidationError("Este participante já está cadastrado como extensionista")
+        else:
+            if Extensionista.objects.filter(participante=value).exists():
+                raise serializers.ValidationError("Este participante já está cadastrado como extensionista")
+        return value
+    
+    def validate_excecao(self, value):
+        if self.instance:
+            if Extensionista.objects.filter(excecao=value).exclude(pk=self.instance.pk).exists():
+                raise serializers.ValidationError("Este participante já está cadastrado como extensionista")
+        else:
+            if Extensionista.objects.filter(excecao=value).exists():
+                raise serializers.ValidationError("Este participante já está cadastrado como extensionista")
+        return value
+
     def validate(self, data):
         participante = data.get('participante')
         excecao = data.get('excecao')

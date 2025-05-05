@@ -1,12 +1,14 @@
 from django.urls import path
 from api_rest import views
 from rest_framework.routers import DefaultRouter
-from api_rest.views import ParticipanteViewSet, EmpresaViewSet, TechLeaderViewSet, LoginUsuario, LogoutUsuario, AdminCreateView
+from api_rest.views import ParticipanteViewSet, EmpresaViewSet, TechLeaderViewSet, LoginUsuario, LogoutUsuario, AdminCreateView, ExcecaoViewSet, ExtensionistaViewSet
 
 router = DefaultRouter()
 router.register('participante', ParticipanteViewSet, basename='participante')
 router.register('empresa', EmpresaViewSet, basename='empresa')
 router.register('techleader', TechLeaderViewSet, basename='techleader')
+router.register('excecao', ExcecaoViewSet, basename='excecao')
+router.register('extensionista', ExtensionistaViewSet, basename='extensionista')
 
 
 urlpatterns = [

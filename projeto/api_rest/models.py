@@ -228,10 +228,15 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
                 password=senha,
                 **extras
             )
-            Excecao.objects.create(
+            excecao = Excecao.objects.create(
                 usuario=usuario,
                 motivo=motivo,
                 nota=nota
+            )
+            Extensionista.objects.create(
+                excecao = excecao,
+                participante = None,
+                veterano = False
             )
         return usuario
     
@@ -340,7 +345,7 @@ class Participante(models.Model):
     
     def save(self, *args, **kwargs):
         
-        if hasattr(self.usuario, 'empresa') or hasattr(self.usuario, 'techleader'):
+        if hasattr(self.usuario, 'empresa') or hasattr(self.usuario, 'techleader') or hasattr(self.usuario, 'excecao'):
             
             raise ValidationError(
                 "Este usuário já está registrado com outro perfil."
@@ -397,7 +402,7 @@ class Empresa(models.Model):
     
     def save(self, *args, **kwargs):
         
-        if hasattr(self.usuario, 'participante') or hasattr(self.usuario, 'techleader'):
+        if hasattr(self.usuario, 'participante') or hasattr(self.usuario, 'techleader') or hasattr(self.usuario, 'excecao'):
             
             raise ValidationError( 
                 "Este usuário já está registrado com outro perfil."
@@ -444,7 +449,7 @@ class TechLeader(models.Model):
     
     def save(self, *args, **kwargs):
         
-        if hasattr(self.usuario, 'participante') or hasattr(self.usuario, 'empresa'):
+        if hasattr(self.usuario, 'participante') or hasattr(self.usuario, 'empresa') or hasattr(self.usuario, 'excecao'):
             
             raise ValidationError(
                 "Este usuário já está registrado com outro perfil."
@@ -483,7 +488,19 @@ class Excecao(models.Model):
         permissions = [
             ("ver_todas_excecoes", "Pode ver todas as exceções"),
         ]
+        
+    def __str__(self):
+        return f"Participante: {self.usuario.nome}"    
     
+    def save(self, *args, **kwargs):
+        
+        if hasattr(self.usuario, 'participante') or hasattr(self.usuario, 'empresa') or hasattr(self.usuario, 'techleader') or hasattr(self.usuario, 'excecao'):
+            
+            raise ValidationError(
+                "Este usuário já está registrado com outro perfil."
+            )
+        super().save(*args, **kwargs) 
+        
     
 class Extensionista(models.Model):
     
@@ -510,5 +527,11 @@ class Extensionista(models.Model):
         permissions = [
             ("ver_todos_extensionistas", "Pode ver todos os extensionistas"),
         ]
+        
+    def __str__(self):
+        if self.participante:
+            return f"Extensionisto: {self.participante.usuario.nome}"
+        else:
+            return f"Extensionista: {self.excecao.usuario.nome}"
     
     

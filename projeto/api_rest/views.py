@@ -9,23 +9,22 @@ from django.http import Http404
 from django.contrib.auth import authenticate
 from django.shortcuts import get_object_or_404
 
-
 from drf_spectacular.utils import extend_schema_view
 
 from rest_framework.views import APIView  
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
-from .models import Usuario, Participante, TechLeader, Empresa
-from .serializers import UsuarioSerializer, ParticipanteSerializer, TechLeaderSerializer, EmpresaSerializer, CustomTokenSerializer, AdminCreateSerializer
+from .models import Usuario, Participante, TechLeader, Empresa, Excecao, Extensionista
+from .serializers import UsuarioSerializer, ParticipanteSerializer, TechLeaderSerializer, EmpresaSerializer, CustomTokenSerializer, AdminCreateSerializer, ExcecaoSerializer, ExtensionistaSerializer
 from .permissoes import IsOwnerOrAdmin
 from .swagger import (list_participantes_swagger, update_participantes_swagger,
                     create_participantes_swagger, retrieve_participantes_swagger, 
                     partial_update_participantes_swagger, delete_participantes_swagger,
-                    
+
                     list_techleaders_swagger, update_techleaders_swagger,
                     create_techleaders_swagger, retrieve_techleaders_swagger,
                     partial_update_techleaders_swagger, delete_techleaders_swagger,
-                    
+
                     list_empresas_swagger, update_empresas_swagger,
                     create_empresas_swagger, retrieve_empresas_swagger,
                     partial_update_empresas_swagger, delete_empresas_swagger,
@@ -35,6 +34,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 class ErrorHandlingMixin:
+    
     def handle_exception(self, exc):
 
         # Log pra debugging
@@ -154,7 +154,6 @@ class LoginUsuario(TokenObtainPairView):
     
     serializer_class = CustomTokenSerializer
 
-
 # view de logout, invalida o refresh token
 class LogoutUsuario(APIView):
     def post(self, request):
@@ -182,6 +181,7 @@ class AdminCreateView(APIView):
 
 # view q gerencia CRUD de Participantes
 class ParticipanteViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
+
     queryset = Participante.objects.all()
     serializer_class = ParticipanteSerializer
     
@@ -246,6 +246,7 @@ class ParticipanteViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
 
     @delete_participantes_swagger()
     def destroy(self, request, *args, **kwargs):
+        # Anonimizar o usuario
         participante = self._get_participante(kwargs['pk'])
         participante.usuario.delete()
         participante.delete()
@@ -255,9 +256,9 @@ class ParticipanteViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
 
 # view p/ techleaders, mesma estrutura da view de participantes
 class TechLeaderViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
-    
+    queryset = TechLeader.objects.all()
     serializer_class = TechLeaderSerializer
-    
+
     def get_permissions(self):
         # define regras de acesso p/ cada acao
         if self.action == 'create':
@@ -276,7 +277,7 @@ class TechLeaderViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
             return TechLeader.objects.all()
         # return TechLeader.objects.all()#############retirar depois###############
         return TechLeader.objects.filter(usuario=user)
-    
+
     def _get_techleader(self, pk):
         try:
             return TechLeader.objects.get(pk=pk)
@@ -289,7 +290,7 @@ class TechLeaderViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     @update_techleaders_swagger()
     def update(self, request, *args, **kwargs):
         
@@ -298,21 +299,21 @@ class TechLeaderViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
 
     @list_techleaders_swagger()
     def list(self, request, *args, **kwargs):
-        
+
         techleaders = self.get_queryset() 
         serializer = self.get_serializer(techleaders, many=True)
         return Response(serializer.data)
 
     @retrieve_techleaders_swagger()
     def retrieve(self, request, *args, **kwargs):
-        
+
         techleader = self._get_techleader(kwargs['pk'])
         serializer = self.get_serializer(techleader)
         return Response(serializer.data)
 
     @partial_update_techleaders_swagger()
     def partial_update(self, request, *args, **kwargs):
-        
+
         techleader = self._get_techleader(kwargs['pk'])
         return self._handle_serialization(techleader, data=request.data, partial=True)
 
@@ -323,7 +324,7 @@ class TechLeaderViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
 
     @delete_techleaders_swagger()
     def destroy(self, request, *args, **kwargs):
-        
+        # Anonimizar o usuario        
         techleader = self._get_techleader(kwargs['pk'])
         techleader.usuario.delete()
         techleader.delete()
@@ -331,7 +332,8 @@ class TechLeaderViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
     
 # view p/ empresas, logica identica mudando os campos do perfil
 class EmpresaViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
-    
+
+    queryset = Empresa.objects.all()
     serializer_class = EmpresaSerializer
 
     def get_permissions(self):
@@ -394,14 +396,125 @@ class EmpresaViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
 
     @create_empresas_swagger()
     def create(self, request, *args, **kwargs):
-        
         return self._handle_serialization(None, data=request.data)
 
     @delete_empresas_swagger()
     def destroy(self, request, *args, **kwargs):
-        
+        # Anonimizar o usuario
         empresa = self._get_empresa(kwargs['pk'])
         empresa.usuario.delete()
         empresa.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
+class ExcecaoViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
+    queryset = Excecao.objects.all()
+    serializer_class = ExcecaoSerializer
+    
+    def get_permissions(self):
+        
+        if self.action == 'create':
+            permissions_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            permissions_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
+        else:
+            permissions_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
+        return [perm() for perm in permissions_classes]
+    
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_staff or user.has_perm('api_rest.ver_todas_excecoes'):
+            return Excecao.objects.all()
+        # return Excecao.objects.all()#############retirar depois###############
+        return Excecao.objects.filter(usuario=user)
+    
+    def _get_excecao(self, pk):
+        try:
+            return Excecao.objects.get(pk=pk)
+        except Excecao.DoesNotExist:
+            raise Http404("Participante não encontrado com o ID fornecido.")
+            
+    def _handle_serialization(self, excecao, data=None, partial=False):
+        serializer = self.get_serializer(excecao, data=data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def update(self, request, *args, **kwargs):
+        excecao = self._get_excecao(kwargs['pk'])
+        return self._handle_serialization(excecao, data=request.data)
+    
+    def list(self, request, *args, **kwargs):
+        excecao = self.get_queryset()
+        serializer = self.get_serializer(excecao, many=True)
+        return Response(serializer.data)
+    
+    def retrieve(self, request, *args, **kwargs):
+        excecao =self._get_excecao(kwargs['pk'])
+        serializer = self.get_serializer(excecao)
+        return Response(serializer.data)
+    
+    def partial_update(self, request, *args, **kwargs):
+        excecao = self._get_excecao(kwargs['pk'])
+        return self._handle_serialization(excecao, data=request.data, partial=True)
+    
+    def create(self, request, *args, **kwargs):
+        return self._handle_serialization(None, data=request.data)
+    
+    def destroy(self, request, *args, **kwargs):
+        # Anonimizar usuario
+        excecao = self._get_excecao(kwargs['pk'])
+        excecao.usuario.delete()
+        excecao.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class ExtensionistaViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
+    queryset = Extensionista.objects.all()
+    serializer_class = ExtensionistaSerializer
+    
+    def get_permissions(self):
+        return [permissions.IsAuthenticated, permissions.IsAdminUser]
+    
+    def get_queryset(self):
+        return Extensionista.objects.all()
+    
+    def _get_extensionista(self, pk):
+        try:
+            return Extensionista.objects.get(pk=pk)
+        except Extensionista.DoesNotExist:
+            raise Http404("Extensionista não encontrado com o ID fornecido.")
+        
+    def _handle_serialization(self, extensionista, data=None, partial=False):
+        serializer = self.get_serializer(extensionista, data=data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    def update(self, request, *args, **kwargs):
+        extensionista = self._get_extensionista(kwargs['pk'])
+        return self._handle_serialization(extensionista, data=request.data)
+    
+    def list(self, request, *agrs, **kwargs):
+        extensionista = self.get_queryset()
+        serializer = self.get_serializer(extensionista, many=True)
+        return Response(serializer.data)
+    
+    def retrive(self, request, *agrs, **kwargs):
+        extensionista = self._get_extensionista(kwargs['pk'])
+        serializer = self.get_serializer(extensionista)
+        return Response(serializer.data)
+    
+    def partial_update(self, request, *args, **kwargs):
+        extensionista = self._get_extensionista(kwargs['pk'])
+        serializer = self._handle_serialization(extensionista, data=request.data, partial=True)
+        return Response(serializer.data)
+    
+    def create(self, request, *args, **kwargs):
+        return self._handle_serialization(None, data=request.data)
+        
+    def destroy(self, request, *args, **kwargs):
+        extensionista = self._get_extensionista(kwargs['pk'])
+        extensionista.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
