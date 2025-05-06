@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import AuthenticationFailed
 from api_rest.models import Usuario, Participante, Empresa, TechLeader, Extensionista, Excecao
 from imersao.models import Imersao
 from django.core.exceptions import ValidationError
@@ -306,11 +307,41 @@ class ExtensionistaSerializer(serializers.ModelSerializer):
         
 # serializer customizado do login p/ JWT
 class CustomTokenSerializer(TokenObtainPairSerializer):
+    
+    def validate(self, attrs):
+        try:
+            data = super().validate(attrs)
+        except AuthenticationFailed as exc:
+            raise serializers.ValidationError({
+                "erro": "Credenciais inválidas",
+                "codigo": 401,
+                "detalhes": str(exc)
+            })
+
+        if not self.user.is_active:
+            raise serializers.ValidationError({
+                "erro": "Conta desativada",
+                "codigo": 403,
+                "detalhes": "Sua conta está inativa. Contate o suporte."
+            })
+        
+        token = self.get_token(self.user)
+        
+        data['access'] = str(token.access_token)
+        data['refresh'] = str(token)
+        data['usuario'] = {
+            "id": self.user.id,
+            "nome": self.user.nome,
+            "email": self.user.username,
+            "tipo_usuario": self.user.get_tipo_usuario()
+        }
+
+        return data
+    
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
 
-        # adiciona dados extra no payload do token jwt
         token['nome'] = user.nome
         token['email'] = user.username
         token['tipo_usuario'] = user.get_tipo_usuario()
