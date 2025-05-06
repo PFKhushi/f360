@@ -231,7 +231,7 @@ class ExcecaoSerializer(BasePerfilSerializer):
     
     class Meta:
         model = Excecao
-        fields = ['id', 'usuario', 'motivo', 'nota', 'data_inicio']
+        fields = ['id', 'usuario', 'motivo', 'nota', 'data_inicio', 'extensionista', 'imersionista']
         
     def get_extensionista(self, excecao):
         if hasattr(excecao, 'extensionista'):
@@ -273,7 +273,7 @@ class ExtensionistaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Extensionista
-        fields = ['id', 'participante', 'excecao', 'vetenaro']
+        fields = ['id', 'participante', 'excecao', 'veterano']
     
     def validate_participante(self, value):
         
