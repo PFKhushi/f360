@@ -2,13 +2,13 @@
 
 import React, { useState } from 'react'
 import ButtonTooltip from '../shared/ButtonTooltip'
-// import { IconPower } from '@tabler/icons-react'
-import { IoPower } from "react-icons/io5";
 import ModalBase from '../shared/ModalBase'
 // import { useAuth } from '@/app/context/useAuth'
 import { useRouter } from 'next/navigation'
+import { twMerge } from 'tailwind-merge';
+import { LuDoorOpen } from 'react-icons/lu';
 
-export default function ButtonLogout() {
+export default function ButtonLogout({hideMenu}: {hideMenu: boolean}) {
 
   const [openModal, setOpenModal] = useState<boolean>(false)
 
@@ -22,19 +22,26 @@ export default function ButtonLogout() {
 
   function Logout(){
     // clearAuth();
-    //router.push('/sign-in');
-    return router.refresh();
+    router.push('/sign-in');
+    // return router.refresh();
   }
 
   return (
     <>
       <ButtonTooltip
-        tooltipTitle='Sair do Sistema'
-        icon={IoPower}
+        tooltipTitle=''
         onClick={handleOnClick}
-        size={24}
-        className='hover:text-tertiary'
-      />
+        icon={LuDoorOpen}
+        className='flex items-center gap-2.5 text-xl text-white hover:bg-secondary-1 h-18 px-3'
+        classNameIcon='min-w-8 min-h-8'
+      >
+        <span className={twMerge(
+          'text-nowrap',
+          !hideMenu ? 'block' : 'hidden'
+        )}>
+          Sair
+        </span>
+      </ButtonTooltip>
 
       <ModalBase
         openModal={openModal}
@@ -47,13 +54,13 @@ export default function ButtonLogout() {
           <div className='flex justify-center flex-wrap gap-4'>
             <button
               onClick={() => setOpenModal(false)}
-              className='bg-quinary text-primary px-4 py-2 w-26 cursor-pointer rounded-bl-xl rounded-tr-xl hover:bg-primary hover:text-quinary transition font-semibold shadow-[2px_2px_3px_rgb(0,0,0,0.2)]'
+              className='bg-primary-1 text-white px-4 py-2 w-26 cursor-pointer rounded-bl-xl rounded-tr-xl hover:bg-primary-3 transition font-semibold shadow-[2px_2px_3px_rgb(0,0,0,0.2)]'
             >
               Cancelar
             </button>
             <button
               onClick={Logout}
-              className='bg-quinary text-tertiary px-4 py-2 w-26 cursor-pointer rounded-bl-xl rounded-tr-xl hover:bg-tertiary hover:text-quinary transition font-semibold shadow-[2px_2px_3px_rgb(0,0,0,0.2)]'
+              className='bg-secondary-2 text-red-800 px-4 py-2 w-26 cursor-pointer rounded-bl-xl rounded-tr-xl hover:bg-secondary-1 transition font-semibold shadow-[2px_2px_3px_rgb(0,0,0,0.2)]'
             >
               Sair
             </button>

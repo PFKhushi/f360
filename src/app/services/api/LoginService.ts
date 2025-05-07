@@ -19,7 +19,7 @@ export class LoginService {
   
   public async login(data: LoginProps): Promise<LoginResponseProps | null>{
     try {
-      const response: AxiosResponse<LoginResponseProps> = await apiInstance.post('/login/', data)
+      const response: AxiosResponse = await apiInstance.post('/login/', data)
       if(response){
         console.log(response)
         return {

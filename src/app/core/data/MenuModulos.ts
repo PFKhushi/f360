@@ -7,7 +7,6 @@ import { IoCalendarOutline } from "react-icons/io5";
 import { RiFileList3Line } from "react-icons/ri";
 import { BsGraphUpArrow } from "react-icons/bs";
 import { TiMessages } from "react-icons/ti";
-import { LuDoorOpen } from "react-icons/lu";
 
 type MenuModulo = {
   id: string
@@ -36,32 +35,26 @@ export const MenuModulos: MenuModulosProps[] = [
       {
         id: 'M01',
         title: 'Agenda de Eventos',
-        href: '#',
+        href: '/agenda-eventos',
         icon: IoCalendarOutline
       },
       {
         id: 'M02',
         title: 'Imersões',
-        href: '#',
+        href: '/imersoes',
         icon: RiFileList3Line
       },
       {
         id: 'M03',
         title: 'Projetos de Extensão',
-        href: '#',
+        href: '/projetos-extensao',
         icon: BsGraphUpArrow
       },
       {
         id: 'M04',
         title: 'Contato',
-        href: '#',
+        href: '/contato',
         icon: TiMessages
-      },
-      {
-        id: 'M05',
-        title: 'Sair',
-        href: '#',
-        icon: LuDoorOpen
       },
     ]
   }

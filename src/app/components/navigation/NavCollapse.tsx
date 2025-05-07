@@ -57,7 +57,7 @@ export default function NavCollapse({menu, level = 1, left, widthScreen, isColla
       ref={refDivContainer}
       onMouseEnter={getValues}
       className={twMerge(
-        'relative flex items-center gap-1 py-2 px-3 text-quinary hover:bg-quinary hover:text-primary rounded-bl-xl rounded-tr-xl',
+        'relative flex items-center gap-1 py-2 px-3 text-white hover:bg-primary-3 rounded-bl-xl rounded-tr-xl',
         left ? (level > 1 && 'rounded-tl-xl') : (level > 1 && 'rounded-br-xl'),
         level === 1 && "group/1",
         level === 2 && "group/2",
@@ -105,7 +105,7 @@ export default function NavCollapse({menu, level = 1, left, widthScreen, isColla
           }}
         >
           <div className={twMerge(
-            'absolute w-6.5 h-full bg-quinary scale-150 rounded-full clip-path-triangule -z-10',
+            'absolute w-6.5 h-full bg-primary-3 scale-150 rounded-full clip-path-triangule -z-10',
             level === 1 && "-top-1",
             level > 1 && "-rotate-90 h-3 -right-0.75",
             left && "rotate-90 right-auto -left-0.75"

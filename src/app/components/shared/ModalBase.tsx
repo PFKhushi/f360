@@ -32,7 +32,7 @@ export default function ModalBase({openModal, setOpenModal, children, titleToolt
     >
       <Fade in={openModal}>
         <div className={twMerge(
-          "relative px-3 pb-3 pt-5 w-full max-w-3xl mx-auto my-auto bg-quaternary rounded-bl-2xl rounded-tr-2xl",
+          "relative px-3 pb-3 pt-5 w-full max-w-3xl mx-auto my-auto bg-white rounded-bl-2xl rounded-tr-2xl",
           className
         )}>
           {viewCloseButton && (

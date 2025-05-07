@@ -34,12 +34,19 @@ export default function SidebarItem({ modulo, breakpointScreen, hideMenu, setIsO
         className={twMerge(
           'flex items-center justify-between w-full h-16 px-3',
           'transition hover:bg-secondary-1 text-lg',
-          (path === modulo.href) && 'bg-secondary-2 hover:bg-secondary-1 text-xl font-bold'
+          (path === modulo.href) && 'bg-secondary-2 hover:bg-secondary-1 text-primary-1 font-bold'
         )}
       >
         <div className='flex flex-nowrap items-center gap-2.5'>
-          <Icon className='w-8 h-8'/>
-          <span className={!hideMenu ? 'block' : 'hidden'}>{modulo.title}</span>
+          <Icon className={twMerge(
+            'w-8 h-8',
+          )}/>
+          <span className={twMerge(
+            'text-nowrap',
+            !hideMenu ? 'block' : 'hidden'
+          )}>
+            {modulo.title}
+          </span>
         </div>
       </Link>
   )

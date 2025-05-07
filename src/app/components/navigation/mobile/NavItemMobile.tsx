@@ -22,8 +22,8 @@ export default function NavItemMobile({menu, setOpenDrawer}: {menu: MenuTreeType
       
       <Link
         className={twMerge(
-          'flex justify-between items-center py-2 px-2 rounded-bl-xl rounded-tr-xl',
-          'hover:bg-primary hover:text-quinary transition'
+          'flex justify-between items-center py-2 px-2 rounded-bl-xl rounded-tr-xl ',
+          'hover:bg-secondary-2 transition'
         )}
         href={menu.href}
         onClick={() => setOpenDrawer(false)}
@@ -40,7 +40,7 @@ export default function NavItemMobile({menu, setOpenDrawer}: {menu: MenuTreeType
           onClick={handleClick}
           className={twMerge(
             'flex justify-between cursor-pointer py-2 rounded-bl-xl rounded-tr-xl',
-            'hover:bg-primary hover:text-quinary transition'
+            'hover:bg-secondary-2 transition'
           )}
         >
           <div

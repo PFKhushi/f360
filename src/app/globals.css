@@ -256,6 +256,10 @@
   }
 }
 
+@utility clip-path-triangule {
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+}
+
 /* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;

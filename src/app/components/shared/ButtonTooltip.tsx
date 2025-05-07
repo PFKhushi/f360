@@ -7,7 +7,7 @@ import { TooltipCustom } from './TooltipCustom'
 interface ButtonHeaderProps {
   tooltipTitle: string,
   icon?: IconType
-  onClick: React.MouseEventHandler<HTMLButtonElement>,
+  onClick?: React.MouseEventHandler<HTMLButtonElement>,
   children?: React.ReactNode,
   className?: string,
   classNameIcon?: string
@@ -18,7 +18,7 @@ export default function ButtonHeader({tooltipTitle, icon: Icon, onClick, childre
     <TooltipCustom title={tooltipTitle} placement="top" arrow disableInteractive>
       <button
         className={twMerge(
-          'cursor-pointer p-2 rounded transition ',
+          'cursor-pointer p-2 transition ',
           className
         )}
         onClick={onClick}
