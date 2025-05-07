@@ -252,15 +252,15 @@ class ParticipanteViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
             permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
         else:
             permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
-        return [permissions.AllowAny()] #############retirar depois###############
-        # return [perm() for perm in permission_classes]
+        # return [permissions.AllowAny()] #############retirar depois###############
+        return [perm() for perm in permission_classes]
 
     def get_queryset(self):
         user = self.request.user
         if user.is_staff or user.has_perm('api_rest.ver_todos_participantes'):
             return Participante.objects.all()
-        return Participante.objects.all() #############retirar depois###############
-        # return Participante.objects.filter(usuario=user)  # user so ve seu perfil
+        # return Participante.objects.all() #############retirar depois###############
+        return Participante.objects.filter(usuario=user)  # user so ve seu perfil
 
     # Usando a função genérica para diferentes ações
     @update_participantes_swagger()
