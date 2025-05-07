@@ -6,8 +6,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import React, { useState } from 'react'
 import { useControlSidebar } from '@/app/context/useControlSidebar'
 import SidebarItems from './SidebarItems';
-// import UserProfile from '../UserProfile';
-// import { twMerge } from 'tailwind-merge';
+import { twMerge } from 'tailwind-merge';
+import ButtonLogout from './ButtonLogout';
 
 export default function Sidebar() {
 
@@ -66,30 +66,28 @@ export default function Sidebar() {
           }
         }}
       >
-        <div className='flex justify-center gap-1 h-25 p-4'>
-          <picture className="">
+        <div className={twMerge(
+          'flex justify-center gap-1 h-18 w-[242px] p-2',
+          toggleWidth === 65 && 'px-2 justify-start'
+        )}>
+          <picture>
             <img
               className="w-full h-full object-contain"
               src='/images/logos/branca-sem-preenchimento/LOGO S_ PREENCHIMENTO-LETREIRO-HORIZONTAL.png'
               alt="Logo OnliVendas"
             />
           </picture>
-          {/* <picture className={twMerge(
-            toggleWidth === 60 && 'hidden'
-          )}>
-            <img
-              className="max-h-full min-w-fit"
-              src="/images/logos/branca-sem-preenchimento/LOGO S_ PREENCHIMENTO-LETREIRO-HORIZONTAL.png"
-              alt="Logo Fábrica de Software"
-            />
-          </picture> */}
+          
         </div>
         
         <SidebarItems hideMenu={toggleWidth === 65} breakpointScreen={breakpointScreen} setIsSidebarHover={setIsSidebarHover}/>
-        {/* <UserProfile hideMenu={toggleWidth === 60} breakpointScreen={breakpointScreen} setIsSidebarHover={setIsSidebarHover}/> */}
+
+        <ButtonLogout hideMenu={toggleWidth === 65}/>
+          
       </Drawer>
       <div style={{
-        width: isCollapse && breakpointScreen ? MIN_WIDTH : 0
+        minWidth: isCollapse && breakpointScreen ? MIN_WIDTH : 0,
+        
       }}/>
     </>
   )

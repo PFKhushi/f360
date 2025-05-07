@@ -18,8 +18,7 @@ export default function MobileSidebar({navigation}: {navigation: NavigationType}
         tooltipTitle='Menu Módulo'
         icon={TbGridDots}
         onClick={() => setOpenDrawer(true)}
-        // size={24}
-        // stroke={2.5}
+        classNameIcon='text-white w-7 h-7'
       />
       <Drawer
         anchor="right"
