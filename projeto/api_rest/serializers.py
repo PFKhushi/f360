@@ -21,9 +21,7 @@ class AdminCreateSerializer(serializers.Serializer):
             )
             return user
         except IntegrityError:
-            raise serializers.ValidationError({
-                "username": "Já existe um usuário com esse e-mail."
-            })
+            raise serializers.ValidationError(                "Já existe um usuário com esse e-mail.")
 
 # serializer base do usuario, usado nos perfis
 class UsuarioSerializer(serializers.ModelSerializer):
@@ -39,10 +37,10 @@ class UsuarioSerializer(serializers.ModelSerializer):
     def validate_username(self, value):
         if self.instance:
             if Usuario.objects.filter(username=value).exclude(pk=self.instance.pk).exists():
-                raise serializers.ValidationError("Já existe um usuário com este username")
+                raise serializers.ValidationError("Este usuário já está cadastrado")
         else:
             if Usuario.objects.filter(username=value).exists():
-                raise serializers.ValidationError("Já existe um usuário com este username")
+                raise serializers.ValidationError("Este usuário já está cadastrado")
         return value
     
     def create(self, validated_data):
@@ -58,27 +56,34 @@ class BasePerfilSerializer(serializers.ModelSerializer):
     class Meta:
         abstract = True  # Não será usada diretamente
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if hasattr(self, 'instance') and self.instance is not None:
+            self.fields['usuario'] = UsuarioSerializer(
+                instance=self.instance.usuario,
+                context=self.context
+            )
+
     def update(self, instance, validated_data):
         usuario_data = validated_data.pop('usuario', None)
-        usuario = instance.usuario
 
-        # Atualiza os campos do usuário
         if usuario_data:
-            for attr, value in usuario_data.items():
-                if attr == 'password':
-                    usuario.set_password(value)
-                else:
-                    setattr(usuario, attr, value)
-            usuario.full_clean()
-            usuario.save()
+            usuario_serializer = UsuarioSerializer(
+                instance=instance.usuario,
+                data=usuario_data,
+                partial=True
+            )
+            usuario_serializer.is_valid(raise_exception=True)
+            usuario_serializer.save()
 
-        # Atualiza os campos do perfil
+        # atualiza os campos do perfil
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.full_clean()
         instance.save()
 
         return instance
+
 
 # serializer aninhado p/ Participante
 class ParticipanteSerializer(BasePerfilSerializer):
@@ -91,10 +96,11 @@ class ParticipanteSerializer(BasePerfilSerializer):
         fields = ['id', 'usuario', 'cpf', 'rgm', 'curso', 'outro_curso', 'periodo', 'email_institucional', 'extensionista', 'imersionista']
 
     def get_extensionista(self, participante):
-        if hasattr(participante, 'extensionista'):
+        extensao = participante.extensionista.first()
+        if extensao:
             return {
                 'extensionista': True,
-                'veterano': participante.extensionista.veterano
+                'veterano': extensao.veterano
             }
         return False
 
@@ -142,10 +148,10 @@ class ParticipanteSerializer(BasePerfilSerializer):
         email_hash = hashlib.sha256(value.lower().encode()).hexdigest()
         if self.instance:
             if Participante.objects.filter(email_institucional_hash=email_hash).exclude(pk=self.instance.pk).exists():
-                raise serializers.ValidationError("Este email institucional já está em uso")
+                raise serializers.ValidationError("Este email institucional já está cadastrado")
         else:
             if Participante.objects.filter(email_institucional_hash=email_hash).exists():
-                raise serializers.ValidationError("Este email institucional já está em uso")
+                raise serializers.ValidationError("Este email institucional já está cadastrado")
         return value
 
     def create(self, validated_data):
@@ -201,10 +207,10 @@ class TechLeaderSerializer(BasePerfilSerializer):
         codigo_hash = hashlib.sha256(value.encode()).hexdigest()
         if self.instance:
             if TechLeader.objects.filter(codigo_hash=codigo_hash).exclude(pk = self.instance.pk).exists():
-                raise serializers.ValidationError("Este código já está em uso")
+                raise serializers.ValidationError("Este código já está cadastrado")
         else:
             if TechLeader.objects.filter(codigo_hash=codigo_hash).exists():
-                raise serializers.ValidationError("Este código já está em uso")
+                raise serializers.ValidationError("Este código já está cadastrado")
         
         return value
 
@@ -314,14 +320,14 @@ class CustomTokenSerializer(TokenObtainPairSerializer):
         except AuthenticationFailed as exc:
             raise serializers.ValidationError({
                 "erro": "Credenciais inválidas",
-                "codigo": 401,
+                "codigo-negocio": 401,
                 "detalhes": str(exc)
             })
 
         if not self.user.is_active:
             raise serializers.ValidationError({
                 "erro": "Conta desativada",
-                "codigo": 403,
+                "codigo-negocio": 403,
                 "detalhes": "Sua conta está inativa. Contate o suporte."
             })
         

@@ -89,7 +89,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     username = models.EmailField( 
         verbose_name="E-mail", 
         unique=True,
-        error_messages={'unique':'Já existe um usuário com esse username'},
+        error_messages={'unique':'Este usuário já está cadastrado'},
         help_text="E-mail principal para login"
     )
     

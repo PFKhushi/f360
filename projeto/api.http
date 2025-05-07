@@ -42,8 +42,8 @@ GET http://localhost:8000/api/participante/ HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ2MTUwNTkyLCJpYXQiOjE3NDYxNDg3OTIsImp0aSI6IjllNDc3NzA0ZGU2NDQyNDhhZTgxN2ZiYzYwZjdhODkxIiwidXNlcl9pZCI6MjEsIm5vbWUiOiJBZG1pbmlzdHJhZG9yIEdlcmFsIiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsInRpcG9fdXN1YXJpbyI6IkFETUlOIn0.n1WUnlhasb9xh-UpIpkFXBK2IKoZIL2AqlvxEyjtUsQ
 
 ###
-GET http://localhost:8000/api/participante/1 HTTP/1.1
-Authorization: Bearer {{access_token}}
+GET http://localhost:8000/api/participante/789 HTTP/1.1
+
 
 ###
 POST http://localhost:8000/api/login/ HTTP/1.1
@@ -61,16 +61,16 @@ Content-Type: application/json
 {
     "usuario": {
         "nome": "João Silva",
-        "username": "joadwo@email.com",
+        "username": "joadwdfgfodfg@email.com",
         "password": "senha123",
-        "telefone": "11947654321"
+        "telefone": "11907054321"
     },
-    "cpf": "12320378901",
-    "rgm": "12320348",
+    "cpf": "10325978981",
+    "rgm": "15398348",
     "curso": "ADS",
     "outro_curso": "",
     "periodo": 3,
-    "email_institucional": "joa2o.sdissva@al0n3o.edu.br"
+    "email_institucional": "joao.sdisdfsva@al0n3o.edu.br"
 }
 
 
@@ -78,22 +78,22 @@ Content-Type: application/json
 DELETE http://localhost:8000/api/participante/3/ HTTP/1.1
 
 ###
-PUT http://localhost:8000/api/participante/999/ HTTP/1.1
+PUT http://localhost:8000/api/participante/14/ HTTP/1.1
 Content-Type: application/json
 
 {
     "usuario": {
-        "nome": "JoãoSilva",
-        "username": "joaasfdfo@email.com",
+        "nome": "João Silva",
+        "username": "joadwdfgfodfg@email.com",
         "password": "senha123",
-        "telefone": "11934654321"
+        "telefone": "11907054321"
     },
-    "cpf": "12363478901",
-    "rgm": "12340548",
+    "cpf": "10325978981",
+    "rgm": "15398348",
     "curso": "ADS",
     "outro_curso": "",
     "periodo": 3,
-    "email_institucional": "joao.sdissva@ano.edu.br"
+    "email_institucional": "joao.sdisdfsva@al0n3o.edu.br"
 }
 
 
@@ -114,22 +114,22 @@ Authorization: Bearer {{access_token}}
     "email_institucional": "novo@fatec.sp.gov.br"
 }
 ###
-PATCH http://localhost:8000/api/participante/7/ HTTP/1.1
+PATCH http://localhost:8000/api/participante/14/ HTTP/1.1
 Content-Type: application/json
 
 {
     "usuario": {
         "nome": "João Silva",
-        "username": "jos3dao@email.com",
+        "username": "joadwdfgfodfg@email.com",
         "password": "senha123",
-        "telefone": "11987654321"
+        "telefone": "11907054321"
     },
-    "cpf": "12344478901",
-    "rgm": "12304548",
+    "cpf": "10325978981",
+    "rgm": "15398348",
     "curso": "ADS",
     "outro_curso": "",
     "periodo": 3,
-    "email_institucional": "joao.sdissva@aluno.edu.br"
+    "email_institucional": "joao.sdisdfsva@al0n3o.edu.br"
 }
 
 ###
@@ -220,26 +220,29 @@ Content-Type: application/json
 {
     "usuario": {
         "nome": "Novo TechLeader",
-        "username": "tecdh@leader.com",
+        "username": "tecdh@leasdfader.com",
         "password": "senhaTech!",
         "telefone": "1155555555"
     },
-    "codigo": "99939",
+    "codigo": "991234939",
     "especialidade": "Backend"
 }
 
 ###
-PUT http://localhost:8000/api/techleader/2/ HTTP/1.1
+GET http://localhost:8000/api/techleader/346/
+
+###
+PUT http://localhost:8000/api/techleader/3/ HTTP/1.1
 Content-Type: application/json
 
 {
     "usuario": {
         "nome": "Novo TechLeader",
-        "username": "tech@leader.com",
+        "username": "tecdh@leasdfader.com",
         "password": "senhaTech!",
         "telefone": "1155555555"
     },
-    "codigo": "9999",
+    "codigo": "991234939",
     "especialidade": "Backend"
 }
 
