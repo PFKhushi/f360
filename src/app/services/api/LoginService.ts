@@ -1,43 +1,36 @@
+import { ApiResponse } from "@/app/types/ApiTypes/ApiResponseType"
 import { apiInstance } from "./apiInstance"
 import { AxiosError, AxiosResponse } from "axios"
 
-type LoginProps = {
+type DataProps = {
   username: string,
   password: string
 }
 
-type LoginResponseProps = {
-  access: string | null,
-  refresh: string | null,
-  error: boolean,
-  message: string,
+type ResultadoProps = {
+  access: string,
+  refresh: string
 }
+
 
 export class LoginService {
 
   constructor(){}
   
-  public async login(data: LoginProps): Promise<LoginResponseProps | null>{
+  public async login(data: DataProps): Promise<ApiResponse<ResultadoProps> | null>{
     try {
-      const response: AxiosResponse = await apiInstance.post('/login/', data)
+      const response: AxiosResponse<ApiResponse<ResultadoProps>> = await apiInstance.post('/login/', data)
       if(response){
-        console.log(response)
         return {
-          access: response.data.access,
-          refresh: response.data.refresh,
-          error: false,
-          message: '',
+          ...response.data
         }
       }
       return null
     } catch (error) {
       if(error instanceof AxiosError){
-        // const errorData = error.response?.data as LoginResponse
+        const errorData = error.response?.data as ApiResponse<ResultadoProps>
         return {
-          access: null,
-          refresh: null,
-          error: true,
-          message: 'erro ao realizar login',
+          ...errorData
         }
       }
       return null

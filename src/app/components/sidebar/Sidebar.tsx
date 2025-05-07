@@ -8,6 +8,7 @@ import { useControlSidebar } from '@/app/context/useControlSidebar'
 import SidebarItems from './SidebarItems';
 import { twMerge } from 'tailwind-merge';
 import ButtonLogout from './ButtonLogout';
+import Link from 'next/link';
 
 export default function Sidebar() {
 
@@ -66,7 +67,9 @@ export default function Sidebar() {
           }
         }}
       >
-        <div className={twMerge(
+        <Link
+          href={'/'}
+          className={twMerge(
           'flex justify-center gap-1 h-18 w-[242px] p-2',
           toggleWidth === 65 && 'px-2 justify-start'
         )}>
@@ -77,8 +80,7 @@ export default function Sidebar() {
               alt="Logo OnliVendas"
             />
           </picture>
-          
-        </div>
+        </Link>
         
         <SidebarItems hideMenu={toggleWidth === 65} breakpointScreen={breakpointScreen} setIsSidebarHover={setIsSidebarHover}/>
 
