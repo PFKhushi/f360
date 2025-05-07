@@ -113,7 +113,7 @@ DATABASES = {
     }
 }
 
-# DATABASES['default'] = dj_database_url.parse('postgresql://db_f360_user:6jWfpdOeM63AFrTPCycrpeKmZkXhl1Ut@dpg-d093d8h5pdvs73a2qgh0-a.oregon-postgres.render.com/db_f360')
+DATABASES['default'] = dj_database_url.parse('postgresql://db_f360_user:6jWfpdOeM63AFrTPCycrpeKmZkXhl1Ut@dpg-d093d8h5pdvs73a2qgh0-a.oregon-postgres.render.com/db_f360')
 
 
 # Password validation

@@ -7,6 +7,14 @@ from django.db import models, IntegrityError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 import hashlib
 
+def resposta_json(sucesso=False, resultado='', erro='', detalhes=''):
+    return {
+        'sucesso': sucesso,
+        'resultado': resultado,
+        'erro': erro,
+        'detalhes': detalhes
+    }
+
 class AdminCreateSerializer(serializers.Serializer):
     nome = serializers.CharField(max_length=120)
     username = serializers.EmailField()
@@ -67,7 +75,11 @@ class BasePerfilSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         usuario_data = validated_data.pop('usuario', None)
 
+        print(usuario_data)
         if usuario_data:
+            # Alteração aqui: verificando por 'password' em vez de 'senha'
+            password = usuario_data.pop('password', None)
+
             usuario_serializer = UsuarioSerializer(
                 instance=instance.usuario,
                 data=usuario_data,
@@ -76,13 +88,34 @@ class BasePerfilSerializer(serializers.ModelSerializer):
             usuario_serializer.is_valid(raise_exception=True)
             usuario_serializer.save()
 
-        # atualiza os campos do perfil
+            # Alteração aqui: usando password em vez de senha
+            if password:
+                instance.usuario.set_password(password)
+                instance.usuario.save()
+
         for attr, value in validated_data.items():
+            print(attr, value)
             setattr(instance, attr, value)
         instance.full_clean()
         instance.save()
 
         return instance
+        # if usuario_data:
+        #     usuario_serializer = UsuarioSerializer(
+        #         instance=instance.usuario,
+        #         data=usuario_data,
+        #         partial=True
+        #     )
+        #     usuario_serializer.is_valid(raise_exception=True)
+        #     usuario_serializer.save()
+
+        # # atualiza os campos do perfil
+        # for attr, value in validated_data.items():
+        #     setattr(instance, attr, value)
+        # instance.full_clean()
+        # instance.save()
+
+        # return instance
 
 
 # serializer aninhado p/ Participante
@@ -315,34 +348,21 @@ class ExtensionistaSerializer(serializers.ModelSerializer):
 class CustomTokenSerializer(TokenObtainPairSerializer):
     
     def validate(self, attrs):
+        print("Tentando autenticar com:", attrs)
         try:
             data = super().validate(attrs)
         except AuthenticationFailed as exc:
-            raise serializers.ValidationError({
-                "erro": "Credenciais inválidas",
-                "codigo-negocio": 401,
-                "detalhes": str(exc)
-            })
+            raise serializers.ValidationError(str(exc))
 
         if not self.user.is_active:
-            raise serializers.ValidationError({
-                "erro": "Conta desativada",
-                "codigo-negocio": 403,
-                "detalhes": "Sua conta está inativa. Contate o suporte."
-            })
+            raise serializers.ValidationError( "Sua conta está inativa. Contate o suporte.")
         
         token = self.get_token(self.user)
         
         data['access'] = str(token.access_token)
         data['refresh'] = str(token)
-        data['usuario'] = {
-            "id": self.user.id,
-            "nome": self.user.nome,
-            "email": self.user.username,
-            "tipo_usuario": self.user.get_tipo_usuario()
-        }
-
-        return data
+        
+        return resposta_json(sucesso=True, resultado=data)
     
     @classmethod
     def get_token(cls, user):

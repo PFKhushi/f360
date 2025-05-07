@@ -3,8 +3,8 @@ POST https://f360-latest.onrender.com/api/login/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "admin@exsample.com",
-    "password": "senhaSupesrSegura123"
+    "username": "joadwdfgfodfg@email.com",
+    "password": "senha123"
 }
 
 ###
@@ -61,39 +61,46 @@ Content-Type: application/json
 {
     "usuario": {
         "nome": "João Silva",
-        "username": "joadwdfgfodfg@email.com",
+        "username": "joadwsdfgfgfodfg@email.com",
         "password": "senha123",
         "telefone": "11907054321"
     },
-    "cpf": "10325978981",
-    "rgm": "15398348",
+    "cpf": "10321978981",
+    "rgm": "15318348",
     "curso": "ADS",
     "outro_curso": "",
     "periodo": 3,
-    "email_institucional": "joao.sdisdfsva@al0n3o.edu.br"
+    "email_institucional": "joao.sisdfsdfgsva@al0n3o.edu.br"
 }
 
+###
+POST http://localhost:8000/api/login/ HTTP/1.1
+Content-Type: application/json
 
+{
+    "username": "joadwdsdfgfgfodfg@email.com",
+    "password": "senha123"
+}
 ###
 DELETE http://localhost:8000/api/participante/3/ HTTP/1.1
 
 ###
-PUT http://localhost:8000/api/participante/14/ HTTP/1.1
+PUT http://localhost:8000/api/participante/16/ HTTP/1.1
 Content-Type: application/json
 
 {
     "usuario": {
         "nome": "João Silva",
-        "username": "joadwdfgfodfg@email.com",
-        "password": "senha123",
+        "username": "joadwsdfgfgfodfg@email.com",
+        "password": "sensdha123",
         "telefone": "11907054321"
     },
-    "cpf": "10325978981",
-    "rgm": "15398348",
+    "cpf": "10321978981",
+    "rgm": "15318348",
     "curso": "ADS",
     "outro_curso": "",
     "periodo": 3,
-    "email_institucional": "joao.sdisdfsva@al0n3o.edu.br"
+    "email_institucional": "joao.sisdfsdfgsva@al0n3o.edu.br"
 }
 
 
@@ -120,16 +127,16 @@ Content-Type: application/json
 {
     "usuario": {
         "nome": "João Silva",
-        "username": "joadwdfgfodfg@email.com",
+        "username": "joadwdsdfgfgfodfg@email.com",
         "password": "senha123",
         "telefone": "11907054321"
     },
-    "cpf": "10325978981",
-    "rgm": "15398348",
+    "cpf": "10320978981",
+    "rgm": "15308348",
     "curso": "ADS",
     "outro_curso": "",
     "periodo": 3,
-    "email_institucional": "joao.sdisdfsva@al0n3o.edu.br"
+    "email_institucional": "joao.sdisdfsdfgsva@al0n3o.edu.br"
 }
 
 ###
