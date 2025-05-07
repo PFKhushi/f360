@@ -7,12 +7,13 @@ import ModalBase from '../shared/ModalBase'
 import { useRouter } from 'next/navigation'
 import { twMerge } from 'tailwind-merge';
 import { LuDoorOpen } from 'react-icons/lu';
+import { useAuth } from '@/app/context/useAuth'
 
 export default function ButtonLogout({hideMenu}: {hideMenu: boolean}) {
 
   const [openModal, setOpenModal] = useState<boolean>(false)
 
-  // const { clearAuth } = useAuth()
+  const { clearAuth } = useAuth()
   const router = useRouter()
     
 
@@ -21,9 +22,9 @@ export default function ButtonLogout({hideMenu}: {hideMenu: boolean}) {
   }
 
   function Logout(){
-    // clearAuth();
+    clearAuth();
     router.push('/sign-in');
-    // return router.refresh();
+    return router.refresh();
   }
 
   return (
@@ -54,13 +55,13 @@ export default function ButtonLogout({hideMenu}: {hideMenu: boolean}) {
           <div className='flex justify-center flex-wrap gap-4'>
             <button
               onClick={() => setOpenModal(false)}
-              className='bg-primary-1 text-white px-4 py-2 w-26 cursor-pointer rounded-bl-xl rounded-tr-xl hover:bg-primary-3 transition font-semibold shadow-[2px_2px_3px_rgb(0,0,0,0.2)]'
+              className='bg-primary-1 text-white px-4 py-2 w-26 cursor-pointer rounded-xl hover:bg-primary-3 transition font-semibold shadow-[2px_2px_3px_rgb(0,0,0,0.2)]'
             >
               Cancelar
             </button>
             <button
               onClick={Logout}
-              className='bg-secondary-2 text-red-800 px-4 py-2 w-26 cursor-pointer rounded-bl-xl rounded-tr-xl hover:bg-secondary-1 transition font-semibold shadow-[2px_2px_3px_rgb(0,0,0,0.2)]'
+              className='bg-secondary-2 text-red-800 px-4 py-2 w-26 cursor-pointer rounded-xl hover:bg-secondary-1 transition font-semibold shadow-[2px_2px_3px_rgb(0,0,0,0.2)]'
             >
               Sair
             </button>

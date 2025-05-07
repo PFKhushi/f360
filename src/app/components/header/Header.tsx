@@ -2,7 +2,6 @@
 
 import React from 'react'
 import ButtonTooltip from '../shared/ButtonTooltip'
-// import { IconMenu2 } from '@tabler/icons-react'
 import { HiOutlineMenu } from "react-icons/hi";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { LiaUserCircle } from "react-icons/lia";
@@ -13,7 +12,8 @@ import { NavigationType } from '@/app/types/MenuTypes/NavigationType';
 import NavList from '../navigation/NavList';
 import MobileSidebar from '../navigation/mobile/MobileSidebar';
 import { useRouter } from "next/navigation";
-// import ButtonLogout from './ButtonLogout';
+import { useAuth } from '@/app/context/useAuth';
+import { DecodeToken } from '@/app/utils/DecodeToken';
 
 export default function Header({navigation}: {navigation: NavigationType}) {
 
@@ -21,6 +21,9 @@ export default function Header({navigation}: {navigation: NavigationType}) {
   const breakPointMd = useMediaQuery(theme.breakpoints.up('md'));
   const { setIsCollapse, setIsOpen } = useControlSidebar()
   const router = useRouter();
+
+  const {auth} = useAuth()
+  const tokenDecoded = auth?.access ? DecodeToken(auth.access) : undefined
   
   return (
     <nav className='bg-primary-5 flex items-center py-2 px-2 shadow-[2px_2px_5px_rgba(0,0,0,0.2)] h-20'>
@@ -31,7 +34,6 @@ export default function Header({navigation}: {navigation: NavigationType}) {
           icon={HiOutlineMenu}
           onClick={breakPointMd ? setIsCollapse : setIsOpen}
           classNameIcon='text-white w-8 h-8'
-          // stroke={2.5}
         />
       </div>
 
@@ -42,8 +44,7 @@ export default function Header({navigation}: {navigation: NavigationType}) {
       </div>
 
       <div className='flex gap-1'>
-        {/* <ButtonLogout /> */}
-
+        
         <ButtonTooltip
           tooltipTitle='Notificações'
           icon={IoMdNotificationsOutline}
@@ -59,7 +60,7 @@ export default function Header({navigation}: {navigation: NavigationType}) {
             className='flex items-center gap-2.5 text-white'
             classNameIcon='w-8 h-8'
           >
-            <span className='font-louis-george-cafe text-xl'>Aluno</span>
+            <span className='font-louis-george-cafe text-xl'>{tokenDecoded?.nome || ''}</span>
           </ButtonTooltip>
           
         </div>

@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { LoginService } from "@/app/services/api/LoginService";
 import { FiLoader } from "react-icons/fi";
+import { MessageService } from "@/app/services/message/MessageService";
+import { useAuth } from "@/app/context/useAuth";
 
 const schema = z.object({
   email: z
@@ -34,15 +36,39 @@ export default function SignIn() {
 
   const router = useRouter();
   const [isloading, setIsLoading] = useState<boolean>(false)
+  const { setToken, clearAuth } = useAuth()
 
   async function handleLogin(data: FormData) {
+
+    clearAuth();
 
     setIsLoading(true)
     const loginResponse = await new LoginService().login({username: data.email, password: data.senha})
     setIsLoading(false)
 
-    // console.log(data);
-    // router.push("/dashboard");
+    const message = new MessageService()
+
+    if(loginResponse){
+
+      if(loginResponse.sucesso){
+
+        if(typeof loginResponse.resultado !== 'string'){
+          setToken(loginResponse.resultado)
+        }
+        router.push("/dashboard");
+        return router.refresh()
+      }
+
+      if(Array.isArray(loginResponse.detalhes)){
+        return loginResponse.detalhes.map(detalhe => {
+          message.error(detalhe)
+        })
+      }else{
+        return message.error(loginResponse.detalhes)
+      }
+    }
+
+    return message.error('Erro ao buscar os dados.')
   }
 
   return (
