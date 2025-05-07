@@ -1,11 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { LoginService } from "@/app/services/api/LoginService";
+import { FiLoader } from "react-icons/fi";
 
 const schema = z.object({
   email: z
@@ -31,51 +33,59 @@ export default function SignIn() {
   });
 
   const router = useRouter();
+  const [isloading, setIsLoading] = useState<boolean>(false)
 
-  function handleLogin(data: FormData) {
-    console.log(data);
-    router.push("/dashboard");
+  async function handleLogin(data: FormData) {
+
+    setIsLoading(true)
+    const loginResponse = await new LoginService().login({username: data.email, password: data.senha})
+    setIsLoading(false)
+
+    // console.log(data);
+    // router.push("/dashboard");
   }
 
   return (
-    <main className="relative min-h-screen flex items-stretch">
-      <div
-        className="absolute inset-0 bg-cover bg-center z-0"
-        style={{ backgroundImage: "url('/images/planodefundologin.jpg')" }}
-      />
-      <div className="relative w-full max-w-3xl bg-primary-3 text-white flex flex-col justify-center px-10 py-12 rounded-r-3xl">
-        <div className="mb-10 flex items-center justify-between">
-          <Link href={'/'}>
+    <main className="flex min-h-dvh bg-cover bg-top-left bg-[url('/images/planodefundologin.jpg')]">
+      
+      <div className="flex flex-col gap-18 justify-center items-center w-full md:max-w-1/2 lg:max-w-2/5 bg-primary-3 text-white px-5 py-5 md:rounded-r-3xl">
+        
+        <div className="flex flex-col gap-30 w-full max-w-83">
+          <Link
+            href={'/'}
+            className="flex items-center justify-between"
+          >
             <picture>
               <img
-                src="/images/logos/branca-com-preenchimento/branco-com-preenchimento-letreiro.png"
+                src="/images/logos/branca-com-preenchimento/branco-com-preenchimento.png"
                 alt="Logo"
-                className="h-40 object-contain mb-6"
+                className="h-32 object-contain"
               />
             </picture>
           </Link>
-          
-          {/* <a className="text-right text-xl font-roboto" href="/">
-            Início
-          </a> */}
-        </div>
 
-        <h1 className="text-3xl font-bold mb-1 font-coolvetica">Boas vindas.</h1>
-        <p className="mb-8 text-base font-louis-george-cafe">Faça login para continuar</p>
+          <div className="flex flex-col gap-6">
+            <h1 className="text-[40px] font-bold font-coolvetica">Boas vindas.</h1>
+            <p className="text-2xl font-light font-louis-george-cafe">Faça login para continuar</p>
+          </div>
+        </div>
 
         <form
           onSubmit={handleSubmit(handleLogin)}
-          className="flex flex-col gap-6 px-16 py-4"
+          className="flex flex-col gap-3 w-full max-w-83"
         >
           <div>
-            <label htmlFor="email" className="block mb-2 font-medium text-xl font-roboto">
+            <label
+              htmlFor="email"
+              className="block mb-2 font-medium text-xl"
+            >
               Email
             </label>
             <input
               id="email"
               type="email"
               placeholder="Digite seu email aqui..."
-              className="w-full px-4 py-2 rounded-md bg-white/20 placeholder-white text-white focus:outline-none"
+              className="w-full px-4 py-2.5 rounded-lg border-[#D9D9D9] border-1 bg-white/37 placeholder-[#1E1E1EE5]/90 text-white text-xl focus:outline-none"
               {...register("email")}
             />
             {errors.email && (
@@ -86,14 +96,17 @@ export default function SignIn() {
           </div>
 
           <div>
-            <label htmlFor="senha" className="block mb-2 font-medium text-xl font-roboto">
+            <label
+              htmlFor="senha"
+              className="block mb-2 font-medium text-xl"
+            >
               Senha
             </label>
             <input
               id="senha"
               type="password"
               placeholder="Digite sua senha aqui..."
-              className="w-full px-4 py-2 rounded-md bg-white/20 placeholder-white text-white focus:outline-none"
+              className="w-full px-4 py-2.5 rounded-lg border-[#D9D9D9] border-1 bg-white/37 placeholder-[#1E1E1EE5]/90 text-white text-xl focus:outline-none"
               {...register("senha")}
             />
             {errors.senha && (
@@ -103,23 +116,36 @@ export default function SignIn() {
             )}
           </div>
 
-          <div className="text-right text-sm text-white underline font-roboto">
+          <div className="text-right text-lg text-white mb-4">
             esqueceu a senha?
           </div>
 
-          <input
-            type="submit"
-            value="Entrar"
-            className="bg-[#F6A723] hover:bg-[#f8b03f] text-white font-semibold py-2 rounded-md cursor-pointer transition"
-          />
+          <div className="flex flex-col gap-4">
+            <button
+              type="submit"
+              className="flex justify-center items-center self-center bg-secondary-2 hover:bg-secondary-1 text-2xl text-white font-semibold py-2 rounded-2xl cursor-pointer transition h-15 w-full max-w-46"
+              disabled={isloading}
+            >
+              {isloading ? (
+                <FiLoader className="animate-spin w-8 h-8"/>
+              ) : (
+                <>Entrar</>
+              )}
+            </button>
+
+            <div className="flex justify-center gap-1 text-lg">
+              <span>Não se cadastrou?</span>
+              <Link
+                href="register"
+                className="underline"
+              >
+                Cadastre-se aqui
+              </Link>
+            </div>
+          </div>
+
         </form>
 
-        <div className="mt-6 text-sm font-roboto">
-          Não se cadastrou?{" "}
-          <a href="register" className="underline font-roboto">
-            Cadastre-se aqui
-          </a>
-        </div>
       </div>
     </main>
   );

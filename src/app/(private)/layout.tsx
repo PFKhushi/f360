@@ -1,4 +1,6 @@
-import Link from "next/link";
+'use client'
+
+import Sidebar from "../components/sidebar/Sidebar";
 
 export default function RootLayout({
   children,
@@ -6,35 +8,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <main>
-      <nav className="p-2 w-full max-w-400 mx-auto">
-        <ul className="flex justify-between">
-          <div className="flex gap-2 *:hover:text-secondary-1">
-            <li>
-              <Link href={'/dashboard'}>Dashboard</Link>
-            </li>
-            <li>
-              <Link href={'/gestao-imersao'}>Gestão da Imersão</Link>
-            </li>
-            <li>
-              <Link href={'/gestao-imersao/desafios'}>Gestão da Imersão - Desafios</Link>
-            </li>
-            <li>
-              <Link href={'/gestao-imersao/eventos'}>Gestão da Imersão - Eventos</Link>
-            </li>
-            <li>
-              <Link href={'/gestao-imersao/imersionistas'}>Gestão da Imersão - Imersionistas</Link>
-            </li>
-          </div>
-
-          <div className="flex gap-2 *:hover:text-secondary-1">
-            <li>
-              <Link href={'/'}>Sair</Link>
-            </li>
-          </div>
-        </ul>
-      </nav>
-      {children}
+    <main className="flex min-h-svh w-full"> 
+      <Sidebar/>
+      <div className="flex flex-col w-full max-h-svh grow">
+        {children}
+      </div>
     </main>  
   );
 }
