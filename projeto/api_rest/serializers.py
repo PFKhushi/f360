@@ -7,7 +7,7 @@ from django.db import models, IntegrityError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 import hashlib
 
-def resposta_json(sucesso=False, resultado='', erro='', detalhes=''):
+def resposta_json(sucesso=False, resultado=None, erro='', detalhes=[]):
     return {
         'sucesso': sucesso,
         'resultado': resultado,
@@ -100,22 +100,6 @@ class BasePerfilSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
-        # if usuario_data:
-        #     usuario_serializer = UsuarioSerializer(
-        #         instance=instance.usuario,
-        #         data=usuario_data,
-        #         partial=True
-        #     )
-        #     usuario_serializer.is_valid(raise_exception=True)
-        #     usuario_serializer.save()
-
-        # # atualiza os campos do perfil
-        # for attr, value in validated_data.items():
-        #     setattr(instance, attr, value)
-        # instance.full_clean()
-        # instance.save()
-
-        # return instance
 
 
 # serializer aninhado p/ Participante

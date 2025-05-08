@@ -1,14 +1,14 @@
 ###
-POST https://f360-latest.onrender.com/api/login/ HTTP/1.1
+POST http://localhost:8000/api/login/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "joadwdfgfodfg@email.com",
-    "password": "senha123"
+    "username": "admin@exsample.com",
+    "password": "senhaSupesrSegura123"
 }
 
 ###
-POST https://f360-latest.onrender.com/api/criar-admin/ HTTP/1.1
+POST http://localhost:8000/api/criar-admin/ HTTP/1.1
 Content-Type: application/json
 
 {
@@ -61,16 +61,16 @@ Content-Type: application/json
 {
     "usuario": {
         "nome": "João Silva",
-        "username": "joadwsdfgfgfodfg@email.com",
+        "username": "jwsdfgfgfodfg@email.com",
         "password": "senha123",
         "telefone": "11907054321"
     },
-    "cpf": "10321978981",
-    "rgm": "15318348",
+    "cpf": "00001978981",
+    "rgm": "00308308",
     "curso": "ADS",
     "outro_curso": "",
     "periodo": 3,
-    "email_institucional": "joao.sisdfsdfgsva@al0n3o.edu.br"
+    "email_institucional": "josisdfsdfgsva@al0n3o.edu.br"
 }
 
 ###

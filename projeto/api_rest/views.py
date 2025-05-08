@@ -1,8 +1,8 @@
 from rest_framework import generics, permissions, status, viewsets, serializers
 from rest_framework.response import Response 
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.exceptions import NotFound
-from rest_framework.exceptions import APIException, PermissionDenied
+from rest_framework.exceptions import NotFound, APIException, PermissionDenied, NotAuthenticated
+
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.http import Http404
@@ -34,7 +34,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def resposta_json(sucesso=False, resultado='', erro='', detalhes=''):
+def resposta_json(sucesso=False, resultado=None, erro='', detalhes=[]):
+    print("Tratando resposta")
     return {
         'sucesso': sucesso,
         'resultado': resultado,
@@ -66,7 +67,9 @@ class ErrorHandlingMixin():
         elif isinstance(exc, PermissionDenied):
             return self._handle_permission_error(exc)
         elif isinstance(exc, (Http404, NotFound)):
-            return self._handle_not_found_error(exc)    
+            return self._handle_not_found_error(exc)  
+        elif isinstance(exc, NotAuthenticated):
+            return self._handle_authentication_error(exc)
         elif isinstance(exc, APIException):
             return self._handle_api_exception(exc)
         else:
@@ -104,6 +107,13 @@ class ErrorHandlingMixin():
                 return [detail.string]
             return [str(detail)]
 
+    def _handle_authentication_error(self, exc):
+        return Response(resposta_json(
+            erro="Acesso não autorizado",
+            detalhes=self._flatten_error_messages(exc)),
+            status=status.HTTP_401_UNAUTHORIZED
+            )
+    
     def _handle_validation_error(self, exc):
         print("_handle_validation_error")
         return Response(
@@ -215,11 +225,21 @@ class AdminCreateView(APIView):
     permission_classes = [permissions.AllowAny] # rota placeholder
 
     def post(self, request):
+        print(1)
         serializer = AdminCreateSerializer(data=request.data)
-        if serializer.is_valid():
+        print(2)
+        
+        try:
+            print("try")
+            serializer.is_valid()
             admin = serializer.save()
             return Response(resposta_json(sucesso=True, resultado=serializer.to_representation(admin)), status=status.HTTP_201_CREATED)
-        return Response(resposta_json(erro=serializer.errors), status=status.HTTP_400_BAD_REQUEST)
+        
+        except:  
+            print("except")
+            return Response(resposta_json(
+                erro="Erro de validação nos dados enviados", 
+                detalhes=["Já existe um usuário com esse e-mail."]), status=status.HTTP_400_BAD_REQUEST)
 
 def _handle_serialization(context, instance, data=None, partial=False):
     
