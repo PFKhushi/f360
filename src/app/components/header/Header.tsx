@@ -26,7 +26,7 @@ export default function Header({navigation}: {navigation: NavigationType}) {
   const tokenDecoded = auth?.access ? DecodeToken(auth.access) : undefined
   
   return (
-    <nav className='bg-primary-5 flex items-center py-2 px-2 shadow-[2px_2px_5px_rgba(0,0,0,0.2)] h-20'>
+    <nav className='bg-primary-5 flex items-center py-2 px-2 drop-shadow-[0px_2px_4px] drop-shadow-black/75 h-18'>
       
       <div className='flex gap-1'>
         <ButtonTooltip
@@ -60,7 +60,7 @@ export default function Header({navigation}: {navigation: NavigationType}) {
             className='flex items-center gap-2.5 text-white'
             classNameIcon='w-8 h-8'
           >
-            <span className='font-louis-george-cafe text-xl'>{tokenDecoded?.nome || ''}</span>
+            <span className='font-louis-george-cafe text-xl'>{tokenDecoded?.nome.split(' ')[0]}</span>
           </ButtonTooltip>
           
         </div>

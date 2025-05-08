@@ -17,26 +17,28 @@ export default function Footer() {
 
         <div className='flex flex-col gap-5 md:gap-15 lg:gap-18 xl:gap-21 text-white text-base md:text-xl lg:text-2xl xl:text-[28px]'>
           
-          <div className='flex justify-center md:justify-end gap-5'>
-            <p className='md:max-w-83.5 lg:max-w-100 xl:max-w-116.75 text-right'>BR-230 - Água Fria, João Pessoa - PB, 58053-000</p>
-            <FiMapPin className='w-8 lg:w-10 xl:w-12 h-8 lg:h-10 xl:h-12' />
+          <div className='flex justify-center-safe md:justify-end self-center gap-5 max-w-80 md:max-w-100 lg:max-w-120 xl:max-w-136'>
+            <p className='text-right'>
+              BR-230 - Água Fria, João Pessoa - PB, 58053-000
+            </p>
+            <FiMapPin className='min-w-8 lg:min-w-10 xl:min-w-12 h-8 lg:h-10 xl:h-12' />
           </div>
 
-          <div className='flex justify-center md:justify-end gap-5'>
+          <div className='flex justify-center-safe md:justify-end gap-5'>
             <p className='italic'>suporte@fabricadesoftware.com</p>
-            <BsChatLeftText className='w-8 lg:w-10 xl:w-12 h-8 lg:h-10 xl:h-12' />
+            <BsChatLeftText className='min-w-8 lg:w-10 xl:w-12 h-8 lg:h-10 xl:h-12' />
           </div>
 
-          <div className='flex justify-center md:justify-end gap-5'>
+          <div className='flex justify-center-safe md:justify-end gap-5'>
             <p className='italic'>fabricadesoftwareunipe@gmail.com</p>
-            <MdOutlineEmail className='w-8 lg:w-10 xl:w-12 h-8 lg:h-10 xl:h-12' />
+            <MdOutlineEmail className='min-w-8 lg:w-10 xl:w-12 h-8 lg:h-10 xl:h-12' />
           </div>
 
-          <div className='flex justify-center md:justify-end gap-5'>
+          <div className='flex justify-center-safe md:justify-end gap-5'>
             <p className='italic'>@fabricadesoftware</p>
-            <FiTwitter className='w-8 lg:w-10 xl:w-12 h-8 lg:h-10 xl:h-12' />
-            <FiInstagram className='w-8 lg:w-10 xl:w-12 h-8 lg:h-10 xl:h-12' />
-            <FiFacebook className='w-8 lg:w-10 xl:w-12 h-8 lg:h-10 xl:h-12' />
+            <FiTwitter className='min-w-8 lg:w-10 xl:w-12 h-8 lg:h-10 xl:h-12' />
+            <FiInstagram className='min-w-8 lg:w-10 xl:w-12 h-8 lg:h-10 xl:h-12' />
+            <FiFacebook className='min-w-8 lg:w-10 xl:w-12 h-8 lg:h-10 xl:h-12' />
           </div>
 
         </div>
