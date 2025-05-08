@@ -64,7 +64,7 @@ const schema = z.object({
   //   .optional(),
 })
 .refine((data) => {
-  if(data.curso === 'outros'){
+  if(data.curso === 'OTR'){
     return data.outro_curso && data.outro_curso.trim() !== '';
   }
   return true;
@@ -140,7 +140,7 @@ export default function Participante() {
       clearErrors('telefone')
     }
 
-    if(watch().curso !== 'cursos'){
+    if(watch().curso !== 'OTR'){
       setValue('outro_curso', '')
     }
   }, [watch().telefone, watch().curso])
@@ -271,7 +271,7 @@ export default function Participante() {
             ]}
           />
 
-          {watch().curso === 'outros' && (
+          {watch().curso === 'OTR' && (
             <div className="col-span-2 md:col-span-1 w-full">
               <InputField
                 id="outro_curso"
