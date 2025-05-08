@@ -23,7 +23,7 @@ export default function SidebarItems({hideMenu, breakpointScreen, setIsSidebarHo
   return (
     <aside className={twMerge(
       'h-full pb-2 space-y-0.5 overflow-y-auto overflow-x-hidden text-white',
-      // 'scrollbar scrollbar-w-1.5 scrollbar-thumb-rounded-full scrollbar-thumb-primary hover:scrollbar-thumb-secondary',
+      'scrollbar scrollbar-w-1.5 scrollbar-thumb-rounded-full scrollbar-thumb-primary-5 hover:scrollbar-thumb-primary-4 scrollbar-track-secondary-1/50 scrollbar-track-rounded-full',
     )}>
       {MenuModulos.map((menuModulo) => (
         <div key={menuModulo.groupId}>

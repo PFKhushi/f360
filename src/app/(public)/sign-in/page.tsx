@@ -43,29 +43,23 @@ export default function SignIn() {
     clearAuth();
 
     setIsLoading(true)
-    const loginResponse = await new LoginService().login({username: data.email, password: data.senha})
+    const response = await new LoginService().login({username: data.email, password: data.senha})
     setIsLoading(false)
 
     const message = new MessageService()
 
-    if(loginResponse){
+    if(response){
 
-      if(loginResponse.sucesso){
-
-        if(typeof loginResponse.resultado !== 'string'){
-          setToken(loginResponse.resultado)
-        }
+      if(response.sucesso){
+        setToken(response.resultado)
         router.push("/dashboard");
         return router.refresh()
       }
 
-      if(Array.isArray(loginResponse.detalhes)){
-        return loginResponse.detalhes.map(detalhe => {
-          message.error(detalhe)
-        })
-      }else{
-        return message.error(loginResponse.detalhes)
-      }
+      return response.detalhes.map(detalhe => {
+        message.error(detalhe)
+      })
+      
     }
 
     return message.error('Erro ao buscar os dados.')
@@ -74,9 +68,9 @@ export default function SignIn() {
   return (
     <main className="flex min-h-dvh bg-cover bg-top-left bg-[url('/images/planodefundologin.jpg')]">
       
-      <div className="flex flex-col gap-18 justify-center items-center w-full md:max-w-1/2 lg:max-w-2/5 bg-primary-3 text-white px-5 py-5 md:rounded-r-3xl">
+      <div className="flex flex-col gap-12 justify-center items-center w-full md:max-w-1/2 lg:max-w-2/5 bg-primary-3 text-white px-5 py-5 md:rounded-r-3xl">
         
-        <div className="flex flex-col gap-30 w-full max-w-83">
+        <div className="flex flex-col gap-12 w-full max-w-83">
           <Link
             href={'/'}
             className="flex items-center justify-between"
@@ -90,7 +84,7 @@ export default function SignIn() {
             </picture>
           </Link>
 
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
             <h1 className="text-[40px] font-bold font-coolvetica">Boas vindas.</h1>
             <p className="text-2xl font-light font-louis-george-cafe">Faça login para continuar</p>
           </div>

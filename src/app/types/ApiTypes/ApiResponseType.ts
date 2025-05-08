@@ -1,7 +1,7 @@
 
 export type ApiResponse<T> = {
   sucesso: boolean,
-  resultado: T | string,
+  resultado: T | null,
   erro: string,
-  detalhes: string | string []
+  detalhes: string []
 }
