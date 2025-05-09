@@ -2,7 +2,7 @@ import { ApiResponse } from "@/app/types/ApiTypes/ApiResponseType"
 import { apiInstance } from "./apiInstance"
 import { AxiosError, AxiosResponse } from "axios"
 
-type DataProps = {
+type DataPropsParticipante = {
   usuario: {
     nome: string,
     username: string,
@@ -17,7 +17,7 @@ type DataProps = {
   email_institucional: string
 }
 
-type ResultadoProps = {
+type ResultadoPropsParticipante = {
   id: number,
   usuario: {
     id: number,
@@ -35,14 +35,36 @@ type ResultadoProps = {
   imersionista: boolean
 }
 
+type DataPropsEmpresa = {
+  usuario: {
+    nome: string,
+    username: string,
+    password: string,
+    telefone?: string
+  },
+  cnpj: string,
+  representante: string,
+}
+
+type ResultadoPropsEmpresa = {
+  id: number,
+  usuario: {
+    id: number,
+    nome: string,
+    username: string,
+    telefone?: string
+  },
+  cnpj: string,
+  representante: string,
+}
 
 export class RegisterService {
 
   constructor(){}
   
-  public async registerParticipante(data: DataProps): Promise<ApiResponse<ResultadoProps> | null>{
+  public async registerParticipante(data: DataPropsParticipante): Promise<ApiResponse<ResultadoPropsParticipante> | null>{
     try {
-      const response: AxiosResponse<ApiResponse<ResultadoProps>> = await apiInstance.post('/participante/', data)
+      const response: AxiosResponse<ApiResponse<ResultadoPropsParticipante>> = await apiInstance.post('/participante/', data)
       if(response){
         return {
           ...response.data
@@ -51,7 +73,29 @@ export class RegisterService {
       return null
     } catch (error) {
       if(error instanceof AxiosError){
-        const errorData = error.response?.data as ApiResponse<ResultadoProps>
+        const errorData = error.response?.data as ApiResponse<ResultadoPropsParticipante>
+        return {
+          ...errorData
+        }
+      }
+      return null
+    } 
+  }
+
+  public async registerEmpresa(data: DataPropsEmpresa): Promise<ApiResponse<ResultadoPropsEmpresa> | null>{
+    try {
+      const response: AxiosResponse<ApiResponse<ResultadoPropsEmpresa>> = await apiInstance.post('/empresa/', data)
+      console.log(response)
+      if(response){
+        return {
+          ...response.data
+        }
+      }
+      return null
+    } catch (error) {
+      if(error instanceof AxiosError){
+        const errorData = error.response?.data as ApiResponse<ResultadoPropsEmpresa>
+        console.log(errorData)
         return {
           ...errorData
         }

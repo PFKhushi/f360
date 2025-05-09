@@ -13,7 +13,7 @@ import { isValidCpfFormat, isValidPhoneFormat, isValidRGMFormat } from '@/app/ut
 import { RegisterService } from '@/app/services/api/RegisterService';
 import { MessageService } from '@/app/services/message/MessageService';
 import { useRouter } from 'next/navigation';
-import { FiLoader } from 'react-icons/fi';
+import ButtonSubmit from '@/app/components/shared/ButtonSubmit';
 
 const schema = z.object({
   nome: z
@@ -119,20 +119,20 @@ export default function Participante() {
 
     const message = new MessageService()
     
-        if(response){
-    
-          if(response.sucesso){
-            message.success('Cadastro realizado com sucesso!')
-            return router.push("/sign-in");
-          }
-    
-          return response.detalhes.map(detalhe => {
-            message.error(detalhe)
-          })
-          
-        }
-    
-        return message.error('Erro ao buscar os dados.')
+    if(response){
+
+      if(response.sucesso){
+        message.success('Cadastro realizado com sucesso!')
+        return router.push("/sign-in");
+      }
+
+      return response.detalhes.map(detalhe => {
+        message.error(detalhe)
+      })
+      
+    }
+
+    return message.error('Erro ao buscar os dados.')
   }
 
   useEffect(() => {
@@ -147,7 +147,7 @@ export default function Participante() {
 
   return (
     <main className='flex items-center-safe justify-center-safe bg-primary-4 min-h-svh p-4 pb-8'>
-      <div className='flex flex-col gap-8 md:gap-14 bg-primary-2 rounded-2xl justify-center items-center px-4 md:px-6 py-4 drop-shadow-[0px_10px_0px] drop-shadow-secondary-2'>
+      <div className='flex flex-col gap-8 md:gap-14 w-full max-w-[850px] bg-primary-2 rounded-2xl justify-center items-center px-4 md:px-6 py-4 drop-shadow-[0px_10px_0px] drop-shadow-secondary-2'>
         
         <div className='flex flex-col items-center gap-4 w-full'>
           <Link
@@ -311,17 +311,10 @@ export default function Participante() {
           </div> */}
 
           <div className="col-span-2 flex flex-col items-center gap-4 mt-6">
-            <button 
-              type="submit"
-              className="flex justify-center items-center text-white text-[18px] md:text-xl font-roboto bg-secondary-2 rounded-2xl w-40 h-15" 
-              disabled={isloading}
-            >
-              {isloading ? (
-                <FiLoader className="animate-spin w-8 h-8"/>
-              ) : (
-                <>Cadastrar-se</>
-              )}
-            </button>
+            <ButtonSubmit
+              isLoading={isloading}
+              label='Cadastrar-se'
+            />
             <Link
               href={'/sign-in'}
               className="text-white font-light text-base md:text-[18px] underline"

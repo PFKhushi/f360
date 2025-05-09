@@ -33,7 +33,7 @@ export default function SidebarItems({hideMenu, breakpointScreen, setIsSidebarHo
           )}>
             {!hideMenu ? menuModulo.groupTitle : '...'}
           </div> */}
-          <div className='flex flex-col my-2 flex-nowrap'>
+          <div className='flex flex-col flex-nowrap'>
             {menuModulo.groupMenus.map((modulo) => {
 
               // if(!ALLOWED_MODULES_PROFILE.find(module => module.modulesAllowed.includes(modulo.href))) {

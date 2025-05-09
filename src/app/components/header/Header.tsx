@@ -11,9 +11,10 @@ import { useControlSidebar } from '@/app/context/useControlSidebar';
 import { NavigationType } from '@/app/types/MenuTypes/NavigationType';
 import NavList from '../navigation/NavList';
 import MobileSidebar from '../navigation/mobile/MobileSidebar';
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from '@/app/context/useAuth';
 import { DecodeToken } from '@/app/utils/DecodeToken';
+import { twMerge } from 'tailwind-merge';
 
 export default function Header({navigation}: {navigation: NavigationType}) {
 
@@ -24,6 +25,8 @@ export default function Header({navigation}: {navigation: NavigationType}) {
 
   const {auth} = useAuth()
   const tokenDecoded = auth?.access ? DecodeToken(auth.access) : undefined
+
+  const path = '/' + usePathname().split('/')[1]
   
   return (
     <nav className='bg-primary-5 flex items-center py-2 px-2 drop-shadow-[0px_2px_4px] drop-shadow-black/75 h-18'>
@@ -57,7 +60,11 @@ export default function Header({navigation}: {navigation: NavigationType}) {
             tooltipTitle='Usuário'
             icon={LiaUserCircle}
             onClick={() => {router.push('/perfil-usuario')}}
-            className='flex items-center gap-2.5 text-white'
+            className={twMerge(
+              'flex items-center gap-2.5 text-white',
+              'hover:bg-secondary-1',
+              path === '/perfil-usuario' && 'text-primary-5 bg-secondary-2 font-bold'
+            )}
             classNameIcon='w-8 h-8'
           >
             <span className='font-louis-george-cafe text-xl'>{tokenDecoded?.nome.split(' ')[0]}</span>

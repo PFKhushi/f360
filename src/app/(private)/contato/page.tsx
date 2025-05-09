@@ -1,6 +1,7 @@
+import InConstruction from "@/app/components/shared/InConstruction";
 
 export default function Contato() {
   return (
-    <div>CONTATO</div>
+    <InConstruction/>
   );
 }
