@@ -1,6 +1,7 @@
+import InConstruction from "@/app/components/shared/InConstruction";
 
 export default function AgendaEventos() {
   return (
-    <div>AGENDA DE EVENTOS</div>
+    <InConstruction/>
   );
 }

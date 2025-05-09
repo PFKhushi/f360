@@ -7,9 +7,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { LoginService } from "@/app/services/api/LoginService";
-import { FiLoader } from "react-icons/fi";
 import { MessageService } from "@/app/services/message/MessageService";
 import { useAuth } from "@/app/context/useAuth";
+import ButtonSubmit from "@/app/components/shared/ButtonSubmit";
 
 const schema = z.object({
   email: z
@@ -141,18 +141,11 @@ export default function SignIn() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <button
-              type="submit"
-              className="flex justify-center items-center self-center bg-secondary-2 hover:bg-secondary-1 text-2xl text-white font-semibold py-2 rounded-2xl cursor-pointer transition h-15 w-full max-w-46"
-              disabled={isloading}
-            >
-              {isloading ? (
-                <FiLoader className="animate-spin w-8 h-8"/>
-              ) : (
-                <>Entrar</>
-              )}
-            </button>
-
+            <ButtonSubmit
+              isLoading={isloading}
+              label="Entrar"
+              className="text-2xl md:text-2xl font-semibold rounded-2xl w-46 self-center"
+            />
             <div className="flex justify-center gap-1 text-lg">
               <span>Não se cadastrou?</span>
               <Link
