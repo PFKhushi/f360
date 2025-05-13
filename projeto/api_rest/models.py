@@ -17,7 +17,7 @@ class UsuarioManager(BaseUserManager):
     def get_username(self):
         return self.username
     
-    def create_user(self, nome, username, password, **extra_fields):
+    def create_user(self, nome, username, password, active=True, **extra_fields):
         
         if not username:
             raise ValueError(_('O email deve ser fornecido'))
@@ -28,7 +28,7 @@ class UsuarioManager(BaseUserManager):
 
         username = self.normalize_email(username).lower()
         
-        extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault('is_active', active)
         
         user = self.model(
             nome=nome, 
@@ -183,12 +183,12 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
     @staticmethod
     def criar_empresa(nome, email, senha, cnpj, representante, **extras):
-        
         with transaction.atomic():
             usuario = Usuario.objects.create_user(
                 nome=nome,
                 username=email,
                 password=senha,
+                active=False,
                 **extras
             )
             Empresa.objects.create(

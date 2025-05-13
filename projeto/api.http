@@ -375,6 +375,14 @@ Content-Type: application/json
             "area": 2,
             "nivel": 4
         }
+    ],
+    "outras_tech": [
+        {
+            "nome": "c",
+        },
+        {
+            "nome"
+        } 
     ]
 }
 

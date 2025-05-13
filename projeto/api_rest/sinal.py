@@ -7,8 +7,6 @@ from .models import Participante, Empresa, TechLeader, Usuario
 @receiver(post_save, sender=Participante)
 def atualizar_tipo_usuario_participante(sender, instance, **kwargs):
     usuario = instance.usuario
-    if not usuario.is_active:
-        usuario.is_active = True  # ativa usuario caso esteja inativo
     if usuario.tipo_usuario != Usuario.TipoUsuario.PARTICIPANTE:
         usuario.tipo_usuario = Usuario.TipoUsuario.PARTICIPANTE
         usuario.save(update_fields=["tipo_usuario"])  # atualiza tipo_usuario

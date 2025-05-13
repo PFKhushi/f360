@@ -74,11 +74,14 @@ class BasePerfilSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         usuario_data = validated_data.pop('usuario', None)
+        ativado = validated_data.pop('ativado', None)
 
         print(usuario_data)
         if usuario_data:
-            # Alteração aqui: verificando por 'password' em vez de 'senha'
             password = usuario_data.pop('password', None)
+            
+            if ativado is not None:
+                usuario_data['is_active'] = ativado
 
             usuario_serializer = UsuarioSerializer(
                 instance=instance.usuario,
@@ -88,7 +91,6 @@ class BasePerfilSerializer(serializers.ModelSerializer):
             usuario_serializer.is_valid(raise_exception=True)
             usuario_serializer.save()
 
-            # Alteração aqui: usando password em vez de senha
             if password:
                 instance.usuario.set_password(password)
                 instance.usuario.save()
@@ -107,10 +109,15 @@ class ParticipanteSerializer(BasePerfilSerializer):
     usuario = UsuarioSerializer()  # inclui dados do user embutidos
     extensionista = serializers.SerializerMethodField(read_only=True)
     imersionista = serializers.SerializerMethodField(read_only=True)
+    ativado = serializers.BooleanField(
+        write_only=True,
+        required=False,
+        help_text="True para ativar a conta, False para desativar"
+    )
 
     class Meta:
         model = Participante
-        fields = ['id', 'usuario', 'cpf', 'rgm', 'curso', 'outro_curso', 'periodo', 'email_institucional', 'extensionista', 'imersionista']
+        fields = ['id', 'usuario', 'cpf', 'rgm', 'curso', 'outro_curso', 'periodo', 'email_institucional', 'extensionista', 'imersionista', 'ativado']
 
     def get_extensionista(self, participante):
         extensao = participante.extensionista.first()
@@ -190,10 +197,15 @@ class ParticipanteSerializer(BasePerfilSerializer):
 # igual ao participante, porem com campos da Empresa
 class EmpresaSerializer(BasePerfilSerializer):
     usuario = UsuarioSerializer()
+    ativado = serializers.BooleanField(
+        write_only=True,
+        required=False,
+        help_text="True para ativar a conta, False para desativar"
+    )
 
     class Meta:
         model = Empresa
-        fields = ['id', 'usuario', 'cnpj', 'representante']
+        fields = ['id', 'usuario', 'cnpj', 'representante', 'ativado']
 
     def create(self, validated_data):
         try:
@@ -214,10 +226,15 @@ class EmpresaSerializer(BasePerfilSerializer):
 # igual aos anteriores, usado p/ techleader
 class TechLeaderSerializer(BasePerfilSerializer):
     usuario = UsuarioSerializer()
+    ativado = serializers.BooleanField(
+        write_only=True,
+        required=False,
+        help_text="True para ativar a conta, False para desativar"
+    )
 
     class Meta:
         model = TechLeader
-        fields = ['id', 'usuario', 'codigo', 'especialidade']
+        fields = ['id', 'usuario', 'codigo', 'especialidade', 'ativado']
         
     def validate_codigo(self, value):
         
@@ -252,10 +269,15 @@ class ExcecaoSerializer(BasePerfilSerializer):
     usuario = UsuarioSerializer()
     extensionista = serializers.SerializerMethodField(read_only=True)
     imersionista = serializers.SerializerMethodField(read_only=True)
+    ativado = serializers.BooleanField(
+        write_only=True,
+        required=False,
+        help_text="True para ativar a conta, False para desativar"
+    )
     
     class Meta:
         model = Excecao
-        fields = ['id', 'usuario', 'motivo', 'nota', 'data_inicio', 'extensionista', 'imersionista']
+        fields = ['id', 'usuario', 'motivo', 'nota', 'data_inicio', 'extensionista', 'imersionista', 'ativado']
         
     def get_extensionista(self, excecao):
         if hasattr(excecao, 'extensionista'):

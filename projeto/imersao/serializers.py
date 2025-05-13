@@ -82,11 +82,12 @@ class FormularioInscricaoDetailSerializer(serializers.ModelSerializer): # querys
 
 class FormularioInscricaoCreateUpdateSerializer(serializers.ModelSerializer):
     interesses = InteresseAreaSerializer(many=True, required=False)
+    outras_tech = TecnologiaSerializer(many=True, required=False)
     
     class Meta:
         model = FormularioInscricao
         fields = ['participante', 'imersao', 'tecnologias', 'primeira_opcao', 
-                'segunda_opcao', 'interesses']
+                'segunda_opcao', 'interesses', 'outras_tech']
     
     def validate(self, data):
         
@@ -104,8 +105,16 @@ class FormularioInscricaoCreateUpdateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         interesses_data = validated_data.pop('interesses', [])
         tecnologias_data = validated_data.pop('tecnologias', [])
+        outras_tech_data = validated_data.pop('outras_tech', [])
         
         formulario = FormularioInscricao.objects.create(**validated_data)
+        
+        for outras_tech in outras_tech_data:
+            tech =Tecnologia.objects.create(
+                nome = outras_tech,
+                ativa = True
+            )
+            tecnologias_data.append(tech.id)
         
         formulario.tecnologias.set(tecnologias_data)
         
@@ -118,7 +127,7 @@ class FormularioInscricaoCreateUpdateSerializer(serializers.ModelSerializer):
         
         return formulario
     
-    def update(self, instance, validated_data):
+    def update(self, instance, validated_data): # verificar necessidade de um update para o formulario
         if 'participante' in validated_data and validated_data['participante'] != instance.participante:
             raise serializers.ValidationError("Não é permitido alterar o participante de um formulário de inscrição.")
         
