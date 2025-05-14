@@ -12,6 +12,7 @@ import { cleanMasksNumeralDocuments, maskCNPJ, maskPhone } from '@/app/utils/Inp
 import { RegisterService } from '@/app/services/api/RegisterService';
 import { MessageService } from '@/app/services/message/MessageService';
 import ButtonSubmit from '@/app/components/shared/ButtonSubmit';
+import LogoText from '@/app/components/LogoText';
 
 const schema = z.object({
   nome: z
@@ -113,7 +114,7 @@ export default function Empresa() {
       <div className='flex flex-col gap-8 md:gap-14 w-full max-w-[850px] bg-primary-2 rounded-2xl justify-center items-center px-4 md:px-6 py-4 drop-shadow-[0px_10px_0px] drop-shadow-secondary-2'>
         
         <div className='flex flex-col items-center gap-4 w-full'>
-          <Link
+          {/* <Link
             href={'/'}
             className='w-full max-w-50 md:max-w-60'
           >
@@ -124,6 +125,9 @@ export default function Empresa() {
                 className='w-full h-full object-contain'
               />
             </picture>
+          </Link> */}
+          <Link href={'/'} className='max-w-50 md:max-w-60 w-full'>
+            <LogoText/>
           </Link>
           <p className='text-white font-louis-george-cafe text-xl md:text-2xl text-center'>
             Venha registrar as suas demandas
@@ -132,14 +136,13 @@ export default function Empresa() {
         </div>
 
         <form 
-          className='grid md:grid-cols-2 gap-x-[80px] gap-y-4 w-full max-w-[750px]'
+          className='grid md:grid-cols-2 gap-x-[80px] gap-y-8 w-full max-w-[750px]'
           onSubmit={handleSubmit(handleRegister)}
         >
 
           <InputField
             id="nome"
             label="Nome da Empresa"
-            placeholder='Digite o nome da empresa...'
             register={register('nome')}
             error={errors.nome}
           />
@@ -147,7 +150,6 @@ export default function Empresa() {
           <InputField
             id="cnpj"
             label="CNPJ"
-            placeholder='Digite seu cpf aqui...'
             register={register('cnpj', {onChange(event) {
               setValue('cnpj', maskCNPJ(event.target.value))
             },})}
@@ -157,7 +159,6 @@ export default function Empresa() {
           <InputField
             id="representante"
             label="Nome do representante"
-            placeholder='Digite o nome aqui...'
             register={register('representante')}
             error={errors.representante}
           />
@@ -165,7 +166,6 @@ export default function Empresa() {
           <InputField
             id="email"
             label="Email (Login)"
-            placeholder='Digite seu email (login) aqui...'
             register={register('username')}
             error={errors.username}
           />
@@ -175,7 +175,6 @@ export default function Empresa() {
               <InputField
                 id="telefone"
                 label="Telefone"
-                placeholder='Digite seu telefone aqui...'
                 register={register('telefone', {onChange(event) {
                   setValue('telefone', maskPhone(event.target.value))
                 },})}
@@ -188,7 +187,6 @@ export default function Empresa() {
             id="password"
             type='password'
             label= "Senha"
-            placeholder='Digite uma senha...'
             register={register('password')}
             error={errors.password}
           />
@@ -197,7 +195,6 @@ export default function Empresa() {
             id="confirmPassword"
             type='password'
             label= "Confirmar Senha"
-            placeholder='Confirme a senha...'
             register={register('confirmPassword')}
             error={errors.confirmPassword}
           />
