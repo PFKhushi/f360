@@ -531,7 +531,8 @@ class Extensionista(models.Model):
     def __str__(self):
         if self.participante:
             return f"Extensionisto: {self.participante.usuario.nome}"
-        else:
+        elif self.excecao:
             return f"Extensionista: {self.excecao.usuario.nome}"
+        return "Extensionista não existe"
     
     

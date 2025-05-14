@@ -408,7 +408,6 @@ class EmpresaViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
 
     @list_empresas_swagger()
     def list(self, request, *args, **kwargs):
-        
         empresas = self.get_queryset() 
         serializer = self.get_serializer(empresas, many=True)
         return Response(resposta_json(sucesso=True, resultado=serializer.data))

@@ -33,3 +33,4 @@ RUN adduser --disabled-password --no-create-home django-user
 USER django-user
 
 CMD ["sh", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+
