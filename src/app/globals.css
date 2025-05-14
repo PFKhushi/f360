@@ -256,8 +256,8 @@
   }
 }
 
-@utility clip-path-triangule {
-  clip-path: polygon(50% 100%, 0 0, 100% 0);
+@utility clip-path-* {
+  clip-path: polygon(--value([*]));
 }
 
 /* @media (prefers-color-scheme: dark) {

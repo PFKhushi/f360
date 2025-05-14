@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import LogoText from '@/app/components/LogoText'
 
 export default function Register(){
   return (
@@ -7,7 +8,7 @@ export default function Register(){
       <div className='flex flex-col items-center gap-10 md:bg-primary-4 drop-shadow-[10px_10px_4px] drop-shadow-black/25 rounded-[20px] text-white md:py-9 px-4 md:px-14'>
         
         <div className='flex flex-col items-center gap-8'>
-          <Link
+          {/* <Link
             className='max-w-84'
             href={'/'}
           >
@@ -18,6 +19,9 @@ export default function Register(){
                 className='w-full h-full object-contain' 
               />
             </picture>
+          </Link> */}
+          <Link href={'/'} className='max-w-84 w-full'>
+            <LogoText/>
           </Link>
           <p className='text-center font-louis-george-cafe text-xl md:text-[24px]'>Seja bem-vindo à Fábrica de Software</p>
           <div className='w-full max-w-[503px] h-[1px] bg-white' />

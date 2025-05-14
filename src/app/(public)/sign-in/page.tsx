@@ -10,6 +10,8 @@ import { LoginService } from "@/app/services/api/LoginService";
 import { MessageService } from "@/app/services/message/MessageService";
 import { useAuth } from "@/app/context/useAuth";
 import ButtonSubmit from "@/app/components/shared/ButtonSubmit";
+import InputField from "@/app/components/InputField";
+import Logo from "@/app/components/Logo";
 
 const schema = z.object({
   email: z
@@ -75,14 +77,19 @@ export default function SignIn() {
             href={'/'}
             className="flex items-center justify-between"
           >
-            <picture>
+            {/* <picture>
               <img
                 src="/images/logos/branca-com-preenchimento/branco-com-preenchimento.png"
                 alt="Logo"
                 className="h-32 object-contain"
               />
-            </picture>
+            </picture> */}
+            <div className="w-24">
+              <Logo/>
+            </div>
           </Link>
+
+          
 
           <div className="flex flex-col gap-4">
             <h1 className="text-[40px] font-bold font-coolvetica">Boas vindas.</h1>
@@ -92,9 +99,29 @@ export default function SignIn() {
 
         <form
           onSubmit={handleSubmit(handleLogin)}
-          className="flex flex-col gap-3 w-full max-w-83"
+          className="flex flex-col gap-4 w-full max-w-83"
         >
-          <div>
+          <div className="grid gap-8">
+            <InputField
+              id="email"
+              label="Email"
+              register={register('email')}
+              error={errors.email}
+              className="bg-primary-3 peer-focus:bg-primary-3"
+            />
+
+            <InputField
+              id="senha"
+              label="Senha"
+              type="password"
+              register={register('senha')}
+              error={errors.senha}
+              className="bg-primary-3 peer-focus:bg-primary-3"
+            />
+
+          </div>
+
+          {/* <div>
             <label
               htmlFor="email"
               className="block mb-2 font-medium text-xl"
@@ -113,9 +140,11 @@ export default function SignIn() {
                 {errors.email.message}
               </span>
             )}
-          </div>
+          </div> */}
 
-          <div>
+          
+
+          {/* <div>
             <label
               htmlFor="senha"
               className="block mb-2 font-medium text-xl"
@@ -134,7 +163,7 @@ export default function SignIn() {
                 {errors.senha.message}
               </span>
             )}
-          </div>
+          </div> */}
 
           <div className="text-right text-lg text-white mb-4">
             esqueceu a senha?

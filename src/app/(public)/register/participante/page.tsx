@@ -14,6 +14,7 @@ import { RegisterService } from '@/app/services/api/RegisterService';
 import { MessageService } from '@/app/services/message/MessageService';
 import { useRouter } from 'next/navigation';
 import ButtonSubmit from '@/app/components/shared/ButtonSubmit';
+import LogoText from '@/app/components/LogoText';
 
 const schema = z.object({
   nome: z
@@ -150,7 +151,7 @@ export default function Participante() {
       <div className='flex flex-col gap-8 md:gap-14 w-full max-w-[850px] bg-primary-2 rounded-2xl justify-center items-center px-4 md:px-6 py-4 drop-shadow-[0px_10px_0px] drop-shadow-secondary-2'>
         
         <div className='flex flex-col items-center gap-4 w-full'>
-          <Link
+          {/* <Link
             href={'/'}
             className='w-full max-w-50 md:max-w-60'
           >
@@ -161,6 +162,9 @@ export default function Participante() {
                 className='w-full h-full object-contain'
               />
             </picture>
+          </Link> */}
+          <Link href={'/'} className='max-w-50 md:max-w-60 w-full'>
+            <LogoText/>
           </Link>
           <p className='text-white font-louis-george-cafe text-xl md:text-2xl text-center'>
             Venha participar do  processo de imersão
@@ -169,13 +173,12 @@ export default function Participante() {
         </div>
 
         <form 
-          className='grid md:grid-cols-2 gap-x-[80px] gap-y-4 w-full max-w-[750px]'
+          className='grid md:grid-cols-2 gap-x-[80px] gap-y-8 w-full max-w-[750px]'
           onSubmit={handleSubmit(handleRegister)}
         >
           <InputField
             id="nome"
             label="Nome completo"
-            placeholder='Digite seu nome aqui...'
             register={register('nome')}
             error={errors.nome}
           />
@@ -183,7 +186,6 @@ export default function Participante() {
           <InputField
             id="cpf"
             label="CPF"
-            placeholder='Digite seu cpf aqui...'
             register={register('cpf', {onChange(event) {
               setValue('cpf', maskCPF(event.target.value))
             },})}
@@ -193,7 +195,6 @@ export default function Participante() {
           <InputField
             id="email"
             label="Email (Login)"
-            placeholder='Digite seu email (login) aqui...'
             register={register('username')}
             error={errors.username}
           />
@@ -201,7 +202,6 @@ export default function Participante() {
           <InputField
             id="email_institucional"
             label="Email Institucional"
-            placeholder='Digite seu email institucional aqui...'
             register={register('email_institucional')}
             error={errors.email_institucional}
           />
@@ -209,7 +209,6 @@ export default function Participante() {
           <InputField
             id="rgm"
             label="Matricula (RGM)"
-            placeholder='Digite sua matricula aqui...'
             register={register('rgm', {onChange(event) {
               setValue('rgm', maskRGM(event.target.value))
             },})}
@@ -219,7 +218,6 @@ export default function Participante() {
           <InputField
             id="telefone"
             label="Telefone"
-            placeholder='Digite seu telefone aqui...'
             register={register('telefone', {onChange(event) {
               setValue('telefone', maskPhone(event.target.value))
             },})}
@@ -237,9 +235,9 @@ export default function Participante() {
           <SelectField
             id = "periodo"
             label = "Período"
-            placeholder='Selecione um período...'
             register={register('periodo')}
             error = {errors.periodo}
+            isInvalidOption={!watch().periodo}
             defaultValue = ""
             options = {[
               {value: 1, label: "1°"},
@@ -256,9 +254,9 @@ export default function Participante() {
           <SelectField
             id = "curso"
             label = "Curso"
-            placeholder='Selecione um curso...'
             register={register('curso')}
             error = {errors.curso}
+            isInvalidOption={!watch().curso}
             defaultValue = ""
             options = {[
               {value: "ADS", label: "Análise e Desenvolvimento de Sistemas"},
@@ -276,7 +274,6 @@ export default function Participante() {
               <InputField
                 id="outro_curso"
                 label= "Informe seu curso"
-                placeholder='Digite o nome do curso...'
                 register={register('outro_curso')}
                 error={errors.outro_curso}
               />
@@ -287,7 +284,6 @@ export default function Participante() {
             id="password"
             type='password'
             label= "Senha"
-            placeholder='Digite uma senha...'
             register={register('password')}
             error={errors.password}
           />
@@ -296,7 +292,6 @@ export default function Participante() {
             id="confirmPassword"
             type='password'
             label= "Confirmar Senha"
-            placeholder='Confirme a senha...'
             register={register('confirmPassword')}
             error={errors.confirmPassword}
           />
