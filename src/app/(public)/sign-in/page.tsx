@@ -89,8 +89,6 @@ export default function SignIn() {
             </div>
           </Link>
 
-          
-
           <div className="flex flex-col gap-4">
             <h1 className="text-[40px] font-bold font-coolvetica">Boas vindas.</h1>
             <p className="text-2xl font-light font-louis-george-cafe">Faça login para continuar</p>
@@ -120,50 +118,6 @@ export default function SignIn() {
             />
 
           </div>
-
-          {/* <div>
-            <label
-              htmlFor="email"
-              className="block mb-2 font-medium text-xl"
-            >
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              placeholder="Digite seu email aqui..."
-              className="w-full px-4 py-2.5 rounded-lg border-[#D9D9D9] border-1 bg-white/37 placeholder-[#1E1E1EE5]/90 text-white text-xl focus:outline-none"
-              {...register("email")}
-            />
-            {errors.email && (
-              <span className="text-secondary-1 text-sm">
-                {errors.email.message}
-              </span>
-            )}
-          </div> */}
-
-          
-
-          {/* <div>
-            <label
-              htmlFor="senha"
-              className="block mb-2 font-medium text-xl"
-            >
-              Senha
-            </label>
-            <input
-              id="senha"
-              type="password"
-              placeholder="Digite sua senha aqui..."
-              className="w-full px-4 py-2.5 rounded-lg border-[#D9D9D9] border-1 bg-white/37 placeholder-[#1E1E1EE5]/90 text-white text-xl focus:outline-none"
-              {...register("senha")}
-            />
-            {errors.senha && (
-              <span className="text-secondary-1 text-sm">
-                {errors.senha.message}
-              </span>
-            )}
-          </div> */}
 
           <div className="text-right text-lg text-white mb-4">
             esqueceu a senha?

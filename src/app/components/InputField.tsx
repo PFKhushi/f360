@@ -10,6 +10,7 @@ type InputFieldProps = {
   error?: FieldError;
   disabled?: boolean;
   className?: string;
+  classNameElement?: string;
 };
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -20,9 +21,13 @@ const InputField: React.FC<InputFieldProps> = ({
   error,
   disabled = false,
   className,
+  classNameElement
 }) => {
   return(
-    <div className='relative col-span-2 md:col-span-1 w-full z-10'>
+    <div className={twMerge(
+      'relative col-span-2 md:col-span-1 w-full z-10',
+      classNameElement
+    )}>
 
       <input 
         type={type}
