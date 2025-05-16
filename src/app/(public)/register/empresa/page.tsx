@@ -170,17 +170,16 @@ export default function Empresa() {
             error={errors.username}
           />
 
-          <div className='col-span-2 flex'>
-            <div className='w-full max-w-[335px]'>
-              <InputField
-                id="telefone"
-                label="Telefone"
-                register={register('telefone', {onChange(event) {
-                  setValue('telefone', maskPhone(event.target.value))
-                },})}
-                error={errors.telefone}
-              />
-            </div>
+          <div className='grid col-span-2 grid-cols-subgrid gap-[80px] w-full'>
+            <InputField
+              id="telefone"
+              label="Telefone"
+              register={register('telefone', {onChange(event) {
+                setValue('telefone', maskPhone(event.target.value))
+              },})}
+              error={errors.telefone}
+              classNameElement='md:col-start-1'
+            />
           </div>
 
           <InputField

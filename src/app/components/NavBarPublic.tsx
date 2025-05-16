@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
 import { twMerge } from 'tailwind-merge';
+import LogoTextVazada from './LogoTextVazada';
 
 export default function NavBarPublic() {
 
@@ -26,13 +27,13 @@ export default function NavBarPublic() {
 
   return (
     <nav className={twMerge(
-      "fixed top-0 py-5 px-5 w-full mx-auto z-10 transition",
+      "fixed top-0 py-3 px-5 w-full mx-auto z-10 transition",
       isDark ? 'bg-primary-5' : 'bg-primary-5/50'
     )}>
       <div className="flex items-center justify-between text-white max-w-360 mx-auto gap-6">
         
-        <div className="flex items-center gap-10 overflow-hidden w-11.5 md:w-fit">
-          <Link href={'/'}>
+        <div className="flex items-center gap-10 overflow-hidden w-12 md:w-fit">
+          {/* <Link href={'/'}>
             <picture>
               <img
                 className="max-w-40 lg:max-w-45 xl:max-w-50"
@@ -40,6 +41,10 @@ export default function NavBarPublic() {
                 alt="Logo Fábrica de Software"
               />
             </picture>
+          </Link> */}
+
+          <Link className='min-w-40 lg:w-45 xl:w-50' href={'/'}>
+            <LogoTextVazada/>
           </Link>
 
         </div>
