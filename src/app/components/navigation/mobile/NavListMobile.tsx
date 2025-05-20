@@ -6,11 +6,11 @@ import { twMerge } from 'tailwind-merge'
 export default function NavListMobile({navigation, setOpenDrawer}: {navigation: NavigationType, setOpenDrawer: (open: boolean) => void}) {
   return (
     <nav className={twMerge(
-      'h-full bg-quinary text-primary overflow-y-auto',
-      'scrollbar scrollbar-w-1.5 scrollbar-thumb-rounded-full transition-colors scrollbar-thumb-primary hover:scrollbar-thumb-secondary',
+      'h-full bg-primary-1 text-white overflow-y-auto',
+      // 'scrollbar scrollbar-w-1.5 scrollbar-thumb-rounded-full transition-colors scrollbar-thumb-primary hover:scrollbar-thumb-secondary',
     )}>
       <div className='flex flex-col px-2.5 py-2'>
-        <span className='text-sm uppercase font-semibold py-2 text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent'>
+        <span className='text-sm uppercase font-semibold py-2 text-center'>
           {navigation.menuTitle}
         </span>
         {navigation.menuTree.map((menu) => (

@@ -134,6 +134,8 @@ export default function CarrouselCardsSolution() {
 
   const [isAutoScroll, setIsAutoScroll] = useState(true);
   const [isMouseEnter, setIsMouseEnter] = useState(false);
+  const [isTouched, setIsTouched] = useState(false);
+  const touchedTimeout = useRef<NodeJS.Timeout | null>(null);
   
   useEffect(() => {
     let intervalId: NodeJS.Timeout
@@ -153,7 +155,7 @@ export default function CarrouselCardsSolution() {
       }else{
 
         intervalId = setInterval(() => {
-          if(!isMouseEnter){
+          if(!isMouseEnter && !isTouched){
             setIsAutoScroll(true);
           }
         }, 2000);
@@ -164,7 +166,7 @@ export default function CarrouselCardsSolution() {
       clearInterval(intervalId);
     };
   
-  }, [isAutoScroll, isMouseEnter]);
+  }, [isAutoScroll, isMouseEnter, !isTouched]);
 
   function handleMouseEnter() {
     setIsAutoScroll(false);
@@ -174,12 +176,28 @@ export default function CarrouselCardsSolution() {
   function handleMouseLeave () {
     setIsMouseEnter(false);
   }
+
+  const handleTouch = useCallback(() => {
+    setIsAutoScroll(false);
+    setIsTouched(true);
+
+    if (touchedTimeout.current) {
+      clearTimeout(touchedTimeout.current);
+    }
+  
+    touchedTimeout.current = setTimeout(() => {
+      setIsTouched(false);
+    }, 2000);
+  }, []);
   
   return (
     <div
       className='relative overflow-hidden'
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouch}
+      onTouchMove={handleTouch}
+      onTouchEnd={handleTouch}
     >
       <button
         className="group absolute z-1 top-0 bottom-0 left-0 bg-gradient-to-l from-transparent to-primary-1 hover:cursor-pointer outline-none"

@@ -7,7 +7,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { LoginService } from "@/app/services/api/LoginService";
-import { FiLoader } from "react-icons/fi";
+import { MessageService } from "@/app/services/message/MessageService";
+import { useAuth } from "@/app/context/useAuth";
+import ButtonSubmit from "@/app/components/shared/ButtonSubmit";
+import InputField from "@/app/components/InputField";
+import Logo from "@/app/components/Logo";
 
 const schema = z.object({
   email: z
@@ -34,37 +38,58 @@ export default function SignIn() {
 
   const router = useRouter();
   const [isloading, setIsLoading] = useState<boolean>(false)
+  const { setToken, clearAuth } = useAuth()
 
   async function handleLogin(data: FormData) {
 
+    clearAuth();
+
     setIsLoading(true)
-    const loginResponse = await new LoginService().login({username: data.email, password: data.senha})
+    const response = await new LoginService().login({username: data.email, password: data.senha})
     setIsLoading(false)
 
-    // console.log(data);
-    // router.push("/dashboard");
+    const message = new MessageService()
+
+    if(response){
+
+      if(response.sucesso){
+        setToken(response.resultado)
+        router.push("/dashboard");
+        return router.refresh()
+      }
+
+      return response.detalhes.map(detalhe => {
+        message.error(detalhe)
+      })
+      
+    }
+
+    return message.error('Erro ao buscar os dados.')
   }
 
   return (
     <main className="flex min-h-dvh bg-cover bg-top-left bg-[url('/images/planodefundologin.jpg')]">
       
-      <div className="flex flex-col gap-18 justify-center items-center w-full md:max-w-1/2 lg:max-w-2/5 bg-primary-3 text-white px-5 py-5 md:rounded-r-3xl">
+      <div className="flex flex-col gap-12 justify-center items-center w-full md:max-w-1/2 lg:max-w-2/5 bg-primary-3 text-white px-5 py-5 md:rounded-r-3xl">
         
-        <div className="flex flex-col gap-30 w-full max-w-83">
+        <div className="flex flex-col gap-12 w-full max-w-83">
           <Link
             href={'/'}
             className="flex items-center justify-between"
           >
-            <picture>
+            {/* <picture>
               <img
                 src="/images/logos/branca-com-preenchimento/branco-com-preenchimento.png"
                 alt="Logo"
                 className="h-32 object-contain"
               />
-            </picture>
+            </picture> */}
+            <div className="w-24">
+              <Logo/>
+            </div>
           </Link>
 
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
             <h1 className="text-[40px] font-bold font-coolvetica">Boas vindas.</h1>
             <p className="text-2xl font-light font-louis-george-cafe">Faça login para continuar</p>
           </div>
@@ -72,48 +97,26 @@ export default function SignIn() {
 
         <form
           onSubmit={handleSubmit(handleLogin)}
-          className="flex flex-col gap-3 w-full max-w-83"
+          className="flex flex-col gap-4 w-full max-w-83"
         >
-          <div>
-            <label
-              htmlFor="email"
-              className="block mb-2 font-medium text-xl"
-            >
-              Email
-            </label>
-            <input
+          <div className="grid gap-8">
+            <InputField
               id="email"
-              type="email"
-              placeholder="Digite seu email aqui..."
-              className="w-full px-4 py-2.5 rounded-lg border-[#D9D9D9] border-1 bg-white/37 placeholder-[#1E1E1EE5]/90 text-white text-xl focus:outline-none"
-              {...register("email")}
+              label="Email"
+              register={register('email')}
+              error={errors.email}
+              className="bg-primary-3 peer-focus:bg-primary-3"
             />
-            {errors.email && (
-              <span className="text-secondary-1 text-sm">
-                {errors.email.message}
-              </span>
-            )}
-          </div>
 
-          <div>
-            <label
-              htmlFor="senha"
-              className="block mb-2 font-medium text-xl"
-            >
-              Senha
-            </label>
-            <input
+            <InputField
               id="senha"
+              label="Senha"
               type="password"
-              placeholder="Digite sua senha aqui..."
-              className="w-full px-4 py-2.5 rounded-lg border-[#D9D9D9] border-1 bg-white/37 placeholder-[#1E1E1EE5]/90 text-white text-xl focus:outline-none"
-              {...register("senha")}
+              register={register('senha')}
+              error={errors.senha}
+              className="bg-primary-3 peer-focus:bg-primary-3"
             />
-            {errors.senha && (
-              <span className="text-secondary-1 text-sm">
-                {errors.senha.message}
-              </span>
-            )}
+
           </div>
 
           <div className="text-right text-lg text-white mb-4">
@@ -121,18 +124,11 @@ export default function SignIn() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <button
-              type="submit"
-              className="flex justify-center items-center self-center bg-secondary-2 hover:bg-secondary-1 text-2xl text-white font-semibold py-2 rounded-2xl cursor-pointer transition h-15 w-full max-w-46"
-              disabled={isloading}
-            >
-              {isloading ? (
-                <FiLoader className="animate-spin w-8 h-8"/>
-              ) : (
-                <>Entrar</>
-              )}
-            </button>
-
+            <ButtonSubmit
+              isLoading={isloading}
+              label="Entrar"
+              className="text-2xl md:text-2xl font-semibold rounded-2xl w-46 self-center"
+            />
             <div className="flex justify-center gap-1 text-lg">
               <span>Não se cadastrou?</span>
               <Link

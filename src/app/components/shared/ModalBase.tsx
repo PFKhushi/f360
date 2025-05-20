@@ -27,12 +27,12 @@ export default function ModalBase({openModal, setOpenModal, children, titleToolt
       className={twMerge(
         'flex p-4',
         'overflow-auto scrollbar scrollbar-w-1.5 scrollbar-thumb-rounded-full',
-        'transition scrollbar-thumb-primary hover:scrollbar-thumb-secondary',
+        'transition scrollbar-thumb-primary-5 hover:scrollbar-thumb-primary-4 scrollbar-track-secondary-1/50 scrollbar-track-rounded-full',
       )}
     >
       <Fade in={openModal}>
         <div className={twMerge(
-          "relative px-3 pb-3 pt-5 w-full max-w-3xl mx-auto my-auto bg-quaternary rounded-bl-2xl rounded-tr-2xl",
+          "relative px-3 pb-3 pt-5 w-full max-w-3xl mx-auto my-auto bg-white rounded-2xl",
           className
         )}>
           {viewCloseButton && (
