@@ -10,6 +10,14 @@
   --foreground: #171717;
 } */
 
+@utility clip-path-* {
+  clip-path: polygon(--value([*]));
+}
+
+@utility animate-delay-* {
+  animation-delay: --value([*]);
+}
+
 @theme inline {
   /* --color-background: var(--background);
   --color-foreground: var(--foreground); */
@@ -32,6 +40,62 @@
 
   --color-variation-1: #EAE5FF;
   --color-variation-2: #FFF6D9;
+
+  --animate-opacity: opacity 2s infinite ease-out;
+  --animate-flame-1: flame-1 3s infinite ease-out;
+  --animate-flame-2: flame-2 5s infinite ease-out;
+  --animate-smoke: smoke 5s linear infinite;
+
+}
+
+@keyframes opacity {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes flame-1 {
+  0%, 100% {
+    translate: 0 0;
+    rotate: 0;
+  }
+  50% {
+    translate: 0 -2px;
+    rotate: -3deg;
+  }
+}
+
+@keyframes flame-2 {
+  0%, 100% {
+    translate: 0 0;
+    rotate: 0;
+  }
+  50% {
+    translate: 0 -7px;
+    rotate: 4deg;
+  }
+}
+
+@keyframes smoke {
+  0% {
+    transform: translateY(0) scaleX(1);
+    opacity: 0;
+  }
+  15%{
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-100%) scaleX(5);
+  }
+  95%{
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(-200%) scaleX(10);
+  }
 }
 
 @layer {
@@ -254,10 +318,6 @@
     font-display: swap;
     src: url(/fonts/coolvetica/CoolveticaHv-Italic.ttf) format(truetype);
   }
-}
-
-@utility clip-path-* {
-  clip-path: polygon(--value([*]));
 }
 
 /* @media (prefers-color-scheme: dark) {
