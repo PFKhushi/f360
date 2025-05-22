@@ -10,7 +10,7 @@ export default function RootLayout({
   return (
     <main className="flex min-h-svh w-full"> 
       <Sidebar/>
-      <div className="flex flex-col w-full max-h-svh grow">
+      <div className="flex flex-col w-full">
         {children}
       </div>
     </main>  

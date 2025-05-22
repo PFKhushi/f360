@@ -29,7 +29,7 @@ export default function Header({navigation}: {navigation: NavigationType}) {
   const path = '/' + usePathname().split('/')[1]
   
   return (
-    <nav className='bg-primary-5 flex items-center py-2 px-2 drop-shadow-[0px_2px_4px] drop-shadow-black/75 h-18'>
+    <nav className='sticky top-0 z-10 bg-primary-5 flex items-center py-2 px-2 drop-shadow-[0px_2px_4px] drop-shadow-black/75 min-h-18'>
       
       <div className='flex gap-1'>
         <ButtonTooltip
