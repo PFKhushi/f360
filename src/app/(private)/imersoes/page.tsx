@@ -37,7 +37,7 @@ export default function Imersoes() {
   ]
 
   return (
-    <div className='h-screen text-white bg-gradient-to-b from-primary-5 to-[#411ccf]'>
+    <div className='h-full text-white bg-gradient-to-b from-primary-5 to-[#411ccf]'>
 
       <div className='flex flex-col items-center gap-4 pt-4 max-w-[1074px]'>
         <h1 className='text-[28px] font-coolvetica'>Imersões disponíveis</h1>
@@ -54,7 +54,7 @@ export default function Imersoes() {
         </div>
       </div>
 
-      <div className='px-12'>
+      <div className='px-10'>
         <h1 className='px-4 pb-1 pt-4 text-[28px] font-coolvetica'>Imersões gerais</h1>
         <div className='flex gap-5'>
           {generalImmersions.map((immersion, index) =>(

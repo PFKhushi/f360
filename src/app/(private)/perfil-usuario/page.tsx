@@ -3,7 +3,7 @@ import { LiaUserCircle } from 'react-icons/lia'
 
 export default function PerfilUsuario() {
   return (
-    <div className='h-screen px-[10px] bg-primary-4 flex md:items-center justify-center'>
+    <div className='h-full px-[10px] bg-primary-4 flex md:items-center justify-center'>
       <main className='text-white max-h-[600px] md:bg-primary-1 max-w-[800px] md:min-w-[550px] rounded-[20px] drop-shadow-[10px_10px_4px] drop-shadow-black/25'>
         <header className='w-full md:bg-primary-3 h-[100px] rounded-[20px]'>
           <div className='pt-4 pl-4 md:pl-16 flex items-center gap-3 text-2xl font-bold'>
