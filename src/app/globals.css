@@ -37,8 +37,8 @@
   --color-primary-6: #0F0B26;
   --color-secondary-1: #FFC311;
   --color-secondary-2: #FFB01C;
-  --color-secondary-3: #D0A30FCF;
-  --color-secondary-4: #18A933B2;
+  --color-secondary-3: #D0A30F;
+  --color-secondary-4: #18A933;
 
   --color-variation-1: #EAE5FF;
   --color-variation-2: #FFF6D9;
@@ -173,7 +173,7 @@
     font-weight: 400;
     font-stretch: 100%;
     font-display: swap;
-    src: url(/fonts/louis-george-cafe/Louis\ George\ Cafe\ Light.ttf) format(truetype);
+    src: url(/fonts/louis-george-cafe/Louis\ George\ Cafe\ Italic.ttf) format(truetype);
   }
 
   @font-face {
@@ -321,6 +321,95 @@
     src: url(/fonts/coolvetica/CoolveticaHv-Italic.ttf) format(truetype);
   }
 }
+
+.rbc-calendar {
+  
+}
+
+.rbc-toolbar {
+  @apply [@media(width_<=_767px)]:!flex-row !flex-nowrap gap-2
+}
+
+.rbc-toolbar-label {
+  @apply text-white text-lg sm:text-2xl capitalize !text-left !px-0 order-first
+}
+
+.rbc-toolbar {
+  @apply !text-sm sm:!text-base
+}
+
+.rbc-toolbar button {
+  @apply !text-white hover:!bg-secondary-2 transition !px-2 !py-1 active:!bg-secondary-1
+}
+
+.rbc-toolbar button:focus {
+  @apply !bg-secondary-2
+}
+
+button.rbc-active {
+  @apply !bg-secondary-1
+}
+
+.rbc-month-view {
+  @apply !border-0 !border-b !border-[#1E1E1E]
+}
+
+.rbc-header {
+  @apply bg-primary-5 text-white !text-xs sm:!text-base !text-left !font-normal uppercase !p-1 sm:!p-2 !border-0 !border-x-[0.5px] !border-[#E8E8E8]
+}
+
+.rbc-month-header {
+  @apply !border-x border-t-2 border-[#E8E8E8] border-b-[0.5px] border-b-[#1E1E1E]
+}
+
+.rbc-today {
+  @apply !bg-secondary-1/50
+}
+
+.rbc-now .rbc-button-link {
+  @apply bg-primary-3 rounded-full px-1 pt-0.5 -translate-x-1 -translate-y-0.5
+}
+
+.rbc-day-bg {
+  @apply bg-primary-4/53 border-x-[0.5px] !border-[#1E1E1E]
+}
+
+.rbc-row-bg {
+  @apply !right-0
+}
+
+.rbc-off-range-bg {
+  @apply !bg-[#F8F8F8]/50
+}
+
+.rbc-off-range{
+  @apply !text-black/50
+}
+
+.rbc-month-row {
+  @apply !border-y-[0.5px] border-x !border-[#1E1E1E]
+}
+
+.rbc-date-cell {
+  @apply text-white !text-left p-2
+}
+
+.rbc-event {
+  @apply !rounded-[18px] !px-4 !py-1
+}
+
+.rbc-show-more {
+  @apply !text-white !font-normal !px-1
+}
+
+.rbc-label {
+  @apply text-white
+}
+
+.rbc-current-time-indicator {
+  @apply !bg-green-400 !h-1
+}
+
 
 /* @media (prefers-color-scheme: dark) {
   :root {
