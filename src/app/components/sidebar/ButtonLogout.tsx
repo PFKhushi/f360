@@ -3,7 +3,6 @@
 import React, { useState } from 'react'
 import ButtonTooltip from '../shared/ButtonTooltip'
 import ModalBase from '../shared/ModalBase'
-// import { useAuth } from '@/app/context/useAuth'
 import { useRouter } from 'next/navigation'
 import { twMerge } from 'tailwind-merge';
 import { LuDoorOpen } from 'react-icons/lu';
