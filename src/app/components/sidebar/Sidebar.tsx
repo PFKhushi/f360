@@ -70,7 +70,7 @@ export default function Sidebar() {
         <Link
           href={'/'}
           className={twMerge(
-          'flex justify-center gap-1 h-18 w-[242px] p-2 bg-primary-2 drop-shadow-[0px_2px_4px] drop-shadow-black/25',
+          'flex justify-center gap-1 h-18 w-[242px] p-2 bg-primary-2 drop-shadow-[0px_2px_4px] drop-shadow-black/50',
           toggleWidth === 65 && 'px-2 justify-start'
         )}>
           <picture>

@@ -33,7 +33,7 @@ export default function ButtonLogout({hideMenu}: {hideMenu: boolean}) {
         tooltipTitle=''
         onClick={handleOnClick}
         icon={LuDoorOpen}
-        className='flex items-center gap-2.5 text-xl text-white hover:bg-secondary-1 h-18 px-3 bg-primary-2 drop-shadow-[0px_-2px_4px] drop-shadow-black/25'
+        className='flex items-center gap-2.5 text-xl text-white hover:bg-secondary-1 h-18 px-3 bg-primary-2 drop-shadow-[0px_-2px_4px] drop-shadow-black/50'
         classNameIcon='min-w-8 min-h-8'
       >
         <span className={twMerge(
