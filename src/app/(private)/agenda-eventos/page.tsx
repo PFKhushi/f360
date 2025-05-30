@@ -46,6 +46,33 @@ export default function AgendaEventos() {
       desc: 'Outro projeto',
       color: '#FFAD3BCC',
       tipo: 'projeto'
+    },
+    {
+      id: 4,
+      title: 'Projeto 3',
+      start: new Date(2025,4,26,9,0,0,0),
+      end: new Date(2025,4,30,13,0,0,0),
+      desc: 'Outro projeto',
+      color: '#FFAD3BCC',
+      tipo: 'projeto'
+    },
+    {
+      id: 5,
+      title: 'Projeto 4',
+      start: new Date(2025,4,26,9,0,0,0),
+      end: new Date(2025,4,30,13,0,0,0),
+      desc: 'Outro projeto',
+      color: '#FFAD3BCC',
+      tipo: 'projeto'
+    },
+    {
+      id: 6,
+      title: 'Projeto 5',
+      start: new Date(2025,4,26,9,0,0,0),
+      end: new Date(2025,4,30,13,0,0,0),
+      desc: 'Outro projeto',
+      color: '#FFAD3BCC',
+      tipo: 'projeto'
     }
   ])
 
