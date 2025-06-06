@@ -3,20 +3,6 @@ import React from 'react'
 export default function LogoText() {
   return (
     <svg className='group hover:drop-shadow-[0px_0px_15px] drop-shadow-white/50' viewBox="0 0 72959.94 27710.53" xmlns="http://www.w3.org/2000/svg" xmlSpace="preserve">
- 
-    {/* <style>
-      {`
-        .fil0 {fill:#21066A}
-        .fil7 {fill:#210E69;fill-rule:nonzero}
-        .fil3 {fill:#271959;fill-rule:nonzero}
-        .fil4 {fill:#331A8F;fill-rule:nonzero}
-        .fil1 {fill:#3C2482;fill-rule:nonzero}
-        .fil2 {fill:#482EA6;fill-rule:nonzero}
-        .fil6 {fill:#FAAE33;fill-rule:nonzero}
-        .fil5 {fill:#FDC032;fill-rule:nonzero}
-      `}
-    </style> */}
- 
       <g id="Camada_x0020_1">
         <metadata id="CorelCorpID_0Corel-Layer"/>
         <g id="_2238064040000">

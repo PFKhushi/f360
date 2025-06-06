@@ -22,7 +22,7 @@ export default function NavItemMobile({menu, setOpenDrawer}: {menu: MenuTreeType
       
       <Link
         className={twMerge(
-          'flex justify-between items-center py-2 px-2 rounded-bl-xl rounded-tr-xl ',
+          'flex justify-between items-center py-2 px-2 rounded-lg',
           'hover:bg-secondary-2 transition'
         )}
         href={menu.href}
