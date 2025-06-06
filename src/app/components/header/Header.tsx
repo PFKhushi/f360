@@ -24,7 +24,7 @@ export default function Header({navigation}: {navigation: NavigationType}) {
   const router = useRouter();
 
   const {auth} = useAuth()
-  const tokenDecoded = auth?.access ? DecodeToken(auth.access) : undefined
+  const tokenDecoded = DecodeToken(auth ? auth.access : '')
 
   const path = '/' + usePathname().split('/')[1]
   
