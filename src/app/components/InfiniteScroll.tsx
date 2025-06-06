@@ -14,7 +14,7 @@ export default function InfiniteScroll({className, duration, maskStart, maskEnd,
 
   const imgs: {srcImagem: string, altImagem: string}[] = [
     {
-      srcImagem: "/images/partners/conductor.svg",
+      srcImagem: "/images/partners/conductor-white.svg",
       altImagem: "Logo Conductor"
     },
     {
@@ -26,11 +26,11 @@ export default function InfiniteScroll({className, duration, maskStart, maskEnd,
       altImagem: "Logo Conte"
     },
     {
-      srcImagem: "/images/partners/jfpb.svg",
+      srcImagem: "/images/partners/jfpb-white.svg",
       altImagem: "Logo JFPB",
     },
     {
-      srcImagem: "/images/partners/btor.png",
+      srcImagem: "/images/partners/btor-white.png",
       altImagem: "Logo Btor",
     },
     {
@@ -38,15 +38,15 @@ export default function InfiniteScroll({className, duration, maskStart, maskEnd,
       altImagem: "Logo IASS"
     },
     {
+      srcImagem: "/images/partners/procon-pb.jpg",
+      altImagem: "Logo PROCON-PB",
+    },
+    {
       srcImagem: "/images/partners/pmpb-seeklogo.png",
       altImagem: "Logo PMPB" },
     {
       srcImagem: "/images/partners/logo_hospital.png",
       altImagem: "Logo Hospital Napoleão Laureano",
-    },
-    {
-      srcImagem: "/images/partners/procon-pb.png",
-      altImagem: "Logo PROCON-PB",
     },
   ];
 
