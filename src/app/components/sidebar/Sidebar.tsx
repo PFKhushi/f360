@@ -9,6 +9,7 @@ import SidebarItems from './SidebarItems';
 import { twMerge } from 'tailwind-merge';
 import ButtonLogout from './ButtonLogout';
 import Link from 'next/link';
+import LogoTextVazada from '../LogoTextVazada';
 
 export default function Sidebar() {
 
@@ -67,20 +68,17 @@ export default function Sidebar() {
           }
         }}
       >
-        <Link
-          href={'/'}
-          className={twMerge(
-          'flex justify-center gap-1 h-18 w-[242px] p-2 bg-primary-2 drop-shadow-[0px_2px_4px] drop-shadow-black/50',
-          toggleWidth === 65 && 'px-2 justify-start'
+        <div className={twMerge(
+          'flex justify-center items-center min-h-18 px-1 pt-0.5 w-[242px] bg-primary-2 drop-shadow-[0px_2px_4px] drop-shadow-black/50',
+          toggleWidth === 65 && 'justify-start'
         )}>
-          <picture>
-            <img
-              className="w-full h-full object-contain"
-              src='/images/logos/branca-sem-preenchimento/LOGO S_ PREENCHIMENTO-LETREIRO-HORIZONTAL.png'
-              alt="Logo OnliVendas"
-            />
-          </picture>
-        </Link>
+          <Link
+            href={'/'}
+            className='w-40'
+          >
+            <LogoTextVazada/>
+          </Link>
+        </div>
         
         <SidebarItems hideMenu={toggleWidth === 65} breakpointScreen={breakpointScreen} setIsSidebarHover={setIsSidebarHover}/>
 
