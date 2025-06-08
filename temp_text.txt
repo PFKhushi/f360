@@ -1,0 +1,25 @@
+{
+  "sucesso": true,
+  "resultado": {
+    "id": 4,
+    "usuario": {
+      "id": 5,
+      "nome": "Pedro",
+      "username": "pedro@email.com",
+      "telefone": "11907054321"
+    },
+    "cpf": "00000000000",
+    "rgm": "00000000",
+    "curso": "CC",
+    "outro_curso": "",
+    "periodo": 7,
+    "extensionista": false,
+    "imersionista": false
+  },
+  "erro": "",
+  "detalhes": []
+}
+
+    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0OTEzOTkyMSwiaWF0IjoxNzQ5MDUzNTIxLCJqdGkiOiI4M2NjNzYxNTBmN2M0MDVlYWUzNWRmNmRkYWM5NmIxMiIsInVzZXJfaWQiOjUsImlkIjo1LCJub21lIjoiUGVkcm8iLCJlbWFpbCI6InBlZHJvQGVtYWlsLmNvbSIsInRpcG9fdXN1YXJpbyI6IlBBUlQifQ.niatJGQfy6ChgWzoDUziZnsNGCl8VqkMC9awEPxYAbw",
+    
+    "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5MDU1MzIxLCJpYXQiOjE3NDkwNTM1MjEsImp0aSI6ImUzZGFmMjYzYmY2NzRmZGVhOWQyMDk5YWE2ZDE4N2M5IiwidXNlcl9pZCI6NSwiaWQiOjUsIm5vbWUiOiJQZWRybyIsImVtYWlsIjoicGVkcm9AZW1haWwuY29tIiwidGlwb191c3VhcmlvIjoiUEFSVCJ9.XY69Kc-FaqVYkX3PWI7GcrWBGa2tEb3KX6I4LeGYYk0"

@@ -2,6 +2,7 @@ from rest_framework import generics, permissions, status, viewsets, serializers
 from rest_framework.response import Response 
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.exceptions import NotFound, APIException, PermissionDenied, NotAuthenticated
+from rest_framework.decorators import action
 
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
@@ -16,7 +17,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from .models import Usuario, Participante, TechLeader, Empresa, Excecao, Extensionista
 from .serializers import UsuarioSerializer, ParticipanteSerializer, TechLeaderSerializer, EmpresaSerializer, CustomTokenSerializer, AdminCreateSerializer, ExcecaoSerializer, ExtensionistaSerializer
-from .permissoes import IsOwnerOrAdmin
+from .permissoes import IsOwnerOrAdmin, IsUserOwnerOrAdmin
 from .swagger import (list_participantes_swagger, update_participantes_swagger,
                     create_participantes_swagger, retrieve_participantes_swagger, 
                     partial_update_participantes_swagger, delete_participantes_swagger,
@@ -35,7 +36,6 @@ logger = logging.getLogger(__name__)
 
 
 def resposta_json(sucesso=False, resultado=None, erro='', detalhes=[]):
-    print("Tratando resposta")
     return {
         'sucesso': sucesso,
         'resultado': resultado,
@@ -46,7 +46,6 @@ def resposta_json(sucesso=False, resultado=None, erro='', detalhes=[]):
 class ErrorHandlingMixin():
     
     def handle_exception(self, exc):
-        print("handle_exception")
 
         # Log pra debugging
         logger.error(
@@ -82,9 +81,9 @@ class ErrorHandlingMixin():
                 if isinstance(field_errors, list):
                     for error in field_errors:
                         if hasattr(error, 'string'): 
-                            messages.append(error.string)
+                            messages.append((field_name + ': ' + str(error)))
                         else:
-                            messages.append(str(error))
+                            messages.append((field_name + ': ' + str(error)))
                 elif isinstance(field_errors, dict):
                     nested_messages = self._flatten_error_messages(field_errors)
                     messages.extend(nested_messages)
@@ -115,7 +114,6 @@ class ErrorHandlingMixin():
             )
     
     def _handle_validation_error(self, exc):
-        print("_handle_validation_error")
         return Response(
             resposta_json(
                 erro="Erro de validação nos dados enviados", 
@@ -124,7 +122,6 @@ class ErrorHandlingMixin():
         )
 
     def _handle_django_validation_error(self, exc):
-        print("_handle_django_validation_error")
         return Response(
             resposta_json(
                 erro="Erro de validação", 
@@ -133,7 +130,6 @@ class ErrorHandlingMixin():
         )
         
     def _handle_not_found_error(self, exc):
-        print("_handle_not_found_error")
         return Response(
             resposta_json(
                 erro='Recurso não encontrado', 
@@ -142,7 +138,6 @@ class ErrorHandlingMixin():
         )
 
     def _handle_integrity_error(self, exc):
-        print("_handle_integrity_error")
         error_detail = str(exc)
         if 'username' in error_detail:
             detail = "Este email já está em uso"
@@ -152,8 +147,6 @@ class ErrorHandlingMixin():
             detail = "Este CNPJ já está cadastrado"
         elif 'rgm' in error_detail:
             detail = "Este RGM já está cadastrado"
-        elif 'email_institucional' in error_detail:
-            detail = "Este email institucional já está em uso"
         elif 'unique constraint' in error_detail:
             detail = "Este campo deve ser único"
         else:
@@ -167,7 +160,6 @@ class ErrorHandlingMixin():
         )
 
     def _handle_permission_error(self, exc):
-        print("_handle_permission_error")
         return Response(
             resposta_json(
                 erro="Não autorizado", 
@@ -176,7 +168,6 @@ class ErrorHandlingMixin():
         )
 
     def _handle_api_exception(self, exc):
-        print("_handle_api_exception")
         return Response(
             resposta_json(
                 erro=exc.default_detail, 
@@ -185,15 +176,24 @@ class ErrorHandlingMixin():
         )
 
     def _handle_unexpected_error(self, exc):
-        print("_handle_unexpected_error")
         request_id = self.request.META.get('X-Request-ID', 'unknown')
         
         return Response(
             resposta_json(
                 erro="Erro inesperado no servidor", 
-                detalhes=f"Consulte o administrador do sistema com o ID da requisição - id={request_id}"),
+                detalhes= str(exc)),
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+        
+class BusinessLogicException(APIException):
+    def __init__(self, detail=None, erro=None, detalhes=None, status_code=None):
+        self.status_code = status_code or 400
+        self.default_detail = detail or 'Erro de regra de negócio.'
+        self.default_code = erro or 'business_logic_error'
+        self._detalhes = detalhes if detalhes is not None else None
+
+    def get_full_details(self):
+        return self._detalhes
         
 
 class LoginUsuario(ErrorHandlingMixin, TokenObtainPairView):
@@ -209,7 +209,7 @@ class LoginUsuario(ErrorHandlingMixin, TokenObtainPairView):
 # view de logout, invalida o refresh token
 class LogoutUsuario(APIView):
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         try:
             refresh_token = request.data.get('refresh_token')
             if refresh_token:
@@ -225,18 +225,14 @@ class AdminCreateView(APIView):
     permission_classes = [permissions.AllowAny] # rota placeholder
 
     def post(self, request):
-        print(1)
         serializer = AdminCreateSerializer(data=request.data)
-        print(2)
         
         try:
-            print("try")
             serializer.is_valid()
             admin = serializer.save()
             return Response(resposta_json(sucesso=True, resultado=serializer.to_representation(admin)), status=status.HTTP_201_CREATED)
         
         except:  
-            print("except")
             return Response(resposta_json(
                 erro="Erro de validação nos dados enviados", 
                 detalhes=["Já existe um usuário com esse e-mail."]), status=status.HTTP_400_BAD_REQUEST)
@@ -257,6 +253,7 @@ def _get_perfil(perfil, pk, nome_entidade):
             return perfil.objects.get(pk=pk)
         except perfil.DoesNotExist:
             raise Http404(f"{nome_entidade} não encontrado com o ID fornecido.")
+
 
 # view q gerencia CRUD de Participantes
 class ParticipanteViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
@@ -448,13 +445,14 @@ class ExcecaoViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
             permissions_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
         else:
             permissions_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
+        # return [permissions.AllowAny()] #############retirar depois###############
         return [perm() for perm in permissions_classes]
     
     def get_queryset(self):
         user = self.request.user
         if user.is_staff or user.has_perm('api_rest.ver_todas_excecoes'):
             return Excecao.objects.all()
-        # return Excecao.objects.all()#############retirar depois###############
+        # return Excecao.objects.all() #############retirar depois###############
         return Excecao.objects.filter(usuario=user)
     
     def update(self, request, *args, **kwargs):
@@ -490,6 +488,7 @@ class ExtensionistaViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
     serializer_class = ExtensionistaSerializer
     
     def get_permissions(self):
+        # return [permissions.AllowAny()] #############retirar depois###############
         return [permissions.IsAuthenticated, permissions.IsAdminUser]
     
     def get_queryset(self):
@@ -521,3 +520,109 @@ class ExtensionistaViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
         extensionista = _get_perfil(Extensionista, kwargs['pk'], 'Extensionista')
         extensionista.delete()
         return Response(resposta_json(sucesso=True, resultado="Extensionista apagado com sucesso"), status=status.HTTP_204_NO_CONTENT)
+    
+from rest_framework.request import Request
+class UsuarioVS(ErrorHandlingMixin, viewsets.ViewSet):
+    
+    PERFIL_VIEWSET_MAP = {
+        'participante': (ParticipanteViewSet, 'is_participante', 'participante'),
+        'excecao': (ExcecaoViewSet, 'is_excecao', 'excecao'),
+        'techleader': (TechLeaderViewSet, 'is_techleader', 'techleader'),
+        'empresa': (EmpresaViewSet, 'is_empresa', 'empresa'),
+    }
+    
+    def _get_viewset_for_usuario(self, usuario):
+        for perfil, (viewset_class, check_method, attr) in self.PERFIL_VIEWSET_MAP.items():
+            if getattr(usuario, check_method):
+                return viewset_class, attr
+        return None, None
+    
+    def _get_viewset_for_perfil(self, perfil_name):
+        config = self.PERFIL_VIEWSET_MAP.get(perfil_name)
+        if not config:
+            raise BusinessLogicException(
+                detail=f"Perfil '{perfil_name}' não existe",
+                erro="perfil_inexistente",
+                detalhes=[f"Perfis válidos: {', '.join(self.PERFIL_VIEWSET_MAP.keys())}"],
+                status_code=400
+            )
+        return config[0], config[1], config[2]
+    
+    def create(self, request):
+        perfil_name = request.data.get('perfil')
+        if not perfil_name:
+            return self.handle_exception(BusinessLogicException(
+                detail="Perfil não informado",
+                erro="perfil_nao_informado",
+                detalhes=["O campo 'perfil' é obrigatório para criação"],
+                status_code=400
+            ))
+        
+        try:
+            viewset_class, check, attr_name = self._get_viewset_for_perfil(perfil_name)
+            viewset = viewset_class()
+            viewset.request = request
+            viewset.format_kwarg = self.format_kwarg
+            viewset.action = 'create'  
+            
+            try:
+                viewset.check_permissions(request)
+            except PermissionError as e:
+                raise e
+            return viewset.create(request)
+            
+        except BusinessLogicException as e:
+            return self.handle_exception(e)
+        except ValidationError as e:
+            raise e
+        except Exception as e:
+            raise e
+
+    @action(detail=True, methods=['get', 'put', 'patch', 'delete'])
+    def perfil(self, request, pk=None):
+        try:
+            usuario = get_object_or_404(Usuario, pk=pk)
+            viewset_class, attr_name = self._get_viewset_for_usuario(usuario)
+            
+            if not viewset_class:
+                return self.handle_exception(BusinessLogicException(
+                    detail="Usuário sem perfil",
+                    erro="usuario_sem_perfil",
+                    detalhes=["Este usuário não possui um perfil associado"],
+                    status_code=404
+                ))
+            
+            perfil_obj = getattr(usuario, attr_name)
+            
+            viewset = viewset_class()
+            viewset.request = request
+            viewset.kwargs = {'pk': perfil_obj.pk}
+            viewset.format_kwarg = self.format_kwarg
+            
+            if request.method == 'GET':
+                return viewset.retrieve(request, pk=perfil_obj.pk)
+            elif request.method == 'PUT':
+                return viewset.update(request, pk=perfil_obj.pk)
+            elif request.method == 'PATCH':
+                return viewset.partial_update(request, pk=perfil_obj.pk)
+            elif request.method == 'DELETE':
+                return viewset.destroy(request, pk=perfil_obj.pk)
+            
+            return Response(
+                {"detail": "Método não permitido"}, 
+                status=status.HTTP_405_METHOD_NOT_ALLOWED
+            )
+            
+        except ValidationError as e:
+            raise e
+        except BusinessLogicException as e:
+            return self.handle_exception(e)
+        except Exception as e:
+            raise e
+        
+    def links(self, request, pk=None):
+        
+        usuario = get_object_or_404(Usuario, pk=pk)
+        viewset_class, attr_name = self._get_viewset_for_usuario(usuario)
+        
+        pass

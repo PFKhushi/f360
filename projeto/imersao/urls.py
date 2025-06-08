@@ -13,7 +13,5 @@ router.register('presenca_palestra', PresencaPalestraViewSet, basename='presenca
 router.register('participacao_imersao', ParticipacaoImersaoViewSet, basename='participacao_imersao')
 
 
-
 urlpatterns = []
 urlpatterns += router.urls   
-    

@@ -2,10 +2,13 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.db import models, IntegrityError, transaction
+from django.db.models import Q
 from django.core.exceptions import ValidationError
 from encrypted_model_fields.fields import EncryptedCharField, EncryptedEmailField
 from django.core.validators import MaxValueValidator, MinValueValidator
 import hashlib
+
+
 
 
 class UsuarioManager(BaseUserManager):
@@ -35,18 +38,11 @@ class UsuarioManager(BaseUserManager):
             username=username,
             **extra_fields
         )
-        
         user.set_password(password)
-        
         try:
-            
             user.save(using=self._db)
-            
         except IntegrityError:
-            
             raise IntegrityError("Violação de campo único (Email já existente)")
-
-        
         return user
     
     def create_superuser(self, username, nome, password, **extra_fields):
@@ -117,11 +113,6 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         help_text="Acesso ao admin"
     )
     
-    data_criacao = models.DateTimeField(
-        auto_now_add=True,
-        help_text="Data de registro no sistema"
-    )
-    
     data_atualizacao = models.DateTimeField(
         auto_now=True,
         help_text="Última atualização"
@@ -154,11 +145,10 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         return self.TipoUsuario.NAO_DEFINIDO
         
     @staticmethod
-    def criar_participante(nome, email, rgm, senha, cpf, curso, outro_curso, periodo, email_institucional, **extras):
-        
+    def criar_participante(nome, email, rgm, senha, cpf, curso, periodo, outro_curso="", **extras):
+
         cpf_hash = hashlib.sha256(cpf.encode()).hexdigest()
         rgm_hash = hashlib.sha256(rgm.encode()).hexdigest()
-        email_institucional_hash = hashlib.sha256(email_institucional.encode()).hexdigest()
         
         with transaction.atomic():
             usuario = Usuario.objects.create_user(
@@ -175,9 +165,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
                 rgm_hash=rgm_hash,
                 curso=curso,
                 outro_curso=outro_curso,
-                periodo=periodo,
-                email_institucional=email_institucional,
-                email_institucional_hash=email_institucional_hash
+                periodo=periodo
             )
         return usuario
 
@@ -313,14 +301,6 @@ class Participante(models.Model):
         help_text="Apenas números (8 dígitos)"
     )
     rgm_hash = models.CharField(max_length=64, editable=False, null=True, blank=True)
-
-    email_institucional = EncryptedEmailField( 
-        verbose_name="E-mail institucional", 
-        unique=True,
-        help_text="E-mail acadêmico/institucional"
-    )
-    email_institucional_hash = models.CharField(max_length=64, editable=False, null=True, blank=True)
-
     ingresso_fab = models.DateField(
         auto_now_add=True,
         help_text="Data de entrada na Fábrica"
@@ -330,9 +310,9 @@ class Participante(models.Model):
         verbose_name = "Participante"
         verbose_name_plural = "Participantes"
         constraints = [
+            # Essas constrains duplicadas ja fizeram sentido, mas n me lembro se já funcionaram pelo problema ser na criptografia. Testar para garantir
             models.UniqueConstraint(fields=['cpf'], name='unique_cpf'),
-            models.UniqueConstraint(fields=['rgm'], name='unique_rgm'),
-            models.UniqueConstraint(fields=['email_institucional'], name='unique_email')
+            models.UniqueConstraint(fields=['rgm'], name='unique_rgm')
         ]
         permissions = [
             ("ver_todos_participantes", "Pode ver todos os participantes"),
@@ -355,16 +335,12 @@ class Participante(models.Model):
             self.cpf_hash = hashlib.sha256(self.cpf.encode()).hexdigest()
         if self.rgm:
             self.rgm_hash = hashlib.sha256(self.rgm.encode()).hexdigest()
-        if self.email_institucional:
-            self.email_institucional_hash = hashlib.sha256(self.email_institucional.lower().encode()).hexdigest()
             
         if self.pk is None:
             if self.cpf_hash and Participante.objects.filter(cpf_hash=self.cpf_hash).exists():
                 raise ValidationError({'cpf': ['Este CPF já está cadastrado']})
             if self.rgm_hash and Participante.objects.filter(rgm_hash=self.rgm_hash).exists():
                 raise ValidationError({'rgm': ['Este RGM já está cadastrado']})
-            if self.email_institucional_hash and Participante.objects.filter(email_institucional_hash=self.email_institucional_hash).exists():
-                raise ValidationError({'email_institucional': ['Este email institucional já está em uso']})
         
         super().save(*args, **kwargs) 
 
@@ -433,6 +409,8 @@ class TechLeader(models.Model):
     
     especialidade = models.CharField(
         max_length=100,
+        blank=True,
+        null=True,
         help_text="Área de especialidade técnica"
     )
     
@@ -451,8 +429,8 @@ class TechLeader(models.Model):
         
         if hasattr(self.usuario, 'participante') or hasattr(self.usuario, 'empresa') or hasattr(self.usuario, 'excecao'):
             
-            raise ValidationError(
-                "Este usuário já está registrado com outro perfil."
+            raise ValidationError({'erro':
+                ['Este usuário já está registrado com outro perfil.']}
             )
         
         if self.codigo:
@@ -460,7 +438,7 @@ class TechLeader(models.Model):
             
         if self.pk is None:
             if self.codigo_hash and TechLeader.objects.filter(codigo_hash=self.codigo_hash).exists():
-                raise ValidationError({'codigo': ['Este código já está cadastrado']})
+                raise ValidationError({'erro': ['Este código já está cadastrado']})
             
         super().save(*args, **kwargs) 
         
@@ -494,26 +472,24 @@ class Excecao(models.Model):
     
     def save(self, *args, **kwargs):
         
-        if hasattr(self.usuario, 'participante') or hasattr(self.usuario, 'empresa') or hasattr(self.usuario, 'techleader') or hasattr(self.usuario, 'excecao'):
-            
-            raise ValidationError(
-                "Este usuário já está registrado com outro perfil."
-            )
+        if hasattr(self.usuario, 'participante') or hasattr(self.usuario, 'empresa') or hasattr(self.usuario, 'techleader'):
+            raise ValidationError({
+                'erro': ['Este usuário já está registrado com outro perfil.']})
         super().save(*args, **kwargs) 
         
     
 class Extensionista(models.Model):
     
-    participante = models.ForeignKey( # Falta app de gestão de projeto para fazer o relacionamento
+    participante = models.ForeignKey( 
         Participante, 
         on_delete=models.CASCADE, 
-        related_name='extensionista',
+        related_name='extensionista_participante',
         null=True, blank=True
     )
     excecao = models.ForeignKey(
         Excecao, 
         on_delete=models.CASCADE, 
-        related_name='extensionista',
+        related_name='extensionista_excecao',
         null=True, blank=True
     )
     veterano = models.BooleanField(

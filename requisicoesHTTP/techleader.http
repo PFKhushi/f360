@@ -1,0 +1,258 @@
+@url_raiz = http://localhost:8000/
+@perfil_techleader = techleader
+
+### Dados do Techleader A
+@techleader_A_nome = Carlos Matos
+@techleader_A_nome2 = Jorge Manuel
+@techleader_A_username = carlos.matos@faculdade.com
+@techleader_A_username2 = jorge.manuel@faculdade.com
+@techleader_A_password = Senha123
+@techleader_A_telefone = 1155555555
+@techleader_A_codigo = 000000000
+@techleader_A_codigo2 = 222222222
+@techleader_A_especialidade = Backend
+@techleader_A_id = 5
+@techleader_A_token = Bearer
+
+### Dados do Techleader
+@techleader_B_nome = Matheus Ferreira
+@techleader_B_nome2 = Arthur Guerra
+@techleader_B_username = matheus.ferreira@faculdade.com
+@techleader_B_username2 = arthur.guerra@faculdade.com
+@techleader_B_password = Senha123
+@techleader_B_telefone = 1155555555
+@techleader_B_codigo = 111111111
+@techleader_B_codigo2 = 333333333
+@techleader_B_especialidade = FrontEnd
+@techleader_B_id = 6
+@techleader_B_token = Bearer
+
+
+
+#### Techleader A
+
+### Cria Techleader
+POST {{url_raiz}}api/usuario/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_techleader}}"
+}
+
+### Cria Techleader
+POST {{url_raiz}}api/usuario/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_techleader}}",
+    "nome": "{{techleader_A_nome}}",
+    "username": "{{techleader_A_username}}",
+    "password": "{{techleader_A_password}}",
+    "telefone": "{{techleader_A_telefone}}",
+    "codigo": "{{techleader_A_codigo}}",
+    "especialidade": "{{techleader_A_especialidade}}"
+}
+
+###
+GET {{url_raiz}}api/usuario/{{techleader_A_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+###
+GET {{url_raiz}}api/usuario/{{techleader_B_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+### Login Techleader
+POST {{url_raiz}}api/login/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{techleader_A_username}}",
+    "password": "{{techleader_A_password}}"
+}
+
+### Edita Techleader Completamente com dados originais
+PUT {{url_raiz}}api/usuario/{{techleader_A_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{techleader_A_nome}}",
+    "username": "{{techleader_A_username}}",
+    "password": "{{techleader_A_password}}",
+    "telefone": "{{techleader_A_telefone}}",
+    "codigo": "{{techleader_A_codigo}}",
+    "especialidade": "{{techleader_A_especialidade}}"
+}
+
+### Edita Techleader Completamente com dados alternativos
+PUT {{url_raiz}}api/usuario/{{techleader_A_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{techleader_A_nome2}}",
+    "username": "{{techleader_A_username2}}",
+    "password": "{{techleader_A_password}}",
+    "telefone": "{{techleader_A_telefone}}",
+    "codigo": "{{techleader_A_codigo2}}",
+    "especialidade": "{{techleader_A_especialidade}}"
+}
+
+### Edita Completamente TechLeader A com os dados da TechLeader B para gerar erro. Usar o PUT para colocar os dados originais em B 
+
+PUT {{url_raiz}}api/usuario/{{techleader_A_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{techleader_B_nome}}",
+    "username": "{{techleader_B_username}}",
+    "password": "{{techleader_B_password}}",
+    "telefone": "{{techleader_B_telefone}}",
+    "codigo": "{{techleader_B_codigo}}",
+    "especialidade": "{{techleader_B_especialidade}}"
+}
+
+### Edita Techleader Parcialmente com dados originais
+PATCH {{url_raiz}}api/usuario/{{techleader_A_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{techleader_A_nome}}",
+    "username": "{{techleader_A_username}}",
+    "password": "{{techleader_A_password}}",
+    "telefone": "{{techleader_A_telefone}}",
+    "codigo": "{{techleader_A_codigo}}",
+    "especialidade": "{{techleader_A_especialidade}}"
+}
+
+### Edita Techleader Parcialmente com dados alternativos
+PATCH {{url_raiz}}api/usuario/{{techleader_A_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{techleader_A_nome2}}",
+    "username": "{{techleader_A_username2}}",
+    "password": "{{techleader_A_password}}",
+    "telefone": "{{techleader_A_telefone}}",
+    "codigo": "{{techleader_A_codigo2}}",
+    "especialidade": "{{techleader_A_especialidade}}"
+}
+
+### Edita Parcialmente TechLeader A com os dados da TechLeader B para gerar erro. Usar o PUT para colocar os dados originais em B 
+
+PATCH {{url_raiz}}api/usuario/{{techleader_A_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{techleader_B_nome}}",
+    "username": "{{techleader_B_username}}",
+    "password": "{{techleader_B_password}}",
+    "telefone": "{{techleader_B_telefone}}",
+    "codigo": "{{techleader_B_codigo}}",
+    "especialidade": "{{techleader_B_especialidade}}"
+}
+
+
+
+#### Techleader B
+
+### Cria Techleader
+POST {{url_raiz}}api/usuario/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_techleader}}",
+    "nome": "{{techleader_B_nome}}",
+    "username": "{{techleader_B_username}}",
+    "password": "{{techleader_B_password}}",
+    "telefone": "{{techleader_B_telefone}}",
+    "codigo": "{{techleader_B_codigo}}",
+    "especialidade": "{{techleader_B_especialidade}}"
+}
+
+### Login Techleader
+POST {{url_raiz}}api/login/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{techleader_B_username}}",
+    "password": "{{techleader_B_password}}"
+}
+
+### Edita Techleader Completamente com dados originais
+PUT {{url_raiz}}api/usuario/{{techleader_B_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{techleader_B_nome}}",
+    "username": "{{techleader_B_username}}",
+    "password": "{{techleader_B_password}}",
+    "telefone": "{{techleader_B_telefone}}",
+    "codigo": "{{techleader_B_codigo}}",
+    "especialidade": "{{techleader_B_especialidade}}"
+}
+
+### Edita Techleader Completamente com dados alternativos
+PUT {{url_raiz}}api/usuario/{{techleader_B_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{techleader_B_nome2}}",
+    "username": "{{techleader_B_username2}}",
+    "password": "{{techleader_B_password}}",
+    "telefone": "{{techleader_B_telefone}}",
+    "codigo": "{{techleader_B_codigo2}}",
+    "especialidade": "{{techleader_B_especialidade}}"
+}
+
+### Edita Completamente TechLeader B com os dados da TechLeader A para gerar erro. Usar o PUT para colocar os dados originais em A 
+
+PUT {{url_raiz}}api/usuario/{{techleader_B_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{techleader_A_nome}}",
+    "username": "{{techleader_A_username}}",
+    "password": "{{techleader_A_password}}",
+    "telefone": "{{techleader_A_telefone}}",
+    "codigo": "{{techleader_A_codigo}}",
+    "especialidade": "{{techleader_A_especialidade}}"
+}
+
+### Edita Techleader Parcialmente com dados originais
+PATCH {{url_raiz}}api/usuario/{{techleader_B_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{techleader_B_nome}}",
+    "username": "{{techleader_B_username}}",
+    "password": "{{techleader_B_password}}",
+    "telefone": "{{techleader_B_telefone}}",
+    "codigo": "{{techleader_B_codigo}}",
+    "especialidade": "{{techleader_B_especialidade}}"
+}
+
+### Edita Techleader Parcialmente com dados alternativos
+PATCH {{url_raiz}}api/usuario/{{techleader_B_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{techleader_B_nome2}}",
+    "username": "{{techleader_B_username2}}",
+    "password": "{{techleader_B_password}}",
+    "telefone": "{{techleader_B_telefone}}",
+    "codigo": "{{techleader_B_codigo2}}",
+    "especialidade": "{{techleader_B_especialidade}}"
+}
+
+### Edita Parcialmente TechLeader B com os dados da TechLeader A para gerar erro. Usar o PUT para colocar os dados originais em A 
+
+PATCH {{url_raiz}}api/usuario/{{techleader_B_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{techleader_A_nome}}",
+    "username": "{{techleader_A_username}}",
+    "password": "{{techleader_A_password}}",
+    "telefone": "{{techleader_A_telefone}}",
+    "codigo": "{{techleader_A_codigo}}",
+    "especialidade": "{{techleader_A_especialidade}}"
+}

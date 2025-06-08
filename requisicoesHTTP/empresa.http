@@ -1,0 +1,263 @@
+@url_raiz = http://localhost:8000/
+@perfil_empresa = empresa
+
+@empresa_A_nome = Google
+@empresa_A_nome2 = Apple
+@empresa_A_username = google@google.com
+@empresa_A_username2 = apple@apple.com
+@empresa_A_password = Senha123
+@empresa_A_telefone = 00000000000
+@empresa_A_cnpj = 00000000000000
+@empresa_A_cnpj2 = 22222222222222
+@empresa_A_representante = João Leitão
+@empresa_A_representante2 = Carvalho Ramalho
+@empresa_A_id = 3
+@empresa_A_token = Bearer
+@empresa_A_refresh_token = Bearer
+
+@empresa_B_nome = Huawei
+@empresa_B_nome2 = Xiaomi
+@empresa_B_username = huawei@huawei.com
+@empresa_B_username2 = xiaomi@xiaomi.com
+@empresa_B_password = Senha123
+@empresa_B_telefone = 11111111111
+@empresa_B_cnpj = 11111111111111
+@empresa_B_cnpj2 = 33333333333333
+@empresa_B_representante = Maria Faria
+@empresa_B_representante2 = Clara Iara
+@empresa_B_id = 4
+@empresa_B_token = Bearer
+@empresa_B_refresh_token = Bearer
+
+
+#### Empresa A
+
+### Cria Empresa sem dados
+POST {{url_raiz}}api/usuario/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_empresa}}"
+}
+
+### Login
+POST {{url_raiz}}api/login/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{empresa_A_username}}",
+    "password": "{{empresa_A_password}}"
+}
+
+
+### Cria Empresa A
+POST {{url_raiz}}api/usuario/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_empresa}}",
+    "nome": "{{empresa_A_nome}}",
+    "username": "{{empresa_A_username}}",
+    "password": "{{empresa_A_password}}",
+    "telefone": "{{empresa_A_telefone}}",
+    "cnpj": "{{empresa_A_cnpj}}",
+    "representante": "{{empresa_A_representante}}"
+}
+
+
+### Edita Completamente Empresa A com os dados originais
+PUT  {{url_raiz}}api/usuario/{{empresa_A_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{empresa_A_nome}}",
+    "username": "{{empresa_A_username}}",
+    "password": "{{empresa_A_password}}",
+    "telefone": "{{empresa_A_telefone}}",
+    "cnpj": "{{empresa_A_cnpj}}",
+    "representante": "{{empresa_A_representante}}"
+}
+
+
+### Edita Completamente Empresa A com os dados alternativos
+PUT  {{url_raiz}}api/usuario/{{empresa_A_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{empresa_A_nome2}}",
+    "username": "{{empresa_A_username2}}",
+    "password": "{{empresa_A_password}}",
+    "telefone": "{{empresa_A_telefone}}",
+    "cnpj": "{{empresa_A_cnpj2}}",
+    "representante": "{{empresa_A_representante2}}"
+}
+
+
+### Edita Completamente Empresa A com os dados da empresa B para gerar erro. Usar o PUT para colocar os dados corretos em B
+PUT  {{url_raiz}}api/usuario/{{empresa_A_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{empresa_B_nome}}",
+    "username": "{{empresa_B_username}}",
+    "password": "{{empresa_B_password}}",
+    "telefone": "{{empresa_B_telefone}}",
+    "cnpj": "{{empresa_B_cnpj}}",
+    "representante": "{{empresa_B_representante}}"
+}
+
+
+### Edita Parcialmente Empresa A com os dados originais
+PATCH  {{url_raiz}}api/usuario/{{empresa_A_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{empresa_A_nome}}",
+    "username": "{{empresa_A_username}}",
+    "password": "{{empresa_A_password}}",
+    "telefone": "{{empresa_A_telefone}}",
+    "cnpj": "{{empresa_A_cnpj}}",
+    "representante": "{{empresa_A_representante}}"
+}
+
+
+### Edita Parcialmente Empresa A com os dados ALTERNATIVOS
+PATCH  {{url_raiz}}api/usuario/{{empresa_A_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{empresa_A_nome2}}",
+    "username": "{{empresa_A_username2}}",
+    "password": "{{empresa_A_password}}",
+    "telefone": "{{empresa_A_telefone}}",
+    "cnpj": "{{empresa_A_cnpj2}}",
+    "representante": "{{empresa_A_representante2}}"
+}
+
+
+### Edita Completamente Empresa A com os dados da empresa B para gerar erro. Usar o PUT para colocar os dados corretos em B
+PATCH {{url_raiz}}api/usuario/{{empresa_A_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{empresa_B_nome}}",
+    "username": "{{empresa_B_username}}",
+    "password": "{{empresa_B_password}}",
+    "telefone": "{{empresa_B_telefone}}",
+    "cnpj": "{{empresa_B_cnpj}}",
+    "representante": "{{empresa_B_representante}}"
+}
+
+
+
+
+
+#### Empresa B
+
+### Login Empresa 
+POST {{url_raiz}}api/login/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{empresa_B_username}}",
+    "password": "{{empresa_B_password}}"
+}
+
+
+### Cria Empresa 
+POST {{url_raiz}}api/usuario/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_empresa}}",
+    "nome": "{{empresa_B_nome}}",
+    "username": "{{empresa_B_username}}",
+    "password": "{{empresa_B_password}}",
+    "telefone": "{{empresa_B_telefone}}",
+    "cnpj": "{{empresa_B_cnpj}}",
+    "representante": "{{empresa_B_representante}}"
+}
+
+
+### Edita Completamente Empresa com os dados originais
+PUT  {{url_raiz}}api/usuario/{{empresa_B_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{empresa_B_nome}}",
+    "username": "{{empresa_B_username}}",
+    "password": "{{empresa_B_password}}",
+    "telefone": "{{empresa_B_telefone}}",
+    "cnpj": "{{empresa_B_cnpj}}",
+    "representante": "{{empresa_B_representante}}"
+}
+
+
+### Edita Completamente Empresa com dados alternativos
+PUT  {{url_raiz}}api/usuario/{{empresa_B_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{empresa_B_nome2}}",
+    "username": "{{empresa_B_username2}}",
+    "password": "{{empresa_B_password}}",
+    "telefone": "{{empresa_B_telefone}}",
+    "cnpj": "{{empresa_B_cnpj2}}",
+    "representante": "{{empresa_B_representante2}}"
+}
+
+
+### Edita Completamente Empresa B com os dados da empresa A para gerar erro. Usar o PUT para colocar os dados corretos em A
+PUT  {{url_raiz}}api/usuario/{{empresa_B_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{empresa_A_nome}}",
+    "username": "{{empresa_A_username}}",
+    "password": "{{empresa_A_password}}",
+    "telefone": "{{empresa_A_telefone}}",
+    "cnpj": "{{empresa_A_cnpj}}",
+    "representante": "{{empresa_A_representante}}"
+}
+
+
+### Edita Parcialmente Empresa com os dados originais
+PATCH  {{url_raiz}}api/usuario/{{empresa_B_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{empresa_B_nome}}",
+    "username": "{{empresa_B_username}}",
+    "password": "{{empresa_B_password}}",
+    "telefone": "{{empresa_B_telefone}}",
+    "cnpj": "{{empresa_B_cnpj}}",
+    "representante": "{{empresa_B_representante}}"
+}
+
+
+### Edita Completamente Empresa com dados alternativos
+PATCH {{url_raiz}}api/usuario/{{empresa_B_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{empresa_B_nome2}}",
+    "username": "{{empresa_B_username2}}",
+    "password": "{{empresa_B_password}}",
+    "telefone": "{{empresa_B_telefone}}",
+    "cnpj": "{{empresa_B_cnpj2}}",
+    "representante": "{{empresa_B_representante2}}"
+}
+
+
+### Edita Completamente Empresa B com os dados da empresa A para gerar erro. Usar o PUT para colocar os dados corretos em A
+PATCH {{url_raiz}}api/usuario/{{empresa_B_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{empresa_A_nome}}",
+    "username": "{{empresa_A_username}}",
+    "password": "{{empresa_A_password}}",
+    "telefone": "{{empresa_A_telefone}}",
+    "cnpj": "{{empresa_A_cnpj}}",
+    "representante": "{{empresa_A_representante}}"
+}

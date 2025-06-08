@@ -1,0 +1,251 @@
+@url_raiz = http://localhost:8000/
+@perfil_excecao = excecao
+
+### Dados da Exceção A
+@excecao_A_nome = David Graça
+@excecao_A_nome2 = Steven Senegal
+@excecao_A_username = david.graca@instituicao.com
+@excecao_A_username2 = steven.senegal@instituicao.com
+@excecao_A_password = Senha123
+@excecao_A_telefone = 1155555555
+@excecao_A_motivo = Aluno de pós-graduação
+@excecao_A_nota = Desempenho excepcional
+@excecao_A_id = 7
+@excecao_A_token = Bearer
+
+### Dados da Exceção B
+@excecao_B_nome = Emanuel Beleu
+@excecao_B_nome2 = Rafael Matoso
+@excecao_B_username = emanuel.beleu@instituicao.com
+@excecao_B_username2 = rafael.matoso@instituicao.com
+@excecao_B_password = Senha123
+@excecao_B_telefone = 1155555555
+@excecao_B_motivo = Aluno de pós-graduação
+@excecao_B_nota = Desempenho excepcional
+@excecao_B_id = 8
+@excecao_B_token = Bearer
+
+
+#### Exceção A
+
+### Cria Exceção
+POST {{url_raiz}}api/usuario/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_excecao}}"
+}
+
+### Cria Exceção
+POST {{url_raiz}}api/usuario/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_excecao}}",
+    "nome": "{{excecao_A_nome}}",
+    "username": "{{excecao_A_username}}",
+    "password": "{{excecao_A_password}}",
+    "telefone": "{{excecao_A_telefone}}",
+    "motivo": "{{excecao_A_motivo}}",
+    "nota": "{{excecao_A_nota}}"
+}
+###
+GET {{url_raiz}}api/usuario/{{excecao_A_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+###
+GET {{url_raiz}}api/usuario/{{excecao_B_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+
+### Login Exceção
+POST {{url_raiz}}api/login/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{excecao_A_username}}",
+    "password": "{{excecao_A_password}}"
+}
+
+### Edita Completamente Exceção com dados originais
+PUT {{url_raiz}}api/usuario/{{excecao_A_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{excecao_A_nome}}",
+    "username": "{{excecao_A_username}}",
+    "password": "{{excecao_A_password}}",
+    "telefone": "{{excecao_A_telefone}}",
+    "motivo": "{{excecao_A_motivo}}",
+    "nota": "{{excecao_A_nota}}"
+}
+
+### Edita Completamente Exceção com dados alternativos
+PUT {{url_raiz}}api/usuario/{{excecao_A_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{excecao_A_nome2}}",
+    "username": "{{excecao_A_username2}}",
+    "password": "{{excecao_A_password}}",
+    "telefone": "{{excecao_A_telefone}}",
+    "motivo": "{{excecao_A_motivo}}",
+    "nota": "{{excecao_A_nota}}"
+}
+
+### Edita Completamnete Exceção A com os dados da Exceção B para gerar erro. Usar o PUT para colocar os dados originais em B 
+PUT {{url_raiz}}api/usuario/{{excecao_A_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{excecao_B_nome}}",
+    "username": "{{excecao_B_username}}",
+    "password": "{{excecao_B_password}}",
+    "telefone": "{{excecao_B_telefone}}",
+    "motivo": "{{excecao_B_motivo}}",
+    "nota": "{{excecao_B_nota}}"
+}
+
+### Edita Parcialmente Exceção com dados originais
+PATCH {{url_raiz}}api/usuario/{{excecao_A_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{excecao_A_nome}}",
+    "username": "{{excecao_A_username}}",
+    "password": "{{excecao_A_password}}",
+    "telefone": "{{excecao_A_telefone}}",
+    "motivo": "{{excecao_A_motivo}}",
+    "nota": "{{excecao_A_nota}}"
+}
+
+### Edita Parcialmente Exceção com dados alternativos
+PATCH {{url_raiz}}api/usuario/{{excecao_A_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{excecao_A_nome2}}",
+    "username": "{{excecao_A_username2}}",
+    "password": "{{excecao_A_password}}",
+    "telefone": "{{excecao_A_telefone}}",
+    "motivo": "{{excecao_A_motivo}}",
+    "nota": "{{excecao_A_nota}}"
+}
+
+### Edita Parcialmente TechLeader A com os dados da TechLeader B para gerar erro. Usar o PUT para colocar os dados originais em B 
+PATCH {{url_raiz}}api/usuario/{{excecao_A_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{excecao_B_nome}}",
+    "username": "{{excecao_B_username}}",
+    "password": "{{excecao_B_password}}",
+    "telefone": "{{excecao_B_telefone}}",
+    "motivo": "{{excecao_B_motivo}}",
+    "nota": "{{excecao_B_nota}}"
+}
+
+
+#### Exceção B
+
+
+### Cria Exceção
+POST {{url_raiz}}api/usuario/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_excecao}}",
+    "nome": "{{excecao_B_nome}}",
+    "username": "{{excecao_B_username}}",
+    "password": "{{excecao_B_password}}",
+    "telefone": "{{excecao_B_telefone}}",
+    "motivo": "{{excecao_B_motivo}}",
+    "nota": "{{excecao_B_nota}}"
+}
+
+### Login Exceção
+POST {{url_raiz}}api/login/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{excecao_B_username}}",
+    "password": "{{excecao_B_password}}"
+}
+
+### Edita Completamente Exceção com dados originais
+PUT {{url_raiz}}api/usuario/{{excecao_B_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{excecao_B_nome}}",
+    "username": "{{excecao_B_username}}",
+    "password": "{{excecao_B_password}}",
+    "telefone": "{{excecao_B_telefone}}",
+    "motivo": "{{excecao_B_motivo}}",
+    "nota": "{{excecao_B_nota}}"
+}
+
+### Edita Completamente Exceção com dados alternativos
+PUT {{url_raiz}}api/usuario/{{excecao_B_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{excecao_B_nome2}}",
+    "username": "{{excecao_B_username2}}",
+    "password": "{{excecao_B_password}}",
+    "telefone": "{{excecao_B_telefone}}",
+    "motivo": "{{excecao_B_motivo}}",
+    "nota": "{{excecao_B_nota}}"
+}
+
+### Edita Completamnete Exceção B com os dados da Exceção A para gerar erro. Usar o PUT para colocar os dados originais em A 
+PUT {{url_raiz}}api/usuario/{{excecao_B_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{excecao_A_nome}}",
+    "username": "{{excecao_A_username}}",
+    "password": "{{excecao_A_password}}",
+    "telefone": "{{excecao_A_telefone}}",
+    "motivo": "{{excecao_A_motivo}}",
+    "nota": "{{excecao_A_nota}}"
+}
+
+### Edita Parcialmente Exceção com dados originais
+PATCH {{url_raiz}}api/usuario/{{excecao_B_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{excecao_B_nome}}",
+    "username": "{{excecao_B_username}}",
+    "password": "{{excecao_B_password}}",
+    "telefone": "{{excecao_B_telefone}}",
+    "motivo": "{{excecao_B_motivo}}",
+    "nota": "{{excecao_B_nota}}"
+}
+
+### Edita Parcialmente Exceção com dados alternativos
+PATCH {{url_raiz}}api/usuario/{{excecao_B_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{excecao_B_nome2}}",
+    "username": "{{excecao_B_username2}}",
+    "password": "{{excecao_B_password}}",
+    "telefone": "{{excecao_B_telefone}}",
+    "motivo": "{{excecao_B_motivo}}",
+    "nota": "{{excecao_B_nota}}"
+}
+
+### Edita Parcialmente TechLeader B com os dados da TechLeader A para gerar erro. Usar o PUT para colocar os dados originais em A 
+PATCH {{url_raiz}}api/usuario/{{excecao_B_id}}/perfil/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{excecao_A_nome}}",
+    "username": "{{excecao_A_username}}",
+    "password": "{{excecao_A_password}}",
+    "telefone": "{{excecao_A_telefone}}",
+    "motivo": "{{excecao_A_motivo}}",
+    "nota": "{{excecao_A_nota}}"
+}

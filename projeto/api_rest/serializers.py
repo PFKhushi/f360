@@ -15,6 +15,17 @@ def resposta_json(sucesso=False, resultado=None, erro='', detalhes=[]):
         'detalhes': detalhes
     }
 
+def links_acesso():
+
+    pass
+    
+    
+def _get_user_data(validated_data):
+    usuario = validated_data.pop('usuario')
+    return usuario.pop('nome'), usuario.pop('username'), usuario.pop('password'), usuario.pop('telefone') 
+    
+    
+
 class AdminCreateSerializer(serializers.Serializer):
     nome = serializers.CharField(max_length=120)
     username = serializers.EmailField()
@@ -29,7 +40,7 @@ class AdminCreateSerializer(serializers.Serializer):
             )
             return user
         except IntegrityError:
-            raise serializers.ValidationError(                "Já existe um usuário com esse e-mail.")
+            raise serializers.ValidationError("Já existe um usuário com esse e-mail.")
 
 # serializer base do usuario, usado nos perfis
 class UsuarioSerializer(serializers.ModelSerializer):
@@ -39,17 +50,9 @@ class UsuarioSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password': {'write_only': True},  # senha n aparece em leitura
             'username': {'required': True},
-            'nome': {'required': True}
+            'nome': {'required': True},
+            'telefone': {'required': False},
         }     
-    
-    def validate_username(self, value):
-        if self.instance:
-            if Usuario.objects.filter(username=value).exclude(pk=self.instance.pk).exists():
-                raise serializers.ValidationError("Este usuário já está cadastrado")
-        else:
-            if Usuario.objects.filter(username=value).exists():
-                raise serializers.ValidationError("Este usuário já está cadastrado")
-        return value
     
     def create(self, validated_data):
         # cria user via manager (usa set_password etc)
@@ -58,31 +61,47 @@ class UsuarioSerializer(serializers.ModelSerializer):
         except ValidationError as e:
             raise serializers.ValidationError(e.message_dict) 
     
-class BasePerfilSerializer(serializers.ModelSerializer):
-    usuario = UsuarioSerializer()
 
+
+class BasePerfilSerializer(serializers.ModelSerializer):
     class Meta:
-        abstract = True  # Não será usada diretamente
+        abstract = True
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if hasattr(self, 'instance') and self.instance is not None:
-            self.fields['usuario'] = UsuarioSerializer(
-                instance=self.instance.usuario,
-                context=self.context
-            )
 
-    def update(self, instance, validated_data):
-        usuario_data = validated_data.pop('usuario', None)
-        ativado = validated_data.pop('ativado', None)
+        if hasattr(self, 'instance') and self.instance is not None and self.instance.usuario:
+            # Preenche os campos "usuário" a partir do source
+            for field, attr in [
+                ('nome', 'nome'),
+                ('username', 'username'),
+                ('telefone', 'telefone'),
+                ('ativado', 'is_active')
+            ]:
+                if field in self.fields:
+                    self.fields[field].initial = getattr(self.instance.usuario, attr)
 
-        print(usuario_data)
-        if usuario_data:
-            password = usuario_data.pop('password', None)
+    def validate_username(self, value):
+        if self.instance:
+            if Usuario.objects.filter(username=value).exclude(pk=self.instance.usuario.pk).exists():
+                raise serializers.ValidationError("Já existe um usuário com esse email.")
+        else:
+            if Usuario.objects.filter(username=value).exists():
+                raise serializers.ValidationError("Já existe um usuário com esse email.")
             
-            if ativado is not None:
-                usuario_data['is_active'] = ativado
+        return value
+    
+    def update(self, instance, validated_data):
+        # Extrai os dados do subcampo "usuario"
+        usuario_data = validated_data.pop('usuario', {})
 
+        password = usuario_data.pop('password', None)
+        if password:
+            instance.usuario.set_password(password)
+            instance.usuario.save()
+
+        # Atualiza os demais campos do usuario, se houver
+        if usuario_data:
             usuario_serializer = UsuarioSerializer(
                 instance=instance.usuario,
                 data=usuario_data,
@@ -91,13 +110,10 @@ class BasePerfilSerializer(serializers.ModelSerializer):
             usuario_serializer.is_valid(raise_exception=True)
             usuario_serializer.save()
 
-            if password:
-                instance.usuario.set_password(password)
-                instance.usuario.save()
-
+        # Atualiza os campos do próprio modelo (Participante, Empresa, etc.)
         for attr, value in validated_data.items():
-            print(attr, value)
             setattr(instance, attr, value)
+
         instance.full_clean()
         instance.save()
 
@@ -106,9 +122,16 @@ class BasePerfilSerializer(serializers.ModelSerializer):
 
 # serializer aninhado p/ Participante
 class ParticipanteSerializer(BasePerfilSerializer):
-    usuario = UsuarioSerializer()  # inclui dados do user embutidos
+    
     extensionista = serializers.SerializerMethodField(read_only=True)
     imersionista = serializers.SerializerMethodField(read_only=True)
+    
+    nome = serializers.CharField(source='usuario.nome')
+    username = serializers.EmailField(source='usuario.username')
+    telefone = serializers.CharField(source='usuario.telefone', required=False)
+    password = serializers.CharField(write_only=True, min_length=6, source='usuario.password')
+    
+    id = serializers.SerializerMethodField(read_only=True)
     ativado = serializers.BooleanField(
         write_only=True,
         required=False,
@@ -117,10 +140,12 @@ class ParticipanteSerializer(BasePerfilSerializer):
 
     class Meta:
         model = Participante
-        fields = ['id', 'usuario', 'cpf', 'rgm', 'curso', 'outro_curso', 'periodo', 'email_institucional', 'extensionista', 'imersionista', 'ativado']
-
+        fields = ['id', 'nome', 'username', 'telefone', 'password', 'cpf', 'rgm', 'curso', 'outro_curso', 'periodo', 'extensionista', 'imersionista', 'ativado']
+    
+    def get_id(self, participante): return participante.usuario.id
+    
     def get_extensionista(self, participante):
-        extensao = participante.extensionista.first()
+        extensao = participante.extensionista_participante.first()
         if extensao:
             return {
                 'extensionista': True,
@@ -132,23 +157,20 @@ class ParticipanteSerializer(BasePerfilSerializer):
         ultima_imersao = Imersao.objects.order_by('-ano', '-semestre').first()
         if not ultima_imersao:
             return False
-        
         participacao = participante.imersoes_participadas.filter(imersao=ultima_imersao).first()
         if participacao:
             return {
                 'id_participacao': participacao.id,
                 'id_imersao': ultima_imersao.id,
             }
-        
         return False
 
     def validate_cpf(self, value):
         if len(value) != 11:
             raise serializers.ValidationError("CPF deve ter exatamente 11 dígitos")
-        
         cpf_hash = hashlib.sha256(value.encode()).hexdigest()
         if self.instance:  # Atualização
-            if Participante.objects.filter(cpf_hash=cpf_hash).exclude(pk=self.instance.pk).exists():
+            if Participante.objects.filter(cpf_hash=cpf_hash).exclude(usuario=self.instance.usuario).exists():
                 raise serializers.ValidationError("Este CPF já está cadastrado")
         else:  # Criação
             if Participante.objects.filter(cpf_hash=cpf_hash).exists():
@@ -158,35 +180,27 @@ class ParticipanteSerializer(BasePerfilSerializer):
     def validate_rgm(self, value):
         if len(value) != 8:
             raise serializers.ValidationError("RGM deve ter exatamente 8 dígitos")
-        
         rgm_hash = hashlib.sha256(value.encode()).hexdigest()
         if self.instance:
-            if Participante.objects.filter(rgm_hash=rgm_hash).exclude(pk=self.instance.pk).exists():
+            if Participante.objects.filter(rgm_hash=rgm_hash).exclude(usuario=self.instance.usuario).exists():
                 raise serializers.ValidationError("Este RGM já está cadastrado")
         else:
             if Participante.objects.filter(rgm_hash=rgm_hash).exists():
                 raise serializers.ValidationError("Este RGM já está cadastrado")
         return value
-
-    def validate_email_institucional(self, value):
-        email_hash = hashlib.sha256(value.lower().encode()).hexdigest()
-        if self.instance:
-            if Participante.objects.filter(email_institucional_hash=email_hash).exclude(pk=self.instance.pk).exists():
-                raise serializers.ValidationError("Este email institucional já está cadastrado")
-        else:
-            if Participante.objects.filter(email_institucional_hash=email_hash).exists():
-                raise serializers.ValidationError("Este email institucional já está cadastrado")
-        return value
+    
+    
 
     def create(self, validated_data):
-        usuario_data = validated_data.pop('usuario')
+
         # cria user + perfil de forma encadeada
         try:
+            nome, username, telefone, password = _get_user_data(validated_data)
             usuario = Usuario.criar_participante(
-                nome=usuario_data['nome'],
-                email=usuario_data['username'],
-                senha=usuario_data['password'],
-                telefone=usuario_data.get('telefone'),
+                nome=nome,
+                email=username,
+                senha=password,
+                telefone={telefone or ""},
                 **validated_data
             )
             return usuario.participante  
@@ -196,7 +210,11 @@ class ParticipanteSerializer(BasePerfilSerializer):
 
 # igual ao participante, porem com campos da Empresa
 class EmpresaSerializer(BasePerfilSerializer):
-    usuario = UsuarioSerializer()
+    nome = serializers.CharField(source='usuario.nome')
+    username = serializers.EmailField(source='usuario.username')
+    telefone = serializers.CharField(source='usuario.telefone', required=False)
+    password = serializers.CharField(write_only=True, min_length=6, source='usuario.password')
+    id = serializers.SerializerMethodField(read_only=True)
     ativado = serializers.BooleanField(
         write_only=True,
         required=False,
@@ -205,19 +223,24 @@ class EmpresaSerializer(BasePerfilSerializer):
 
     class Meta:
         model = Empresa
-        fields = ['id', 'usuario', 'cnpj', 'representante', 'ativado']
-
+        fields = ['id', 'nome', 'username','password', 'telefone', 'cnpj', 'representante', 'ativado']
+    
+    def get_id(self, participante): return participante.usuario.id
+    
+    def validate_cnpj(self, value):
+        
+        if self.instance:
+            if Empresa.objects.filter(cnpj=value).exclude(usuario=self.instance.usuario).exists():
+                raise serializers.ValidationError("Este CNPJ já está cadastrado")
+        else:
+            if Empresa.objects.filter(cnpj=value).exists:
+                raise serializers.ValidationError("Este CNPJ já está cadastrado")
+        
+    
     def create(self, validated_data):
         try:
-            usuario_data = validated_data.pop('usuario')
-            print(usuario_data)
-            usuario = Usuario.criar_empresa(
-                nome=usuario_data['nome'],
-                email=usuario_data['username'],
-                senha=usuario_data['password'],
-                telefone=usuario_data.get('telefone'),
-                **validated_data
-            )
+            nome, username, telefone, password = _get_user_data(validated_data)
+            usuario = Usuario.criar_empresa( nome=nome, email=username, senha=password, telefone=telefone, **validated_data )
             return usuario.empresa 
         except ValidationError as e:
             raise serializers.ValidationError(e.message_dict)
@@ -225,7 +248,11 @@ class EmpresaSerializer(BasePerfilSerializer):
 
 # igual aos anteriores, usado p/ techleader
 class TechLeaderSerializer(BasePerfilSerializer):
-    usuario = UsuarioSerializer()
+    nome = serializers.CharField(source='usuario.nome')
+    username = serializers.EmailField(source='usuario.username')
+    telefone = serializers.CharField(source='usuario.telefone', required=False)
+    password = serializers.CharField(write_only=True, min_length=6, source='usuario.password')
+    id = serializers.SerializerMethodField(read_only=True)
     ativado = serializers.BooleanField(
         write_only=True,
         required=False,
@@ -234,14 +261,16 @@ class TechLeaderSerializer(BasePerfilSerializer):
 
     class Meta:
         model = TechLeader
-        fields = ['id', 'usuario', 'codigo', 'especialidade', 'ativado']
+        fields = ['id', 'nome', 'username', 'telefone', 'password', 'codigo', 'especialidade', 'ativado']
         
+    def get_id(self, participante): return participante.usuario.id
+    
     def validate_codigo(self, value):
         
         codigo_hash = hashlib.sha256(value.encode()).hexdigest()
         if self.instance:
-            if TechLeader.objects.filter(codigo_hash=codigo_hash).exclude(pk = self.instance.pk).exists():
-                raise serializers.ValidationError("Este código já está cadastrado")
+            if TechLeader.objects.filter(codigo_hash=codigo_hash).exclude(usuario=self.instance.usuario).exists():
+                raise serializers.ValidationError("Este código já eeestá cadastrado")
         else:
             if TechLeader.objects.filter(codigo_hash=codigo_hash).exists():
                 raise serializers.ValidationError("Este código já está cadastrado")
@@ -250,15 +279,8 @@ class TechLeaderSerializer(BasePerfilSerializer):
 
     def create(self, validated_data):
         try:
-            usuario_data = validated_data.pop('usuario')
-            print(usuario_data)
-            usuario = Usuario.criar_techleader(
-                nome=usuario_data['nome'],
-                email=usuario_data['username'],
-                senha=usuario_data['password'],
-                telefone=usuario_data.get('telefone'),
-                **validated_data
-            )
+            nome, username, telefone, password = _get_user_data(validated_data)
+            usuario = Usuario.criar_techleader(nome=nome, email=username, senha=password, telefone=telefone, **validated_data)
             return usuario.techleader
         except ValidationError as e:
             raise serializers.ValidationError(e.message_dict)
@@ -266,7 +288,11 @@ class TechLeaderSerializer(BasePerfilSerializer):
         
 class ExcecaoSerializer(BasePerfilSerializer):
     
-    usuario = UsuarioSerializer()
+    id = serializers.SerializerMethodField(read_only=True)
+    nome = serializers.CharField(source='usuario.nome')
+    username = serializers.EmailField(source='usuario.username')
+    telefone = serializers.CharField(source='usuario.telefone', required=False)
+    password = serializers.CharField(write_only=True, min_length=6, source='usuario.password')
     extensionista = serializers.SerializerMethodField(read_only=True)
     imersionista = serializers.SerializerMethodField(read_only=True)
     ativado = serializers.BooleanField(
@@ -277,13 +303,16 @@ class ExcecaoSerializer(BasePerfilSerializer):
     
     class Meta:
         model = Excecao
-        fields = ['id', 'usuario', 'motivo', 'nota', 'data_inicio', 'extensionista', 'imersionista', 'ativado']
+        fields = ['id', 'nome', 'username', 'telefone', 'password', 'motivo', 'nota', 'data_inicio', 'extensionista', 'imersionista', 'ativado']
+        
+    def get_id(self, participante): return participante.usuario.id
         
     def get_extensionista(self, excecao):
-        if hasattr(excecao, 'extensionista'):
+        extensao = excecao.extensionista_excecao.first()
+        if extensao:
             return {
                 'extensionista': True,
-                'veterano': excecao.extensionista.veterano
+                'veterano': extensao.veterano
             }
         return False
     
@@ -293,7 +322,7 @@ class ExcecaoSerializer(BasePerfilSerializer):
             return False
         
         participacao = excecao.imersoes_participadas.filter(imersao=ultima_imersao).first()
-        if participacao:
+        if participacao and excecao.extensionista_excecao:
             return {
                 'id_participacao': participacao.id,
                 'id_imersao': ultima_imersao.id,
@@ -303,17 +332,11 @@ class ExcecaoSerializer(BasePerfilSerializer):
         
     def create(self, validated_data):
         try:
-            usuario_data = validated_data.pop('usuario')
-            usuario = Usuario.criar_excecao(
-                nome=usuario_data['nome'],
-                email=usuario_data['username'],
-                senha=usuario_data['password'],
-                telefone=usuario_data.get('telefone'),
-                **validated_data
-            )
+            nome, username, telefone, password = _get_user_data(validated_data)
+            usuario = Usuario.criar_excecao(nome=nome, email=username, senha=password, telefone=telefone, **validated_data)
             return usuario.excecao
         except ValidationError as e:
-            raise serializers.ValidationError(e.message_dict)
+            raise serializers.ValidationError(e.messages)
 
 class ExtensionistaSerializer(serializers.ModelSerializer):
 
@@ -354,7 +377,6 @@ class ExtensionistaSerializer(serializers.ModelSerializer):
 class CustomTokenSerializer(TokenObtainPairSerializer):
     
     def validate(self, attrs):
-        print("Tentando autenticar com:", attrs)
         try:
             data = super().validate(attrs)
         except AuthenticationFailed as exc:
@@ -373,7 +395,7 @@ class CustomTokenSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-
+        token['id'] = user.id
         token['nome'] = user.nome
         token['email'] = user.username
         token['tipo_usuario'] = user.get_tipo_usuario()

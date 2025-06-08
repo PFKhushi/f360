@@ -49,7 +49,7 @@ erro_empresa_nao_encontrado_schema = openapi.Schema(
 )
 
 
-#Excessões/excessão não encontrada
+#Exceções/exceção não encontrada
 erro_excecao_nao_encontrado_schema = openapi.Schema(
     type=openapi.TYPE_OBJECT,
     properties={
@@ -182,7 +182,6 @@ success_participante_schema = openapi.Response(
                 "rgm": "12345678",
                 "curso": "ADS",
                 "periodo": 3,
-                "email_institucional": "walace@academico.unipe.edu.br",
                 "extensionista": {
                     "extensionista": True,
                     "veterano": False
@@ -191,7 +190,9 @@ success_participante_schema = openapi.Response(
                     "id_participacao": 1,
                     "id_imersao": 1
                 }
-            }
+            },
+            "erro": "",
+            "detalhes": []
         }
     }
 )
@@ -213,7 +214,9 @@ success_techleader_schema = openapi.Response(
                 },
                 "codigo": "TL123",
                 "especialidade": "Backend Development"
-            }
+            },
+            "erro": "",
+            "detalhes": []
         }
     }
 )
@@ -235,7 +238,9 @@ success_empresa_schema = openapi.Response(
                 },
                 "cnpj": "12345678000199",
                 "representante": "João da Silva"
-            }
+            },
+            "erro": "",
+            "detalhes": []
         }
     }
 )
@@ -261,7 +266,9 @@ success_excecao_schema = openapi.Response(
                     "extensionista": True,
                     "veterano": False
                 }
-            }
+            },
+            "erro": "",
+            "detalhes": []
         }
     }
 )
@@ -283,7 +290,9 @@ success_extensionista_schema = openapi.Response(
                     }
                 },
                 "veterano": True
-            }
+            },
+            "erro": "",
+            "detalhes": []
         }
     }
 )
@@ -300,7 +309,9 @@ success_login_schema = openapi.Response(
                 "nome": "Walace5",
                 "email": "Walace5@email.com",
                 "tipo_usuario": "PART" #(participante)
-            }
+            },
+            "erro": "",
+            "detalhes": []
         }
     }
 )
@@ -317,7 +328,9 @@ success_admin_schema = openapi.Response(
                 "username": "WalaceAdmin@email.com",
                 "is_staff": True,
                 "is_superuser": True
-            }
+            },
+            "erro": "",
+            "detalhes": []
         }
     }
 )
@@ -326,7 +339,7 @@ success_admin_schema = openapi.Response(
 def list_participantes_swagger():
     return swagger_auto_schema(
         operation_description="Lista todos os participantes cadastrados no sistema. "
-                             "Participantes só podem ver seus próprios dados, exceto administradores.",
+                            "Participantes só podem ver seus próprios dados, exceto administradores.",
         responses={
             200: openapi.Response('Lista de participantes', ParticipanteSerializer(many=True)),
             403: openapi.Response('Erro de permissão', erro_permissao_schema)
@@ -337,7 +350,7 @@ def list_participantes_swagger():
 def create_participantes_swagger():
     return swagger_auto_schema(
         operation_description="Cria um novo participante da Fábrica de Software. "
-                             "Campos obrigatórios: nome, email (username), password, cpf, rgm, curso, periodo, email_institucional.",
+                            "Campos obrigatórios: nome, email (username), password, cpf, rgm, curso, periodo.",
         request_body=ParticipanteSerializer,
         responses={
             201: success_participante_schema,
@@ -350,7 +363,7 @@ def create_participantes_swagger():
 def retrieve_participantes_swagger():
     return swagger_auto_schema(
         operation_description="Obtém detalhes de um participante específico. "
-                             "Participantes só podem ver seus próprios dados, exceto administradores.",
+                            "Participantes só podem ver seus próprios dados, exceto administradores.",
         responses={
             200: success_participante_schema,
             404: openapi.Response('Não encontrado', erro_participante_nao_encontrado_schema),
@@ -362,7 +375,7 @@ def retrieve_participantes_swagger():
 def update_participantes_swagger():
     return swagger_auto_schema(
         operation_description="Atualiza todos os dados de um participante. "
-                             "Participantes só podem atualizar seus próprios dados, exceto administradores.",
+                            "Participantes só podem atualizar seus próprios dados, exceto administradores.",
         request_body=ParticipanteSerializer,
         responses={
             200: success_participante_schema,
@@ -377,7 +390,7 @@ def update_participantes_swagger():
 def partial_update_participantes_swagger():
     return swagger_auto_schema(
         operation_description="Atualiza parcialmente um participante. "
-                             "Participantes só podem atualizar seus próprios dados, exceto administradores.",
+                            "Participantes só podem atualizar seus próprios dados, exceto administradores.",
         request_body=ParticipanteSerializer,
         responses={
             200: success_participante_schema,
@@ -392,7 +405,7 @@ def partial_update_participantes_swagger():
 def delete_participantes_swagger():
     return swagger_auto_schema(
         operation_description="Exclui um participante do sistema. "
-                             "Apenas administradores podem executar esta ação.",
+                            "Apenas administradores podem executar esta ação.",
         responses={
             204: "Participante excluído com sucesso",
             404: openapi.Response('Não encontrado', erro_participante_nao_encontrado_schema),
@@ -405,7 +418,7 @@ def delete_participantes_swagger():
 def list_techleaders_swagger():
     return swagger_auto_schema(
         operation_description="Lista todos os tech leaders cadastrados. "
-                             "Acesso restrito a administradores e tech leaders.",
+                            "Acesso restrito a administradores e tech leaders.",
         responses={
             200: openapi.Response('Lista de tech leaders', TechLeaderSerializer(many=True)),
             403: openapi.Response('Erro de permissão', erro_permissao_schema)
@@ -416,8 +429,8 @@ def list_techleaders_swagger():
 def create_techleaders_swagger():
     return swagger_auto_schema(
         operation_description="Cria um novo tech leader. "
-                             "Campos obrigatórios: nome, email (username), password, codigo, especialidade. "
-                             "Acesso restrito a administradores.",
+                            "Campos obrigatórios: nome, email (username), password, codigo, especialidade. "
+                            "Acesso restrito a administradores.",
         request_body=TechLeaderSerializer,
         responses={
             201: success_techleader_schema,
@@ -430,7 +443,7 @@ def create_techleaders_swagger():
 def retrieve_techleaders_swagger():
     return swagger_auto_schema(
         operation_description="Obtém detalhes de um tech leader específico. "
-                             "Tech leaders só podem ver seus próprios dados, exceto administradores.",
+                            "Tech leaders só podem ver seus próprios dados, exceto administradores.",
         responses={
             200: success_techleader_schema,
             404: openapi.Response('Não encontrado', erro_techleader_nao_encontrado_schema),
@@ -442,7 +455,7 @@ def retrieve_techleaders_swagger():
 def update_techleaders_swagger():
     return swagger_auto_schema(
         operation_description="Atualiza todos os dados de um tech leader. "
-                             "Tech leaders só podem atualizar seus próprios dados, exceto administradores.",
+                            "Tech leaders só podem atualizar seus próprios dados, exceto administradores.",
         request_body=TechLeaderSerializer,
         responses={
             200: success_techleader_schema,
@@ -457,7 +470,7 @@ def update_techleaders_swagger():
 def partial_update_techleaders_swagger():
     return swagger_auto_schema(
         operation_description="Atualiza parcialmente um tech leader. "
-                             "Tech leaders só podem atualizar seus próprios dados, exceto administradores.",
+                            "Tech leaders só podem atualizar seus próprios dados, exceto administradores.",
         request_body=TechLeaderSerializer,
         responses={
             200: success_techleader_schema,
@@ -472,7 +485,7 @@ def partial_update_techleaders_swagger():
 def delete_techleaders_swagger():
     return swagger_auto_schema(
         operation_description="Exclui um tech leader do sistema. "
-                             "Apenas administradores podem executar esta ação.",
+                            "Apenas administradores podem executar esta ação.",
         responses={
             204: "Tech leader excluído com sucesso",
             404: openapi.Response('Não encontrado', erro_techleader_nao_encontrado_schema),
@@ -485,7 +498,7 @@ def delete_techleaders_swagger():
 def list_empresas_swagger():
     return swagger_auto_schema(
         operation_description="Lista todas as empresas parceiras cadastradas. "
-                             "Empresas só podem ver seus próprios dados, exceto administradores.",
+                            "Empresas só podem ver seus próprios dados, exceto administradores.",
         responses={
             200: openapi.Response('Lista de empresas', EmpresaSerializer(many=True)),
             403: openapi.Response('Erro de permissão', erro_permissao_schema)
@@ -496,8 +509,8 @@ def list_empresas_swagger():
 def create_empresas_swagger():
     return swagger_auto_schema(
         operation_description="Cria uma nova empresa parceira. "
-                             "Campos obrigatórios: nome, email (username), password, cnpj, representante. "
-                             "Acesso restrito a administradores.",
+                            "Campos obrigatórios: nome, email (username), password, cnpj, representante. "
+                            "Acesso restrito a administradores.",
         request_body=EmpresaSerializer,
         responses={
             201: success_empresa_schema,
@@ -510,7 +523,7 @@ def create_empresas_swagger():
 def retrieve_empresas_swagger():
     return swagger_auto_schema(
         operation_description="Obtém detalhes de uma empresa específica. "
-                             "Empresas só podem ver seus próprios dados, exceto administradores.",
+                            "Empresas só podem ver seus próprios dados, exceto administradores.",
         responses={
             200: success_empresa_schema,
             404: openapi.Response('Não encontrado', erro_empresa_nao_encontrado_schema),
@@ -522,7 +535,7 @@ def retrieve_empresas_swagger():
 def update_empresas_swagger():
     return swagger_auto_schema(
         operation_description="Atualiza todos os dados de uma empresa. "
-                             "Empresas só podem atualizar seus próprios dados, exceto administradores.",
+                            "Empresas só podem atualizar seus próprios dados, exceto administradores.",
         request_body=EmpresaSerializer,
         responses={
             200: success_empresa_schema,
@@ -537,7 +550,7 @@ def update_empresas_swagger():
 def partial_update_empresas_swagger():
     return swagger_auto_schema(
         operation_description="Atualiza parcialmente uma empresa. "
-                             "Empresas só podem atualizar seus próprios dados, exceto administradores.",
+                            "Empresas só podem atualizar seus próprios dados, exceto administradores.",
         request_body=EmpresaSerializer,
         responses={
             200: success_empresa_schema,
@@ -552,7 +565,7 @@ def partial_update_empresas_swagger():
 def delete_empresas_swagger():
     return swagger_auto_schema(
         operation_description="Exclui uma empresa do sistema. "
-                             "Apenas administradores podem executar esta ação.",
+                            "Apenas administradores podem executar esta ação.",
         responses={
             204: "Empresa excluída com sucesso",
             404: openapi.Response('Não encontrado', erro_empresa_nao_encontrado_schema),
@@ -565,7 +578,7 @@ def delete_empresas_swagger():
 def list_excecoes_swagger():
     return swagger_auto_schema(
         operation_description="Lista todos as exceções cadastradas. "
-                             "Acesso restrito a administradores.",
+                            "Acesso restrito a administradores.",
         responses={
             200: openapi.Response('Lista de exceções', ExcecaoSerializer(many=True)),
             403: openapi.Response('Erro de permissão', erro_permissao_schema)
@@ -576,8 +589,8 @@ def list_excecoes_swagger():
 def create_excecoes_swagger():
     return swagger_auto_schema(
         operation_description="Cria um novo registro de exceção. "
-                             "Campos obrigatórios: nome, email (username), password, motivo. "
-                             "Acesso restrito a administradores.",
+                            "Campos obrigatórios: nome, email (username), password, motivo. "
+                            "Acesso restrito a administradores.",
         request_body=ExcecaoSerializer,
         responses={
             201: success_excecao_schema,
@@ -590,7 +603,7 @@ def create_excecoes_swagger():
 def retrieve_excecoes_swagger():
     return swagger_auto_schema(
         operation_description="Obtém detalhes de uma exceção específica. "
-                             "Acesso restrito a administradores.",
+                            "Acesso restrito a administradores.",
         responses={
             200: success_excecao_schema,
             404: openapi.Response('Não encontrado', erro_excecao_nao_encontrado_schema),
@@ -602,7 +615,7 @@ def retrieve_excecoes_swagger():
 def update_excecoes_swagger():
     return swagger_auto_schema(
         operation_description="Atualiza todos os dados de uma exceção. "
-                             "Acesso restrito a administradores.",
+                            "Acesso restrito a administradores.",
         request_body=ExcecaoSerializer,
         responses={
             200: success_excecao_schema,
@@ -617,7 +630,7 @@ def update_excecoes_swagger():
 def partial_update_excecoes_swagger():
     return swagger_auto_schema(
         operation_description="Atualiza parcialmente uma exceção. "
-                             "Acesso restrito a administradores.",
+                            "Acesso restrito a administradores.",
         request_body=ExcecaoSerializer,
         responses={
             200: success_excecao_schema,
@@ -632,7 +645,7 @@ def partial_update_excecoes_swagger():
 def delete_excecoes_swagger():
     return swagger_auto_schema(
         operation_description="Exclui uma exceção do sistema. "
-                             "Apenas administradores podem executar esta ação.",
+                            "Apenas administradores podem executar esta ação.",
         responses={
             204: "Exceção excluída com sucesso",
             404: openapi.Response('Não encontrado', erro_excecao_nao_encontrado_schema),
@@ -645,7 +658,7 @@ def delete_excecoes_swagger():
 def list_extensionistas_swagger():
     return swagger_auto_schema(
         operation_description="Lista todos os extensionistas cadastrados. "
-                             "Acesso restrito a administradores.",
+                            "Acesso restrito a administradores.",
         responses={
             200: openapi.Response('Lista de extensionistas', ExtensionistaSerializer(many=True)),
             403: openapi.Response('Erro de permissão', erro_permissao_schema)
@@ -656,8 +669,8 @@ def list_extensionistas_swagger():
 def create_extensionistas_swagger():
     return swagger_auto_schema(
         operation_description="Cria um novo extensionista. "
-                             "Deve referenciar um participante ou exceção existente. "
-                             "Acesso restrito a administradores.",
+                            "Deve referenciar um participante ou exceção existente. "
+                            "Acesso restrito a administradores.",
         request_body=ExtensionistaSerializer,
         responses={
             201: success_extensionista_schema,
@@ -670,7 +683,7 @@ def create_extensionistas_swagger():
 def retrieve_extensionistas_swagger():
     return swagger_auto_schema(
         operation_description="Obtém detalhes de um extensionista específico. "
-                             "Acesso restrito a administradores.",
+                            "Acesso restrito a administradores.",
         responses={
             200: success_extensionista_schema,
             404: openapi.Response('Não encontrado', erro_extensionista_nao_encontrado_schema),
@@ -682,7 +695,7 @@ def retrieve_extensionistas_swagger():
 def update_extensionistas_swagger():
     return swagger_auto_schema(
         operation_description="Atualiza todos os dados de um extensionista. "
-                             "Acesso restrito a administradores.",
+                            "Acesso restrito a administradores.",
         request_body=ExtensionistaSerializer,
         responses={
             200: success_extensionista_schema,
@@ -697,7 +710,7 @@ def update_extensionistas_swagger():
 def partial_update_extensionistas_swagger():
     return swagger_auto_schema(
         operation_description="Atualiza parcialmente um extensionista. "
-                             "Acesso restrito a administradores.",
+                            "Acesso restrito a administradores.",
         request_body=ExtensionistaSerializer,
         responses={
             200: success_extensionista_schema,
@@ -712,7 +725,7 @@ def partial_update_extensionistas_swagger():
 def delete_extensionistas_swagger():
     return swagger_auto_schema(
         operation_description="Exclui um extensionista do sistema. "
-                             "Apenas administradores podem executar esta ação.",
+                            "Apenas administradores podem executar esta ação.",
         responses={
             204: "Extensionista excluído com sucesso",
             404: openapi.Response('Não encontrado', erro_extensionista_nao_encontrado_schema),
@@ -725,7 +738,7 @@ def delete_extensionistas_swagger():
 def login_swagger():
     return swagger_auto_schema(
         operation_description="Realiza login no sistema e retorna tokens JWT. "
-                             "Campos obrigatórios: username (email) e password.",
+                            "Campos obrigatórios: username (email) e password.",
         request_body=CustomTokenSerializer,
         responses={
             200: success_login_schema,
@@ -738,7 +751,7 @@ def login_swagger():
 def admin_create_swagger():
     return swagger_auto_schema(
         operation_description="Cria um novo usuário administrador. "
-                             "Acesso restrito a superusuários.",
+                            "Acesso restrito a superusuários.",
         request_body=AdminCreateSerializer,
         responses={
             201: success_admin_schema,
@@ -747,3 +760,26 @@ def admin_create_swagger():
         },
         tags=['Administração']
     )
+    
+# #Mensagem de sucesso mais detalhada (PERFIL)
+# success_perfil_schema = openapi.Response(
+#     description="Operação realizada com sucesso",
+#     schema=openapi.Schema(
+#         type=openapi.TYPE_OBJECT,
+#         properties={
+#             "sucesso": openapi.Schema(type=openapi.TYPE_BOOLEAN),
+#             "resultado": openapi.Schema(
+#                 type=openapi.TYPE_OBJECT,
+#                 oneOf=[
+#                     success_participante_schema.schema,
+#                     success_techleader_schema.schema,
+#                     success_empresa_schema.schema,
+#                     success_excecao_schema.schema,
+#                     success_extensionista_schema.schema
+#                 ]
+#             ),
+#             "erro": "",
+#             "detalhes": []
+#         }
+#     )
+# )

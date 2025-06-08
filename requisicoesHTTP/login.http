@@ -1,0 +1,13 @@
+###
+POST http://localhost:8000/api/login/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "jwsdfgfgfodfg@email.com",
+    "password": "senha123"
+}
+
+
+"refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0ODk5ODQ3NCwiaWF0IjoxNzQ4OTEyMDc0LCJqdGkiOiJlZWUxMGNiYzFjY2Q0MTBiOTkyYjFmYjE4YjYwYjRiNCIsInVzZXJfaWQiOjEsImlkIjoxLCJub21lIjoiSm9cdTAwZTNvIFNpbHZhIiwiZW1haWwiOiJqd3NkZmdmZ2ZvZGZnQGVtYWlsLmNvbSIsInRpcG9fdXN1YXJpbyI6IlBBUlQifQ.Pf1V7ijjdlofvJhnaQZmmi8_62savZoq_b35xQXf1Y8",
+
+"access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4OTEzODc0LCJpYXQiOjE3NDg5MTIwNzQsImp0aSI6IjZmY2JmNDU5MmJmZDRjZDk4Nzc3MjBkZDM1MTg4YmUzIiwidXNlcl9pZCI6MSwiaWQiOjEsIm5vbWUiOiJKb1x1MDBlM28gU2lsdmEiLCJlbWFpbCI6Imp3c2RmZ2ZnZm9kZmdAZW1haWwuY29tIiwidGlwb191c3VhcmlvIjoiUEFSVCJ9.xmhEwL_9MhE3rvAKNtwIAcTrnXbD2BkJzrgrPc-b7lM"

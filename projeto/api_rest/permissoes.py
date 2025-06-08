@@ -4,6 +4,11 @@ class IsOwnerOrAdmin(permissions.BasePermission): #
 
     def has_object_permission(self, request, view, obj):
         return (request.user == obj.usuario or request.user.is_staff) and request.user.is_authenticated
+    
+class IsUserOwnerOrAdmin(permissions.BasePermission): # 
+
+    def has_object_permission(self, request, view, obj):
+        return (request.user == obj or request.user.is_staff) and request.user.is_authenticated
 
 class CanViewAllParticipantes(permissions.BasePermission):
     
