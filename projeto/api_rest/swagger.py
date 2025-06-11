@@ -163,38 +163,74 @@ erro_extensionista_integridade_schema = openapi.Schema(
     }
 )
 
+#Mensagem de erro para um perfil não associado
+erro_perfil_nao_encontrado_schema = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        "erro": openapi.Schema(type=openapi.TYPE_STRING, example="Perfil não encontrado"),
+        "codigo": openapi.Schema(type=openapi.TYPE_INTEGER, example=404),
+        "detalhes": openapi.Schema(type=openapi.TYPE_STRING, example="Este usuário não possui um perfil associado")
+    }
+)
+
+#Mensagem de erro para perfil que nã foi infomrado
+erro_perfil_nao_informado_schema = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        "erro": openapi.Schema(type=openapi.TYPE_STRING, example="Perfil não informado"),
+        "codigo": openapi.Schema(type=openapi.TYPE_INTEGER, example=400),
+        "detalhes": openapi.Schema(type=openapi.TYPE_STRING, example="O campo 'perfil' é obrigatório para criação")
+    }
+)
+
+#Mensagem de erro para perfil inválido
+erro_perfil_invalido_schema = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        "erro": openapi.Schema(type=openapi.TYPE_STRING, example="Perfil inválido"),
+        "codigo": openapi.Schema(type=openapi.TYPE_INTEGER, example=400),
+        "detalhes": openapi.Schema(
+            type=openapi.TYPE_ARRAY,
+            items=openapi.Schema(type=openapi.TYPE_STRING),
+            example=["Perfis válidos: participante, empresa, techleader, excecao"]
+        )
+    }
+)
+
+
 #Mensagem de sucesso mais detalhada (PARTICIPANTE)
 success_participante_schema = openapi.Response(
     description="Participante criado/atualizado com sucesso",
-    schema=ParticipanteSerializer,
-    examples={
-        "application/json": {
-            "sucesso": True,
-            "resultado": {
-                "id": 1,
-                "usuario": {
+    schema=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            "sucesso": openapi.Schema(type=openapi.TYPE_BOOLEAN, example=True),
+            "resultado": openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                allOf=[ParticipanteSerializer],
+                example={
                     "id": 1,
-                    "nome": "Walace",
-                    "username": "walace@email.com",
-                    "telefone": "83999999999"
-                },
-                "cpf": "12345678901",
-                "rgm": "12345678",
-                "curso": "ADS",
-                "periodo": 3,
-                "extensionista": {
-                    "extensionista": True,
-                    "veterano": False
-                },
-                "imersionista": {
-                    "id_participacao": 1,
-                    "id_imersao": 1
+                    "nome": "João Silva",
+                    "username": "joao@email.com",
+                    "telefone": "11999999999",
+                    "cpf": "12345678901",
+                    "rgm": "12345678",
+                    "curso": "ADS",
+                    "periodo": 3,
+                    "extensionista": {
+                        "extensionista": True,
+                        "veterano": False
+                    },
+                    "imersionista": {
+                        "id_participacao": 1,
+                        "id_imersao": 1
+                    }
                 }
-            },
-            "erro": "",
-            "detalhes": []
+            ),
+            "erro": openapi.Schema(type=openapi.TYPE_STRING, example=""),
+            "detalhes": openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Schema(type=openapi.TYPE_STRING))
         }
-    }
+    )
 )
 
 #Mensagem de sucesso mais detalhada (TECHLEADER)
@@ -335,6 +371,29 @@ success_admin_schema = openapi.Response(
     }
 )
 
+#Mensagem de sucesso para perfil
+success_usuario_perfil_schema = openapi.Response(
+    description="Operação realizada com sucesso no perfil do usuário",
+    schema=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            "sucesso": openapi.Schema(type=openapi.TYPE_BOOLEAN, example=True),
+            "resultado": openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                oneOf=[
+                    ParticipanteSerializer,
+                    EmpresaSerializer,
+                    TechLeaderSerializer,
+                    ExcecaoSerializer
+                ]
+            ),
+            "erro": openapi.Schema(type=openapi.TYPE_STRING, example=""),
+            "detalhes": openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Schema(type=openapi.TYPE_STRING))
+        }
+    )
+)
+
+
 #SWAGGER PARTICIPANTE
 def list_participantes_swagger():
     return swagger_auto_schema(
@@ -349,12 +408,24 @@ def list_participantes_swagger():
 
 def create_participantes_swagger():
     return swagger_auto_schema(
-        operation_description="Cria um novo participante da Fábrica de Software. "
-                            "Campos obrigatórios: nome, email (username), password, cpf, rgm, curso, periodo.",
+        operation_description="Cria um novo participante da Fábrica de Software.\n\n"
+                            "**Campos obrigatórios:**\n"
+                            "- nome\n"
+                            "- senha (email)\n"
+                            "- senha\n"
+                            "- cpf (11 dígitos)\n"
+                            "- rgm (8 dígitos)\n"
+                            "- curso (ADS, CC, SI, CD ou OTR)\n"
+                            "- periodo (número inteiro)\n\n"
+                            "**Restrições:**\n"
+                            "- CPF e RGM devem ser únicos no sistema\n"
+                            "- Email deve ser único\n"
+                            "- Participantes não podem ter outros perfis associados",
         request_body=ParticipanteSerializer,
         responses={
             201: success_participante_schema,
             400: openapi.Response('Erro de validação', erro_validacao_schema),
+            403: openapi.Response('Erro de permissão', erro_permissao_schema),
             409: openapi.Response('Conflito de dados', erro_participante_integridade_schema)
         },
         tags=['Participantes']
@@ -429,7 +500,7 @@ def list_techleaders_swagger():
 def create_techleaders_swagger():
     return swagger_auto_schema(
         operation_description="Cria um novo tech leader. "
-                            "Campos obrigatórios: nome, email (username), password, codigo, especialidade. "
+                            "Campos obrigatórios: nome, email (username), senha, codigo, especialidade. "
                             "Acesso restrito a administradores.",
         request_body=TechLeaderSerializer,
         responses={
@@ -509,7 +580,7 @@ def list_empresas_swagger():
 def create_empresas_swagger():
     return swagger_auto_schema(
         operation_description="Cria uma nova empresa parceira. "
-                            "Campos obrigatórios: nome, email (username), password, cnpj, representante. "
+                            "Campos obrigatórios: nome, email (username), senha, cnpj, representante. "
                             "Acesso restrito a administradores.",
         request_body=EmpresaSerializer,
         responses={
@@ -589,7 +660,7 @@ def list_excecoes_swagger():
 def create_excecoes_swagger():
     return swagger_auto_schema(
         operation_description="Cria um novo registro de exceção. "
-                            "Campos obrigatórios: nome, email (username), password, motivo. "
+                            "Campos obrigatórios: nome, email (username), senha, motivo. "
                             "Acesso restrito a administradores.",
         request_body=ExcecaoSerializer,
         responses={
@@ -738,7 +809,7 @@ def delete_extensionistas_swagger():
 def login_swagger():
     return swagger_auto_schema(
         operation_description="Realiza login no sistema e retorna tokens JWT. "
-                            "Campos obrigatórios: username (email) e password.",
+                            "Campos obrigatórios: username (email) e senha.",
         request_body=CustomTokenSerializer,
         responses={
             200: success_login_schema,
@@ -760,6 +831,185 @@ def admin_create_swagger():
         },
         tags=['Administração']
     )
+
+#Swagger UsuarioVS
+
+def create_usuario_swagger():
+    return swagger_auto_schema(
+        operation_description="Cria um novo usuário com seu perfil associado. "
+                            "O campo 'perfil' é obrigatório e deve ser um dos seguintes: "
+                            "'participante', 'empresa', 'techleader', 'excecao'. "
+                            "Os campos obrigatórios variam conforme o perfil selecionado.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "perfil": openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    enum=['participante', 'empresa', 'techleader', 'excecao'],
+                    description="Tipo de perfil a ser criado"
+                ),
+                "nome": openapi.Schema(type=openapi.TYPE_STRING),
+                "username": openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_EMAIL),
+                "senha": openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_PASSWORD),
+                "telefone": openapi.Schema(type=openapi.TYPE_STRING),
+                # Campos específicos de cada perfil
+                "cpf": openapi.Schema(type=openapi.TYPE_STRING, description="Obrigatório para participante"),
+                "rgm": openapi.Schema(type=openapi.TYPE_STRING, description="Obrigatório para participante"),
+                "curso": openapi.Schema(type=openapi.TYPE_STRING, description="Obrigatório para participante"),
+                "periodo": openapi.Schema(type=openapi.TYPE_INTEGER, description="Obrigatório para participante"),
+                "cnpj": openapi.Schema(type=openapi.TYPE_STRING, description="Obrigatório para empresa"),
+                "representante": openapi.Schema(type=openapi.TYPE_STRING, description="Obrigatório para empresa"),
+                "codigo": openapi.Schema(type=openapi.TYPE_STRING, description="Obrigatório para techleader"),
+                "especialidade": openapi.Schema(type=openapi.TYPE_STRING, description="Obrigatório para techleader"),
+                "motivo": openapi.Schema(type=openapi.TYPE_STRING, description="Obrigatório para excecao"),
+                "nota": openapi.Schema(type=openapi.TYPE_STRING, description="Opcional para excecao")
+            },
+            required=["perfil"],
+            example={
+                "perfil": "participante",
+                "nome": "João Silva",
+                "username": "joao@email.com",
+                "senha": "senha123",
+                "telefone": "11999999999",
+                "cpf": "12345678901",
+                "rgm": "12345678",
+                "curso": "ADS",
+                "periodo": 3
+            }
+        ),
+        responses={
+            201: success_usuario_perfil_schema,
+            400: openapi.Response('Erro de validação', oneOf=[
+                erro_validacao_schema,
+                erro_perfil_nao_informado_schema,
+                erro_perfil_invalido_schema
+            ]),
+            403: openapi.Response('Erro de permissão', erro_permissao_schema),
+            409: openapi.Response('Conflito de dados', oneOf=[
+                erro_participante_integridade_schema,
+                erro_empresa_integridade_schema,
+                erro_techleader_integridade_schema,
+                erro_excecao_integridade_schema
+            ])
+        },
+        tags=['Usuários']
+    )
+
+def retrieve_usuario_perfil_swagger():
+    return swagger_auto_schema(
+        operation_description="Obtém os detalhes do perfil associado a um usuário. "
+                            "Usuários só podem ver seus próprios dados, exceto administradores.",
+        responses={
+            200: success_usuario_perfil_schema,
+            404: openapi.Response('Não encontrado', oneOf=[
+                erro_nao_encontrado_schema,
+                erro_perfil_nao_encontrado_schema
+            ]),
+            403: openapi.Response('Erro de permissão', erro_permissao_schema)
+        },
+        tags=['Usuários']
+    )
+
+def update_usuario_perfil_swagger():
+    return swagger_auto_schema(
+        operation_description="Atualiza todos os dados do perfil de um usuário. "
+                            "Usuários só podem atualizar seus próprios dados, exceto administradores.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "nome": openapi.Schema(type=openapi.TYPE_STRING),
+                "username": openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_EMAIL),
+                "senha": openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_PASSWORD),
+                "telefone": openapi.Schema(type=openapi.TYPE_STRING),
+                # Campos específicos de cada perfil
+                "cpf": openapi.Schema(type=openapi.TYPE_STRING),
+                "rgm": openapi.Schema(type=openapi.TYPE_STRING),
+                "curso": openapi.Schema(type=openapi.TYPE_STRING),
+                "periodo": openapi.Schema(type=openapi.TYPE_INTEGER),
+                "cnpj": openapi.Schema(type=openapi.TYPE_STRING),
+                "representante": openapi.Schema(type=openapi.TYPE_STRING),
+                "codigo": openapi.Schema(type=openapi.TYPE_STRING),
+                "especialidade": openapi.Schema(type=openapi.TYPE_STRING),
+                "motivo": openapi.Schema(type=openapi.TYPE_STRING),
+                "nota": openapi.Schema(type=openapi.TYPE_STRING)
+            }
+        ),
+        responses={
+            200: success_usuario_perfil_schema,
+            400: openapi.Response('Erro de validação', erro_validacao_schema),
+            404: openapi.Response('Não encontrado', oneOf=[
+                erro_nao_encontrado_schema,
+                erro_perfil_nao_encontrado_schema
+            ]),
+            403: openapi.Response('Erro de permissão', erro_permissao_schema),
+            409: openapi.Response('Conflito de dados', oneOf=[
+                erro_participante_integridade_schema,
+                erro_empresa_integridade_schema,
+                erro_techleader_integridade_schema,
+                erro_excecao_integridade_schema
+            ])
+        },
+        tags=['Usuários']
+    )
+
+def partial_update_usuario_perfil_swagger():
+    return swagger_auto_schema(
+        operation_description="Atualiza parcialmente os dados do perfil de um usuário. "
+                            "Usuários só podem atualizar seus próprios dados, exceto administradores.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "nome": openapi.Schema(type=openapi.TYPE_STRING),
+                "username": openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_EMAIL),
+                "senha": openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_PASSWORD),
+                "telefone": openapi.Schema(type=openapi.TYPE_STRING),
+                # Campos específicos de cada perfil
+                "cpf": openapi.Schema(type=openapi.TYPE_STRING),
+                "rgm": openapi.Schema(type=openapi.TYPE_STRING),
+                "curso": openapi.Schema(type=openapi.TYPE_STRING),
+                "periodo": openapi.Schema(type=openapi.TYPE_INTEGER),
+                "cnpj": openapi.Schema(type=openapi.TYPE_STRING),
+                "representante": openapi.Schema(type=openapi.TYPE_STRING),
+                "codigo": openapi.Schema(type=openapi.TYPE_STRING),
+                "especialidade": openapi.Schema(type=openapi.TYPE_STRING),
+                "motivo": openapi.Schema(type=openapi.TYPE_STRING),
+                "nota": openapi.Schema(type=openapi.TYPE_STRING)
+            }
+        ),
+        responses={
+            200: success_usuario_perfil_schema,
+            400: openapi.Response('Erro de validação', erro_validacao_schema),
+            404: openapi.Response('Não encontrado', oneOf=[
+                erro_nao_encontrado_schema,
+                erro_perfil_nao_encontrado_schema
+            ]),
+            403: openapi.Response('Erro de permissão', erro_permissao_schema),
+            409: openapi.Response('Conflito de dados', oneOf=[
+                erro_participante_integridade_schema,
+                erro_empresa_integridade_schema,
+                erro_techleader_integridade_schema,
+                erro_excecao_integridade_schema
+            ])
+        },
+        tags=['Usuários']
+    )
+
+def delete_usuario_perfil_swagger():
+    return swagger_auto_schema(
+        operation_description="Exclui um usuário e seu perfil associado. "
+                            "Apenas administradores podem executar esta ação.",
+        responses={
+            204: "Usuário e perfil excluídos com sucesso",
+            404: openapi.Response('Não encontrado', oneOf=[
+                erro_nao_encontrado_schema,
+                erro_perfil_nao_encontrado_schema
+            ]),
+            403: openapi.Response('Erro de permissão', erro_permissao_schema)
+        },
+        tags=['Usuários']
+    )
+
+
     
 # #Mensagem de sucesso mais detalhada (PERFIL)
 # success_perfil_schema = openapi.Response(
