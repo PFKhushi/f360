@@ -1,0 +1,23 @@
+@url_raiz = http://localhost:8000/
+@nome = Administrador Geral
+@username = admin@exsample.com
+@password = senhaSupesrSegura123
+
+###
+POST {{url_raiz}}api/login/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{username}}",
+    "password": "{{password}}"
+}
+
+###
+POST {{url_raiz}}api/criar-admin/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "{{nome}}",
+    "username": "{{username}}",
+    "password": "{{password}}"
+}

@@ -1,0 +1,134 @@
+@url_raiz = http://localhost:8000/
+
+@url_area = api/area_fabrica/
+
+@nome1A = BackEnd
+@nome1B = BanckEnd
+@id1 = 1
+@nome2A = FrontEnd
+@nome2B = ForntEnd
+@id2 = 2
+@nome3A = Dados
+@nome3B = Dardos
+@id3 = 3
+
+@username = admin@exsample.com
+@password = senhaSupesrSegura123
+@admin_access = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUxMTg0MTQ1LCJpYXQiOjE3NTExODIzNDUsImp0aSI6ImU0ODQ4OGY5OGYzZTQ3Yzk5NTEyNDVmMmVlNTRhZGUzIiwidXNlcl9pZCI6MSwiaWQiOjEsIm5vbWUiOiJBZG1pbmlzdHJhZG9yIEdlcmFsIiwiZW1haWwiOiJhZG1pbkBleHNhbXBsZS5jb20iLCJ0aXBvX3VzdWFyaW8iOiJBRE1JTiJ9.nvEBt4g5aYhdCeXGhoJ9dNHPp0Ecq2eSzSQPxf8QU74
+
+###
+POST {{url_raiz}}api/login/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{username}}",
+    "password": "{{password}}"
+}
+
+###
+GET {{url_raiz}}{{url_area}} HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_access}}
+
+###
+POST {{url_raiz}}{{url_area}} HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_access}}
+
+{
+    "nome": "{{nome1A}}"
+}
+
+###
+PUT {{url_raiz}}{{url_area}}{{id1}}/ HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_access}}
+
+{
+    "nome": "{{nome1B}}",
+    "ativa": "false"
+}
+
+###
+PATCH {{url_raiz}}{{url_area}}{{id1}}/ HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_access}}
+
+{
+    "nome": "{{nome1A}}",
+    "ativa": "true"
+}
+
+###
+DELETE {{url_raiz}}{{url_area}}{{id1}}/ HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_access}}
+
+
+###
+POST {{url_raiz}}{{url_area}} HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_access}}
+
+{
+    "nome": "{{nome2A}}"
+}
+
+###
+PUT {{url_raiz}}{{url_area}}{{id2}}/ HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_access}}
+
+{
+    "nome": "{{nome2B}}",
+    "ativa": "false"
+}
+
+###
+PATCH {{url_raiz}}{{url_area}}{{id2}}/ HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_access}}
+
+{
+    "nome": "{{nome2A}}",
+    "ativa": "true"
+}
+
+###
+DELETE {{url_raiz}}{{url_area}}{{id2}}/ HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_access}}
+
+###
+POST {{url_raiz}}{{url_area}} HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_access}}
+
+{
+    "nome": "{{nome3A}}"
+}
+
+###
+PUT {{url_raiz}}{{url_area}}{{id3}}/ HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_access}}
+
+{
+    "nome": "{{nome3B}}",
+    "ativa": "false"
+}
+
+###
+PATCH {{url_raiz}}{{url_area}}{{id3}}/ HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_access}}
+
+{
+    "nome": "{{nome3A}}",
+    "ativa": "true"
+}
+
+###
+DELETE {{url_raiz}}{{url_area}}{{id3}}/ HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_access}}

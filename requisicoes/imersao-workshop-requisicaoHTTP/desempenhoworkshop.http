@@ -1,0 +1,64 @@
+@url_raiz = http://localhost:8000/
+@url_workshop = api/workshop/
+@url_desempenho = api/desempenho_workshop/
+
+@username = admin@exsample.com
+@password = senhaSupesrSegura123
+@access_token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUxMTkxOTA5LCJpYXQiOjE3NTExOTAxMDksImp0aSI6ImU5NDQxZTY3YTRmYTQ5YTg4NjAyYzRmYTljM2VlMmJmIiwidXNlcl9pZCI6MSwiaWQiOjEsIm5vbWUiOiJBZG1pbmlzdHJhZG9yIEdlcmFsIiwiZW1haWwiOiJhZG1pbkBleHNhbXBsZS5jb20iLCJ0aXBvX3VzdWFyaW8iOiJBRE1JTiJ9.cN0CI12QEAi_c2x3nHY47WsiRGXasONMhKR5XkQ0-JM
+
+
+###
+POST {{url_raiz}}api/login/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{username}}",
+    "password": "{{password}}"
+}
+
+### Lista workshops
+GET {{url_raiz}}{{url_workshop}} HTTP/1.1
+Content-Type: application/json
+
+### Pega workshops
+GET {{url_raiz}}{{url_workshop}}1/ HTTP/1.1
+Content-Type: application/json
+Authorization: {{access_token}}
+
+### Pega workshops
+GET {{url_raiz}}{{url_desempenho}} HTTP/1.1
+Content-Type: application/json
+Authorization: {{access_token}}
+
+###
+POST {{url_raiz}}{{url_desempenho}} HTTP/1.1
+Content-Type: application/json
+Authorization: {{access_token}}
+
+{
+    "usuario_id": 2,
+    "workshop": 1,
+    "desempenho": "asdf",
+    "comentario": "qwerqwerqwer",
+    "especialidade": 2,
+    "aprovado": true,
+    "classificacao": "asdfasdgasg",
+    "experiencia": "asdfafdsdgh"
+}
+
+###
+POST {{url_raiz}}{{url_desempenho}} HTTP/1.1
+Content-Type: application/json
+Authorization: {{access_token}}
+
+{
+    "usuario_id": 3,
+    "workshop": 1,
+    "desempenho": "asdf",
+    "comentario": "qwerqwerqwer",
+    "especialidade": 2,
+    "aprovado": true,
+    "classificacao": "asdfasdgasg",
+    "experiencia": "asdfafdsdgh"
+}
+

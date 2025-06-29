@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save, pre_delete as delete
 from django.dispatch import receiver
-from .models import Participante, Empresa, TechLeader, Usuario
+from .models import Participante, Empresa, TechLeader, Usuario, Excecao
 
 
 # dispara qnd um Participante eh salvo
@@ -27,4 +27,12 @@ def atualizar_tipo_usuario_techleader(sender, instance, **kwargs):
     usuario = instance.usuario
     if usuario.tipo_usuario != Usuario.TipoUsuario.TECHLEADER:
         usuario.tipo_usuario = Usuario.TipoUsuario.TECHLEADER
+        usuario.save(update_fields=["tipo_usuario"])  # seta tipo como TECHLEADER
+        
+# dispara qnd um TechLeader eh salvo
+@receiver(post_save, sender=Excecao)
+def atualizar_tipo_usuario_techleader(sender, instance, **kwargs):
+    usuario = instance.usuario
+    if usuario.tipo_usuario != Usuario.TipoUsuario.EXCECAO:
+        usuario.tipo_usuario = Usuario.TipoUsuario.EXCECAO
         usuario.save(update_fields=["tipo_usuario"])  # seta tipo como TECHLEADER

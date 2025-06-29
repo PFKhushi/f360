@@ -1,0 +1,31 @@
+@url_raiz = http://localhost:8000/
+@url_workshop = api/workshop/
+@url_presenca = api/presenca_workshop/
+
+@username_admin = admin@exsample.com
+@password_admin = senhaSupesrSegura123
+@access_token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUxMTg1MDM1LCJpYXQiOjE3NTExODMyMzUsImp0aSI6ImFkMjM3OTM3YTQyNjRhNzRhMzliMGFmZmFiNjQ5YzdkIiwidXNlcl9pZCI6MSwiaWQiOjEsIm5vbWUiOiJBZG1pbmlzdHJhZG9yIEdlcmFsIiwiZW1haWwiOiJhZG1pbkBleHNhbXBsZS5jb20iLCJ0aXBvX3VzdWFyaW8iOiJBRE1JTiJ9.RHGmuGed8V0ljtbSjUgxDjirUcrc7BWTaTehuRDZQwQ
+
+### Lista workshops
+GET {{url_raiz}}{{url_workshop}}1/ HTTP/1.1
+Content-Type: application/json
+Authorization: {{access_token}}
+
+### Loga como admin
+POST {{url_raiz}}api/login/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{username_admin}}",
+    "password": "{{password_admin}}"
+}
+
+###
+POST {{url_raiz}}{{url_presenca}} HTTP/1.1
+Content-Type: application/json
+Authorization: {{access_token}}
+
+{
+    "dia_workshop": 1,
+    "usuario_id": 2
+}

@@ -1,0 +1,217 @@
+@url_raiz = http://localhost:8000/
+@url_iteracao = api/iteracao/
+
+@id-A = 1
+@semestre-A1 = 1
+@ano-A1 = 2025
+@semestre-A2 = 1
+@ano-A2 = 2024
+
+@id-B = 2
+@semestre-B1 = 2
+@ano-B1 = 2025
+@semestre-B2 = 2
+@ano-B2 = 2024
+
+@id-C = 3
+@semestre-C1 = 1
+@ano-C1 = 2026
+@semestre-C2 = 2
+@ano-C2 = 2027
+
+### Lista todas as itercações
+GET {{url_raiz}}{{url_iteracao}} HTTP/1.1
+Content-Type: application/json
+
+
+### Cria a iteracao A
+POST {{url_raiz}}{{url_iteracao}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "ano": "{{ano-A1}}",
+    "semestre": "{{semestre-A1}}"
+}
+
+
+### Retorna Iteracao A
+GET {{url_raiz}}{{url_iteracao}}{{id-A}}/ HTTP/1.1
+Content-Type: application/json
+
+
+### Altera completamente A com dados originais
+PUT {{url_raiz}}{{url_iteracao}}{{id-A}}/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "ano": "{{ano-A1}}",
+    "semestre": "{{semestre-A1}}",
+    "ativa": "true"
+}
+
+
+### Altera completamente A com dados alternativos
+PUT {{url_raiz}}{{url_iteracao}}{{id-A}}/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "ano": "{{ano-A2}}",
+    "semestre": "{{semestre-A2}}"
+}
+
+
+### Altera parcialmente A com dados originais
+PATCH  {{url_raiz}}{{url_iteracao}}{{id-A}}/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "ano": "{{ano-A1}}",
+    "semestre": "{{semestre-A1}}"
+}
+
+
+### Altera parcialmente A com dados alternativos
+PATCH  {{url_raiz}}{{url_iteracao}}{{id-A}}/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "ano": "{{ano-A2}}",
+    "semestre": "{{semestre-A2}}"
+}
+
+
+### Deleta A
+DELETE {{url_raiz}}{{url_iteracao}}{{id-A}}/ HTTP/1.1
+Content-Type: application/json
+
+
+### Tentar fazer um POST vazio
+POST {{url_raiz}}{{url_iteracao}} HTTP/1.1
+Content-Type: application/json
+
+
+##################################################################
+
+
+### Cria a iteracao B
+POST {{url_raiz}}{{url_iteracao}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "ano": "{{ano-B1}}",
+    "semestre": "{{semestre-B1}}"
+}
+
+
+### Retorna Iteracao B
+GET {{url_raiz}}{{url_iteracao}}{{id-B}}/ HTTP/1.1
+Content-Type: application/json
+
+
+### Altera completamente B com dados originais
+PUT {{url_raiz}}{{url_iteracao}}{{id-B}}/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "ano": "{{ano-B1}}",
+    "semestre": "{{semestre-B1}}",
+    "ativa": "false"
+}
+
+
+### Altera completamente B com dados alternativos
+PUT {{url_raiz}}{{url_iteracao}}{{id-B}}/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "ano": "{{ano-B2}}",
+    "semestre": "{{semestre-B2}}"
+}
+
+
+### Altera parcialmente B com dados originais
+PATCH  {{url_raiz}}{{url_iteracao}}{{id-B}}/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "ano": "{{ano-B1}}",
+    "semestre": "{{semestre-B1}}"
+}
+
+
+### Altera parcialmente B com dados alternativos
+PATCH  {{url_raiz}}{{url_iteracao}}{{id-B}}/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "ano": "{{ano-B2}}",
+    "semestre": "{{semestre-B2}}"
+}
+
+
+### Deleta B
+DELETE {{url_raiz}}{{url_iteracao}}{{id-B}}/ HTTP/1.1
+Content-Type: application/json
+
+
+##################################################################
+
+
+### Cria a iteracao C
+POST {{url_raiz}}{{url_iteracao}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "ano": "{{ano-C1}}",
+    "semestre": "{{semestre-C1}}"
+}
+
+
+### Retorna Iteracao C
+GET {{url_raiz}}{{url_iteracao}}{{id-C}}/ HTTP/1.1
+Content-Type: application/json
+
+
+### Altera completamente C com dados originais
+PUT {{url_raiz}}{{url_iteracao}}{{id-C}}/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "ano": "{{ano-C1}}",
+    "semestre": "{{semestre-C1}}"
+}
+
+
+### Altera completamente C com dados alternativos
+PUT {{url_raiz}}{{url_iteracao}}{{id-C}}/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "ano": "{{ano-C2}}",
+    "semestre": "{{semestre-C2}}"
+}
+
+
+### Altera parcialmente C com dados originais
+PATCH  {{url_raiz}}{{url_iteracao}}{{id-C}}/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "ano": "{{ano-C1}}",
+    "semestre": "{{semestre-C1}}"
+}
+
+
+### Altera parcialmente C com dados alternativos
+PATCH  {{url_raiz}}{{url_iteracao}}{{id-C}}/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "ano": "{{ano-C2}}",
+    "semestre": "{{semestre-C2}}"
+}
+
+
+### Deleta C
+DELETE {{url_raiz}}{{url_iteracao}}{{id-C}}/ HTTP/1.1
+Content-Type: application/json

@@ -11,7 +11,7 @@
 @techleader_A_codigo = 000000000
 @techleader_A_codigo2 = 222222222
 @techleader_A_especialidade = Backend
-@techleader_A_id = 5
+@techleader_A_id = 4
 @techleader_A_token = Bearer
 
 ### Dados do Techleader
@@ -27,6 +27,7 @@
 @techleader_B_id = 6
 @techleader_B_token = Bearer
 
+@access_token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUxMTkxOTA5LCJpYXQiOjE3NTExOTAxMDksImp0aSI6ImU5NDQxZTY3YTRmYTQ5YTg4NjAyYzRmYTljM2VlMmJmIiwidXNlcl9pZCI6MSwiaWQiOjEsIm5vbWUiOiJBZG1pbmlzdHJhZG9yIEdlcmFsIiwiZW1haWwiOiJhZG1pbkBleHNhbXBsZS5jb20iLCJ0aXBvX3VzdWFyaW8iOiJBRE1JTiJ9.cN0CI12QEAi_c2x3nHY47WsiRGXasONMhKR5XkQ0-JM
 
 
 #### Techleader A
@@ -42,6 +43,7 @@ Content-Type: application/json
 ### Cria Techleader
 POST {{url_raiz}}api/usuario/ HTTP/1.1
 Content-Type: application/json
+Authorization: {{access_token}}
 
 {
     "perfil": "{{perfil_techleader}}",

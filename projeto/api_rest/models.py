@@ -320,7 +320,6 @@ class Participante(models.Model):
         ]
 
     def __str__(self):
-        
         return f"Participante: {self.usuario.nome}"
     
     def save(self, *args, **kwargs):
@@ -506,9 +505,9 @@ class Extensionista(models.Model):
         
     def __str__(self):
         if self.participante:
-            return f"Extensionisto: {self.participante.usuario.nome}"
+            return f"Extensionista: {self.participante.usuario.__str__()}"
         elif self.excecao:
-            return f"Extensionista: {self.excecao.usuario.nome}"
+            return f"Extensionista: {self.excecao.usuario.__str__()}"
         return "Extensionista não existe"
     
     

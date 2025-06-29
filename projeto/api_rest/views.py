@@ -5,7 +5,7 @@ from rest_framework.exceptions import NotFound, APIException, PermissionDenied, 
 from rest_framework.decorators import action
 
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.http import Http404
 from django.contrib.auth import authenticate
 from django.shortcuts import get_object_or_404
@@ -16,7 +16,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
 from .models import Usuario, Participante, TechLeader, Empresa, Excecao, Extensionista
-from .serializers import UsuarioSerializer, ParticipanteSerializer, TechLeaderSerializer, EmpresaSerializer, CustomTokenSerializer, AdminCreateSerializer, ExcecaoSerializer, ExtensionistaSerializer
+from .serializers import UsuarioSerializer, ParticipanteSerializer, TechLeaderSerializer, EmpresaSerializer, CustomTokenSerializer, AdminCreateSerializer, ExcecaoSerializer, ExtensionistaSerializer, ExtensionistaBulkSerializer
 from .permissoes import IsOwnerOrAdmin, IsUserOwnerOrAdmin
 from .swagger import (list_participantes_swagger, update_participantes_swagger,
                     create_participantes_swagger, retrieve_participantes_swagger, 
@@ -144,6 +144,7 @@ class ErrorHandlingMixin():
         elif 'cpf' in error_detail:
             detail = "Este CPF já está cadastrado"
         elif 'cnpj' in error_detail:
+            print(error_detail)
             detail = "Este CNPJ já está cadastrado"
         elif 'rgm' in error_detail:
             detail = "Este RGM já está cadastrado"
@@ -240,6 +241,7 @@ class AdminCreateView(APIView):
 def _handle_serialization(context, instance, data=None, partial=False):
     
     serializer = context.get_serializer(instance, data=data, partial=partial)
+    print(serializer)
     
     try:
         serializer.is_valid(raise_exception=True)
@@ -482,7 +484,172 @@ class ExcecaoViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
         excecao.usuario.delete()
         excecao.delete()
         return Response(resposta_json(sucesso=True, resultado="Participante(exceção) apagado com sucesso"), status=status.HTTP_204_NO_CONTENT)
+
+
+class ExtensionistaBulkViewSet(viewsets.ModelViewSet):
     
+    queryset = Extensionista.objects.all()
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    
+    def _get_user_data(self, user_id):
+        try:
+            usuario = Usuario.objects.get(pk=user_id)
+            participante = Participante.objects.filter(usuario=usuario).first()
+            excecao = Excecao.objects.filter(usuario=usuario).first()
+            return usuario, participante, excecao
+        except Usuario.DoesNotExist:
+            return None, None, None
+    
+    def _is_extensionista(self, participante, excecao):
+        if participante and Extensionista.objects.filter(participante=participante).exists():
+            return True
+        if excecao and Extensionista.objects.filter(excecao=excecao).exists():
+            return True
+        return False
+    
+    def _process_user_creation(self, user_id, criados, rejeitados):
+        usuario, participante, excecao = self._get_user_data(user_id)
+        
+        if not usuario:
+            rejeitados.append({
+                "id": user_id, 
+                "erro": "Usuário não encontrado"
+                })
+            return
+        
+        if not participante and not excecao:
+            rejeitados.append({
+                "id": user_id, 
+                "nome": usuario.nome,
+                "email": usuario.username, 
+                "erro": "Usuário não tem perfil para ser Extensionista"
+                })
+            return
+        
+        if self._is_extensionista(participante, excecao):
+            rejeitados.append({
+                "id": user_id, 
+                "nome": usuario.nome,
+                "email": usuario.username, 
+                "erro": "Já é Extensionista"
+                })
+            return
+        
+        extensionista = Extensionista.objects.create(
+            participante=participante,
+            excecao=excecao
+        )
+        
+        criados.append({
+            "usuario_id": user_id, 
+            "extensionista_id": extensionista.id, 
+            "nome": usuario.nome,
+            "email": usuario.username
+            })
+    
+    def _process_user_deletion(self, user_id, removidos, falhas):
+        usuario, participante, excecao = self._get_user_data(user_id)
+        
+        if not usuario:
+            falhas.append({"usuario_id": user_id, "erro": "Usuário não encontrado"})
+            return
+        
+        deleted = False
+        if participante:
+            count, _ = Extensionista.objects.filter(participante=participante).delete()
+            deleted = count > 0
+        elif excecao:
+            count, _ = Extensionista.objects.filter(excecao=excecao).delete()
+            deleted = count > 0
+        
+        if deleted:
+            removidos.append({
+                "usuario_id": user_id, 
+                "nome": usuario.nome,
+                "email": usuario.username})
+        else:
+            falhas.append({
+                "usuario_id": user_id, 
+                "nome": usuario.nome,
+                "email": usuario.username, 
+                "erro": "Usuário não é Extensionista"})
+
+    def list(self, request):
+        extensionistas = Extensionista.objects.all().select_related('participante__usuario', 'excecao__usuario')
+        resultado = []
+
+        for ext in extensionistas:
+            usuario = None
+            if ext.participante and ext.participante.usuario:
+                usuario = ext.participante.usuario
+            elif ext.excecao and ext.excecao.usuario:
+                usuario = ext.excecao.usuario
+
+            if usuario:
+                resultado.append({
+                    "usuario_id": usuario.id,
+                    "extensionista_id": ext.id,
+                    "nome": usuario.nome,
+                    "email": usuario.username
+                    
+                })
+
+        return Response(resposta_json(resultado=resultado, sucesso=True), status=status.HTTP_200_OK)
+    
+    @transaction.atomic
+    def create(self, request):
+        serializer = ExtensionistaBulkSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        usuario_ids = serializer.validated_data['usuarios']
+        criados = []
+        rejeitados = []
+        
+        for user_id in usuario_ids:
+            self._process_user_creation(user_id, criados, rejeitados)
+        
+        return Response(resposta_json(resultado={"criados": criados, "rejeitados": rejeitados}, sucesso=True),
+                        status=status.HTTP_201_CREATED)
+    
+    @transaction.atomic
+    def partial_update(self, request, pk=None):
+        return self.create(request)
+    
+    @transaction.atomic
+    def update(self, request, pk=None):
+        # Extensionista.objects.all().delete() Caso haja necessidade de deletar
+        return self.create(request)
+    
+    def get_permissions(self):
+        return super().get_permissions()
+    
+    @transaction.atomic
+    def delete(self, request, *args, **kwargs):
+        serializer = ExtensionistaBulkSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        usuario_ids = serializer.validated_data['usuarios']
+        removidos = []
+        falhas = []
+        
+        for user_id in usuario_ids:
+            self._process_user_deletion(user_id, removidos, falhas)
+        
+        return Response(resposta_json(resultado={"removidos": removidos, "falhas": falhas}, sucesso=True),
+                        status=status.HTTP_201_CREATED)
+    
+    @transaction.atomic
+    def destroy(self, request, pk=None):
+        return super().destroy(request, pk)
+
+
+class TestePermissaoView(APIView):
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+
+    def get(self, request):
+        return Response({"ok": True})
+    
+
 class ExtensionistaViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
     queryset = Extensionista.objects.all()
     serializer_class = ExtensionistaSerializer
@@ -521,7 +688,7 @@ class ExtensionistaViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
         extensionista.delete()
         return Response(resposta_json(sucesso=True, resultado="Extensionista apagado com sucesso"), status=status.HTTP_204_NO_CONTENT)
     
-from rest_framework.request import Request
+    
 class UsuarioVS(ErrorHandlingMixin, viewsets.ViewSet):
     
     PERFIL_VIEWSET_MAP = {

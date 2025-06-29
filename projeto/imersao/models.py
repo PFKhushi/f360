@@ -2,24 +2,34 @@ from django.db import models
 from api_rest.models import Participante, Extensionista
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-
-class Imersao(models.Model):
+class Iteracao(models.Model):
     ano         = models.IntegerField()
     semestre    = models.IntegerField()
     ativa       = models.BooleanField(default=True)
+    
+    class Meta:
+        verbose_name = 'Iteração'
+        verbose_name_plural = 'Iterações'
+        unique_together = ('ano', 'semestre')
+        
+    def __str__(self):
+        return f'{self.ano}.{self.semestre}'
+
+
+class Imersao(models.Model):
+    iteracao    = models.OneToOneField(Iteracao, on_delete=models.PROTECT) 
     data_inicio = models.DateField(auto_now_add=True)
     
     class Meta:
         verbose_name = 'Imersão'
         verbose_name_plural = 'Imersões'
-        unique_together = ('ano', 'semestre')
-    
+        
     def __str__(self):
-        return f"{self.ano}.{self.semestre}"
+        return f'Imersão {self.iteracao.__str__()}'
 
 
 class AreaFabrica(models.Model):
-    nome    = models.CharField(max_length=100)
+    nome    = models.CharField(max_length=100, unique=True)
     ativa   = models.BooleanField(default=True)
     
     class Meta:
@@ -51,7 +61,7 @@ class FormularioInscricao(models.Model):
     )
     imersao = models.ForeignKey(
         Imersao, 
-        on_delete=models.CASCADE, 
+        on_delete=models.PROTECT, 
         related_name='formularios_imersao',
         help_text="Imersão a qual o participante se inscreveu"
     )
@@ -61,17 +71,18 @@ class FormularioInscricao(models.Model):
     )
     tecnologias = models.ManyToManyField(
         Tecnologia,
+        related_name='tecnologias_forms',
         help_text="Tecnologias que o participante tem interesse"
     )
     primeira_opcao = models.ForeignKey(
         AreaFabrica, 
-        on_delete=models.CASCADE, 
+        on_delete=models.PROTECT, 
         related_name='primeira_opcao_forms',
         help_text="Primeira opção de vaga que o participante deseja"
     )
     segunda_opcao = models.ForeignKey(
         AreaFabrica, 
-        on_delete=models.CASCADE, 
+        on_delete=models.PROTECT, 
         related_name='segunda_opcao_forms',
         help_text="Segunda opção de vaga que o participante deseja"
     )
@@ -82,7 +93,7 @@ class FormularioInscricao(models.Model):
         unique_together = ('participante', 'imersao')
     
     def __str__(self):
-        return f"Inscrição de {self.participante} na imersão {self.imersao}"
+        return f"Inscrição de {self.participante.__str__()} nos workshops {self.imersao.__str__()}"
 
 
 class InteresseArea(models.Model):
@@ -106,13 +117,13 @@ class InteresseArea(models.Model):
         unique_together = ('formulario', 'area')
     
     def __str__(self):
-        return f"{self.formulario.participante} - {self.area}: {self.nivel}"
+        return f"{self.area}: {self.nivel}"
 
 
 class Palestra(models.Model):
     imersao     = models.ForeignKey(
         Imersao, 
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name='palestras_imersao',
         help_text="Imersão a qual a palestra pertence"
     )
@@ -133,32 +144,41 @@ class Palestra(models.Model):
 
 
 class Workshop(models.Model):
-    imersao = models.ForeignKey(
-        Imersao, 
-        on_delete=models.CASCADE, 
-        related_name='workshops_imersao',
-        help_text="Imersão a qual o workshop pertence"
+    iteracao = models.ForeignKey(
+        Iteracao, 
+        on_delete=models.PROTECT, 
+        related_name='workshops_iteracao',
+        help_text="Iteração a qual o workshop pertence"
     )
+    
+    area = models.ForeignKey(
+        AreaFabrica, 
+        on_delete=models.PROTECT
+        )
     titulo      = models.CharField(max_length=255)
-    descricao   = models.TextField()
-    sala        = models.CharField(max_length=255) 
-    bloco       = models.CharField(max_length=2)
+    descricao   = models.TextField(blank=True, null=True)
+    sala        = models.CharField(max_length=255, blank=True, null=True) 
+    bloco       = models.CharField(max_length=3, blank=True, null=True)
     
     class Meta:
         verbose_name = 'Workshop'
         verbose_name_plural = 'Workshops'
-        unique_together = ('imersao', 'titulo')
+        unique_together = ('iteracao', 'titulo')
+
     
     def __str__(self):
-        return f"{self.titulo}: {self.bloco} - {self.sala}"
+        return f"{self.titulo} {self.iteracao.__str__()}: {self.bloco} - {self.sala} "
+
 
 class InstrutorWorkshop(models.Model):
+    
     workshop = models.ForeignKey(
         Workshop,
         on_delete=models.CASCADE,
         related_name='instrutores_workshop',
         help_text="Workshop ao qual o instrutor pertence"
     )
+    
     extensionista = models.ForeignKey(
         Extensionista,
         on_delete=models.CASCADE,
@@ -170,8 +190,11 @@ class InstrutorWorkshop(models.Model):
         verbose_name = 'Instrutor do Workshop'
         verbose_name_plural = 'Instrutores do Workshop'
         unique_together = ('workshop', 'extensionista')
-    
-    
+        
+    def __str__(self):
+        return f'{self.workshop.__str__()}'
+
+
 class DiaWorkshop(models.Model):
     workshop = models.ForeignKey(
         Workshop, 
@@ -179,7 +202,6 @@ class DiaWorkshop(models.Model):
         related_name='dias_workshop',
     )
     data        = models.DateTimeField()
-    conteudo    = models.CharField(max_length=255)
     
     class Meta:
         verbose_name = 'Dia de Workshop'
@@ -190,13 +212,39 @@ class DiaWorkshop(models.Model):
         return f"{self.workshop.titulo} - {self.data.strftime('%d/%m/%Y %H:%M')}"
 
 
+class DesafioWorkshop(models.Model):
+    
+    participante = models.ForeignKey(
+        Participante, 
+        on_delete=models.CASCADE,
+        related_name='desafio_participante'
+        )
+    workshop = models.ForeignKey(
+        Workshop, 
+        on_delete=models.CASCADE,
+        related_name='desafio_workshop'
+        )
+    link = models.CharField(max_length=255)
+    
+    class Meta:
+        db_table = ''
+        managed = True
+        verbose_name = 'Desafio do workshop'
+        verbose_name_plural = 'Desafios dos workshops'
+        
+    def __str__(self):
+        return f'Desafiio de {self.participante.__str__()} no Workshop {self.workshop.__str__()}'
+
+
 class ParticipantesWorkshop(models.Model):
+    
     participante = models.ForeignKey(
         Participante, 
         on_delete=models.CASCADE,
         related_name='workshops_participante',
         help_text="Participante inscrito no workshop"
     )
+    
     workshop = models.ForeignKey(
         Workshop, 
         on_delete=models.CASCADE,
@@ -210,7 +258,7 @@ class ParticipantesWorkshop(models.Model):
         unique_together = ('participante', 'workshop')
         
     def __str__(self):
-        return f"{self.participante} - {self.workshop.titulo}"
+        return f"{self.participante.__str__()} - {self.workshop.__str__()}"
 
 
 class ParticipacaoImersao(models.Model):
@@ -234,7 +282,7 @@ class ParticipacaoImersao(models.Model):
         unique_together = ('participante', 'imersao')
     
     def __str__(self):
-        return f"{self.participante} - {self.imersao}"
+        return f"{self.participante.__str__()} - {self.imersao.__str__()}"
 
 
 class PresencaPalestra(models.Model):
@@ -258,7 +306,7 @@ class PresencaPalestra(models.Model):
         unique_together = ('participante', 'palestra')
     
     def __str__(self):
-        return f"{self.participante} - {self.palestra.titulo}"
+        return f"{self.participante.__str__()} - {self.palestra.titulo}"
 
 
 class PresencaWorkshop(models.Model):
@@ -282,7 +330,7 @@ class PresencaWorkshop(models.Model):
         unique_together = ('participante', 'dia_workshop')
     
     def __str__(self):
-        return f"{self.participante} - {self.dia_workshop.workshop.titulo} - {self.dia_workshop.data.strftime('%d/%m/%Y')}"
+        return f"{self.participante.__str__()} - {self.dia_workshop.workshop.titulo} - {self.dia_workshop.data.strftime('%d/%m/%Y')}"
 
 
 class DesempenhoWorkshop(models.Model):
@@ -319,6 +367,6 @@ class DesempenhoWorkshop(models.Model):
         unique_together = ('participante', 'workshop')
     
     def __str__(self):
-        return f"{self.participante} - {self.workshop.titulo} - {self.classificacao}"
+        return f"{self.participante.__str__()} - {self.workshop.titulo} - {self.classificacao}"
 
 
