@@ -62,45 +62,67 @@ class ImersaoSerializer(serializers.ModelSerializer):
         return value
     
     def validate(self, data):
-        
         iteracao_obj = data.get('iteracao')
         ano = data.get('ano')
         semestre = data.get('semestre')
+        is_update = self.instance is not None
+
+        if iteracao_obj and (ano or semestre):
+            raise serializers.ValidationError("Forneça apenas 'iteracao' ou 'ano' e 'semestre', não ambos.")
 
         if iteracao_obj:
-            if ano or semestre:
-                raise serializers.ValidationError("Forneça um 'iteracao' (ID) OU 'ano'/'semestre', mas não ambos.")
             if not iteracao_obj.ativa:
                 raise serializers.ValidationError({"iteracao": "Só é possível atribuir a imersão a uma iteração ativa."})
-            if Imersao.objects.filter(iteracao=iteracao_obj).exists():
-                raise serializers.ValidationError({"iteracao": "Já existe uma imersão vinculada a essa iteração."})
+            if not is_update or self.instance.iteracao != iteracao_obj:
+                if Imersao.objects.filter(iteracao=iteracao_obj).exclude(id=getattr(self.instance, 'id', None)).exists():
+                    raise serializers.ValidationError({"iteracao": "Já existe uma imersão vinculada a essa iteração."})
 
-        elif ano and semestre:
-            if Iteracao.objects.filter(ano=ano, semestre=semestre).exists():
-                raise serializers.ValidationError(f"Uma iteração para {ano}.{semestre} já existe. Use o ID da iteração existente ou .")
-        
+        elif ano is not None and semestre is not None:
+            qs = Iteracao.objects.filter(ano=ano, semestre=semestre)
+            if qs.exists():
+                iter_existente = qs.first()
+                if not iter_existente.ativa:
+                    raise serializers.ValidationError({"iteracao": "A iteração encontrada não está ativa."})
+                if not is_update or self.instance.iteracao != iter_existente:
+                    if Imersao.objects.filter(iteracao=iter_existente).exclude(id=getattr(self.instance, 'id', None)).exists():
+                        raise serializers.ValidationError({"iteracao": "Já existe uma imersão vinculada a essa iteração."})
+
         else:
-            raise serializers.ValidationError("Você deve fornecer um ID de 'iteracao' ou os campos 'ano' e 'semestre'.")
-            
+            raise serializers.ValidationError("Você deve fornecer 'iteracao' ou os campos 'ano' e 'semestre'.")
+
         return data
 
     def create(self, validated_data):
-
-        ano = validated_data.get('ano')
-        semestre = validated_data.get('semestre')
-        
+        ano = validated_data.pop('ano', None)
+        semestre = validated_data.pop('semestre', None)
         iteracao_obj = validated_data.get('iteracao')
 
-        if ano and semestre:
-            Iteracao.objects.filter(ativa=True).update(ativa=False)
-            
-            iteracao_obj = Iteracao.objects.create(ano=ano, semestre=semestre, ativa=True)
-        
-        imersao = Imersao.objects.create(iteracao=iteracao_obj)
-        return imersao
-    
-    #verificar necessidade de um update com logica parecida
+        if ano is not None and semestre is not None:
+            iteracao_obj, _ = Iteracao.objects.get_or_create(ano=ano, semestre=semestre, defaults={'ativa': True})
+            if iteracao_obj.ativa is False:
+                iteracao_obj.ativa = True
+                iteracao_obj.save()
+            validated_data['iteracao'] = iteracao_obj
 
+        return Imersao.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        ano = validated_data.pop('ano', None)
+        semestre = validated_data.pop('semestre', None)
+        iteracao_obj = validated_data.get('iteracao')
+
+        if ano is not None and semestre is not None:
+            iteracao_obj, _ = Iteracao.objects.get_or_create(ano=ano, semestre=semestre, defaults={'ativa': True})
+            if iteracao_obj.ativa is False:
+                iteracao_obj.ativa = True
+                iteracao_obj.save()
+
+        if iteracao_obj:
+            instance.iteracao = iteracao_obj
+            instance.save()
+
+        return instance
+    
 
 class AreaFabricaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -200,7 +222,6 @@ class FormularioInscricaoCreateUpdateSerializer(serializers.ModelSerializer):
         
         resultado = []
         
-        # for tecnologia in obj.interesses_forms.all():
         for tecnologia in obj.tecnologias.all():
             
             resultado.append({
@@ -322,15 +343,13 @@ class PalestraSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'titulo', 'descricao', 
             'data', 'palestrante', 'sala', 'bloco',
-            'imersao_info'  # Não expõe 'imersao' como input
+            'imersao_info'  
         ]
 
     def validate(self, data):
-        # Nenhuma validação extra aqui
         return data
 
     def create(self, validated_data):
-        # atribui imersão ativa, igual ao FormularioInscricao
         imersao = Imersao.objects.filter(iteracao__ativa=True).first()
         if not imersao:
             raise serializers.ValidationError("Nenhuma imersão ativa encontrada.")
@@ -339,7 +358,7 @@ class PalestraSerializer(serializers.ModelSerializer):
         return Palestra.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        imersao = instance.imersao  # mantém imersão original
+        imersao = instance.imersao  
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.imersao = imersao
@@ -467,6 +486,47 @@ class PresencaPalestraSerializer(serializers.ModelSerializer): # queryset = Pres
         fields = ['id', 'participante', 'participante_nome', 'palestra', 
                 'palestra_titulo', 'data_participacao']
 
+class PresencaWorkshopBulkCreateSerializer(serializers.Serializer):
+    usuario_ids = serializers.ListField(
+        child=serializers.IntegerField(), allow_empty=False
+    )
+    dia_workshop = serializers.PrimaryKeyRelatedField(queryset=DiaWorkshop.objects.all())
+
+    def validate(self, data):
+        dia = data['dia_workshop']
+        usuario_ids = data['usuario_ids']
+
+        participantes = Participante.objects.filter(usuario_id__in=usuario_ids).select_related('usuario')
+
+        participantes_validos = []
+        erros = []
+
+        for participante in participantes:
+            if participante.workshops.filter(pk=dia.workshop_id).exists():
+                participantes_validos.append(participante)
+            else:
+                erros.append(f"Usuário {participante.usuario_id} não é participante do workshop {dia.workshop_id}.")
+
+        if not participantes_validos:
+            raise serializers.ValidationError("Nenhum usuário fornecido está vinculado ao workshop.")
+
+        data['participantes_validos'] = participantes_validos
+        data['erros'] = erros
+        return data
+
+    def create(self, validated_data):
+        dia = validated_data['dia_workshop']
+        participantes = validated_data['participantes_validos']
+
+        presencas = []
+        for participante in participantes:
+            presenca, _ = PresencaWorkshop.objects.get_or_create(
+                dia_workshop=dia,
+                participante=participante
+            )
+            presencas.append(presenca)
+
+        return presencas
 
 class PresencaWorkshopSerializer(serializers.ModelSerializer):
     usuario_id = serializers.IntegerField(write_only=True, required=True)
@@ -491,7 +551,6 @@ class PresencaWorkshopSerializer(serializers.ModelSerializer):
         except Participante.DoesNotExist:
             raise serializers.ValidationError("Usuário informado não está vinculado a um participante.")
 
-        # Verifica duplicidade antes de salvar
         if PresencaWorkshop.objects.filter(participante=participante, dia_workshop=dia_workshop).exists():
             raise serializers.ValidationError("Este participante já tem presença registrada neste dia de workshop.")
 
@@ -534,6 +593,7 @@ class PresencaWorkshopDetailSerializer(serializers.ModelSerializer):
             'dia_workshop', 
             'data_registro'
         ]
+
 
 
 class DesempenhoWorkshopSerializer(serializers.ModelSerializer): 
@@ -634,6 +694,35 @@ class WorkshopCreateUpdateSerializer(serializers.ModelSerializer):
             'iteracao': {'write_only': True}
         }
         validators = []
+    def get_instrutores_info(self, obj):
+        resultado = []
+        print('instrutores',obj.instrutores_workshop.all())
+        for instrutor in obj.instrutores_workshop.all():
+            ext = instrutor.extensionista
+            usuario = None
+            if ext.participante and ext.participante.usuario:
+                usuario = ext.participante.usuario
+            elif ext.excecao and ext.excecao.usuario:
+                usuario = ext.excecao.usuario
+            if usuario:
+                resultado.append({
+                    "id": usuario.id,
+                    "nome": usuario.nome
+                })
+        return resultado
+
+    def get_participantes_info(self, obj):
+        return [
+            {
+                "id": p.participante.usuario.id,
+                "nome": p.participante.usuario.nome
+            }
+            for p in obj.participantes_workshop.all()
+        ]
+
+    def get_dias_workshop_info(self, obj):
+        return [d.data.isoformat() for d in obj.dias_workshop.all()]
+
 
     def validate(self, data):
         iteracao_obj = data.get('iteracao')
@@ -656,6 +745,29 @@ class WorkshopCreateUpdateSerializer(serializers.ModelSerializer):
             )
         
         return data
+    def _get_extensionista_from_usuario_id(self, usuario_id):
+        try:
+            usuario = Usuario.objects.get(pk=usuario_id)
+            print("usuario: ", usuario)
+            participante = getattr(usuario, 'participante', None)
+            print("participante:", participante)
+            excecao = getattr(usuario, 'excecao', None)
+            print("excecao",excecao)
+            if participante:
+                print("participante!")
+                return Extensionista.objects.filter(participante=participante).first()
+            if excecao:
+                print("excecao!")
+                return Extensionista.objects.filter(excecao=excecao).first()
+        except Usuario.DoesNotExist:
+            return None
+
+    def _get_participante_from_usuario_id(self, usuario_id):
+        try:
+            usuario = Usuario.objects.get(pk=usuario_id)
+            return getattr(usuario, 'participante', None)
+        except Usuario.DoesNotExist:
+            return None
 
     def create(self, validated_data):
         instrutores_data = validated_data.pop('instrutores', [])
@@ -665,8 +777,11 @@ class WorkshopCreateUpdateSerializer(serializers.ModelSerializer):
         
         workshop = Workshop.objects.create(**validated_data)
         try:
+            print("ok1")
             for usuario_id in instrutores_data:
+                print("ok1 -", usuario_id)
                 extensionista = self._get_extensionista_from_usuario_id(usuario_id)
+                print(extensionista)
                 if extensionista:
                     tmp = InstrutorWorkshop.objects.create(
                         workshop=workshop,
@@ -675,6 +790,7 @@ class WorkshopCreateUpdateSerializer(serializers.ModelSerializer):
                     print(1,tmp)
 
             for usuario_id in participantes_data:
+                print("ok2")
                 participante = self._get_participante_from_usuario_id(usuario_id)
                 if participante:
                     tmp = ParticipantesWorkshop.objects.create(
@@ -684,6 +800,7 @@ class WorkshopCreateUpdateSerializer(serializers.ModelSerializer):
                     print(2, tmp)
 
             for data in dias_workshop_data:
+                print("ok3")
                 tmp = DiaWorkshop.objects.create(
                     workshop=workshop,
                     data=data
@@ -736,62 +853,6 @@ class WorkshopCreateUpdateSerializer(serializers.ModelSerializer):
                 )
 
         return instance
-        
-    def get_instrutores_info(self, obj):
-        resultado = []
-        print('instrutores',obj.instrutores_workshop.all())
-        for instrutor in obj.instrutores_workshop.all():
-            ext = instrutor.extensionista
-            usuario = None
-            if ext.participante and ext.participante.usuario:
-                usuario = ext.participante.usuario
-            elif ext.excecao and ext.excecao.usuario:
-                usuario = ext.excecao.usuario
-            if usuario:
-                resultado.append({
-                    "id": usuario.id,
-                    "nome": usuario.nome
-                })
-        return resultado
-
-    def get_participantes_info(self, obj):
-        return [
-            {
-                "id": p.participante.usuario.id,
-                "nome": p.participante.usuario.nome
-            }
-            for p in obj.participantes_workshop.all()
-        ]
-
-    def get_dias_workshop_info(self, obj):
-        return [d.data.isoformat() for d in obj.dias_workshop.all()]
-
-    def _get_extensionista_from_usuario_id(self, usuario_id):
-        try:
-            usuario = Usuario.objects.get(pk=usuario_id)
-            participante = getattr(usuario, 'participante', None)
-            excecao = getattr(usuario, 'excecao', None)
-            if participante:
-                return Extensionista.objects.filter(participante=participante).first()
-            if excecao:
-                return Extensionista.objects.filter(excecao=excecao).first()
-        except Usuario.DoesNotExist:
-            return None
-
-    def _get_participante_from_usuario_id(self, usuario_id):
-        try:
-            usuario = Usuario.objects.get(pk=usuario_id)
-            return getattr(usuario, 'participante', None)
-        except Usuario.DoesNotExist:
-            return None
-
-class AtribuicaoWorkshops:
-    def atribuir_participantes(self):
-        # recuperar todos os formularios de inscrição a ser processados
-        # encontrar workshops que correspondem as areas selecionadas
-        # atribuir o participante aos workshops encontrados
-        # marcar o formulario como já processado (workshop atribuído(?))
-        pass
 
 
 # Serializers aninhados para consultas especificas

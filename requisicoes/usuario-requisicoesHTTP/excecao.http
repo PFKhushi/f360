@@ -1,33 +1,3 @@
-@url_raiz = http://localhost:8000/
-@perfil_excecao = excecao
-
-### Dados da Exceção A
-@excecao_A_nome = David Graça
-@excecao_A_nome2 = Steven Senegal
-@excecao_A_username = david.graca@instituicao.com
-@excecao_A_username2 = steven.senegal@instituicao.com
-@excecao_A_password = Senha123
-@excecao_A_telefone = 1155555555
-@excecao_A_motivo = Aluno de pós-graduação
-@excecao_A_nota = Desempenho excepcional
-@excecao_A_id = 4
-@excecao_A_token = Bearer
-
-### Dados da Exceção B
-@excecao_B_nome = Emanuel Beleu
-@excecao_B_nome2 = Rafael Matoso
-@excecao_B_username = emanuel.beleu@instituicao.com
-@excecao_B_username2 = rafael.matoso@instituicao.com
-@excecao_B_password = Senha123
-@excecao_B_telefone = 1155555555
-@excecao_B_motivo = Aluno de pós-graduação
-@excecao_B_nota = Desempenho excepcional
-@excecao_B_id = 5
-@excecao_B_token = Bearer
-
-@username_admin = admin@exsample.com
-@password_admin = senhaSupesrSegura123
-@token_admin = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUxMTg0MzE2LCJpYXQiOjE3NTExODI1MTYsImp0aSI6IjY2ZWJmNWY1M2U3OTQ5ZDM4Mzk1OWQyOTg3ZjEwNWRhIiwidXNlcl9pZCI6MSwiaWQiOjEsIm5vbWUiOiJBZG1pbmlzdHJhZG9yIEdlcmFsIiwiZW1haWwiOiJhZG1pbkBleHNhbXBsZS5jb20iLCJ0aXBvX3VzdWFyaW8iOiJBRE1JTiJ9.VTdh4MyZRQzZor9fxhAsRb3vjQegCB8sTFHIjZ1k6ts
 
 #### Exceção A
 
@@ -36,14 +6,14 @@ POST {{url_raiz}}api/login/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "{{username_admin}}",
-    "password": "{{password_admin}}"
+    "username": "{{admin_username}}",
+    "password": "{{admin_password}}"
 }
 
 ### Cria Exceção
 POST {{url_raiz}}api/usuario/ HTTP/1.1
 Content-Type: application/json
-Authorization: {{token_admin}}
+Authorization: {{admin_token}}
 
 {
     "perfil": "{{perfil_excecao}}"
@@ -52,7 +22,7 @@ Authorization: {{token_admin}}
 ### Cria Exceção
 POST {{url_raiz}}api/usuario/ HTTP/1.1
 Content-Type: application/json
-Authorization: {{token_admin}}
+Authorization: {{admin_token}}
 
 {
     "perfil": "{{perfil_excecao}}",
@@ -84,7 +54,7 @@ Content-Type: application/json
 ### Edita Completamente Exceção com dados originais
 PUT {{url_raiz}}api/usuario/{{excecao_A_id}}/perfil/ HTTP/1.1
 Content-Type: application/json
-Authorization: {{token_admin}}
+Authorization: {{admin_token}}
 
 {
     "nome": "{{excecao_A_nome}}",
@@ -98,7 +68,7 @@ Authorization: {{token_admin}}
 ### Edita Completamente Exceção com dados alternativos
 PUT {{url_raiz}}api/usuario/{{excecao_A_id}}/perfil/ HTTP/1.1
 Content-Type: application/json
-Authorization: {{token_admin}}
+Authorization: {{admin_token}}
 
 {
     "nome": "{{excecao_A_nome2}}",
@@ -112,7 +82,7 @@ Authorization: {{token_admin}}
 ### Edita Completamnete Exceção A com os dados da Exceção B para gerar erro. Usar o PUT para colocar os dados originais em B 
 PUT {{url_raiz}}api/usuario/{{excecao_A_id}}/perfil/ HTTP/1.1
 Content-Type: application/json
-Authorization: {{token_admin}}
+Authorization: {{admin_token}}
 
 {
     "nome": "{{excecao_B_nome}}",
@@ -126,7 +96,7 @@ Authorization: {{token_admin}}
 ### Edita Parcialmente Exceção com dados originais
 PATCH {{url_raiz}}api/usuario/{{excecao_A_id}}/perfil/ HTTP/1.1
 Content-Type: application/json
-Authorization: {{token_admin}}
+Authorization: {{admin_token}}
 
 {
     "nome": "{{excecao_A_nome}}",
@@ -140,7 +110,7 @@ Authorization: {{token_admin}}
 ### Edita Parcialmente Exceção com dados alternativos
 PATCH {{url_raiz}}api/usuario/{{excecao_A_id}}/perfil/ HTTP/1.1
 Content-Type: application/json
-Authorization: {{token_admin}}
+Authorization: {{admin_token}}
 
 {
     "nome": "{{excecao_A_nome2}}",
@@ -154,7 +124,7 @@ Authorization: {{token_admin}}
 ### Edita Parcialmente TechLeader A com os dados da TechLeader B para gerar erro. Usar o PUT para colocar os dados originais em B 
 PATCH {{url_raiz}}api/usuario/{{excecao_A_id}}/perfil/ HTTP/1.1
 Content-Type: application/json
-Authorization: {{token_admin}}
+Authorization: {{admin_token}}
 
 {
     "nome": "{{excecao_B_nome}}",
@@ -172,7 +142,7 @@ Authorization: {{token_admin}}
 ### Cria Exceção
 POST {{url_raiz}}api/usuario/ HTTP/1.1
 Content-Type: application/json
-Authorization: {{token_admin}}
+Authorization: {{admin_token}}
 
 {
     "perfil": "{{perfil_excecao}}",
@@ -196,7 +166,7 @@ Content-Type: application/json
 ### Edita Completamente Exceção com dados originais
 PUT {{url_raiz}}api/usuario/{{excecao_B_id}}/perfil/ HTTP/1.1
 Content-Type: application/json
-Authorization: {{token_admin}}
+Authorization: {{admin_token}}
 
 {
     "nome": "{{excecao_B_nome}}",
@@ -210,7 +180,7 @@ Authorization: {{token_admin}}
 ### Edita Completamente Exceção com dados alternativos
 PUT {{url_raiz}}api/usuario/{{excecao_B_id}}/perfil/ HTTP/1.1
 Content-Type: application/json
-Authorization: {{token_admin}}
+Authorization: {{admin_token}}
 
 {
     "nome": "{{excecao_B_nome2}}",
@@ -224,7 +194,7 @@ Authorization: {{token_admin}}
 ### Edita Completamnete Exceção B com os dados da Exceção A para gerar erro. Usar o PUT para colocar os dados originais em A 
 PUT {{url_raiz}}api/usuario/{{excecao_B_id}}/perfil/ HTTP/1.1
 Content-Type: application/json
-Authorization: {{token_admin}}
+Authorization: {{admin_token}}
 
 {
     "nome": "{{excecao_A_nome}}",
@@ -238,7 +208,7 @@ Authorization: {{token_admin}}
 ### Edita Parcialmente Exceção com dados originais
 PATCH {{url_raiz}}api/usuario/{{excecao_B_id}}/perfil/ HTTP/1.1
 Content-Type: application/json
-Authorization: {{token_admin}}
+Authorization: {{admin_token}}
 
 {
     "nome": "{{excecao_B_nome}}",
@@ -252,7 +222,7 @@ Authorization: {{token_admin}}
 ### Edita Parcialmente Exceção com dados alternativos
 PATCH {{url_raiz}}api/usuario/{{excecao_B_id}}/perfil/ HTTP/1.1
 Content-Type: application/json
-Authorization: {{token_admin}}
+Authorization: {{admin_token}}
 
 {
     "nome": "{{excecao_B_nome2}}",
@@ -266,7 +236,7 @@ Authorization: {{token_admin}}
 ### Edita Parcialmente TechLeader B com os dados da TechLeader A para gerar erro. Usar o PUT para colocar os dados originais em A 
 PATCH {{url_raiz}}api/usuario/{{excecao_B_id}}/perfil/ HTTP/1.1
 Content-Type: application/json
-Authorization: {{token_admin}}
+Authorization: {{admin_token}}
 
 {
     "nome": "{{excecao_A_nome}}",

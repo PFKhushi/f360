@@ -9,9 +9,11 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.http import Http404
 
+from .permissions import PodeCRUDDesempenho  
 
-from api_rest.models import Participante
-from imersao.models import Iteracao, Imersao, AreaFabrica, Tecnologia, InteresseArea, FormularioInscricao, Palestra, DiaWorkshop, Workshop, ParticipacaoImersao, PresencaPalestra, PresencaWorkshop, DesempenhoWorkshop, InstrutorWorkshop
+
+from api_rest.models import Participante, Excecao, Extensionista
+from imersao.models import Iteracao, Imersao, AreaFabrica, Tecnologia, InteresseArea, FormularioInscricao, Palestra, DiaWorkshop, Workshop, ParticipacaoImersao, PresencaPalestra, PresencaWorkshop, DesempenhoWorkshop, InstrutorWorkshop, ParticipantesWorkshop
 from imersao.serializers import (IteracaoSerializer, ImersaoSerializer, AreaFabricaSerializer, 
 TecnologiaSerializer, InteresseAreaSerializer, FormularioInscricaoListSerializer,
 FormularioInscricaoDetailSerializer, FormularioInscricaoCreateUpdateSerializer, 
@@ -342,7 +344,7 @@ class FormularioInscricaoViewSet(ErrorHandlingMixin, BaseEntidadeViewSet, viewse
     def get_queryset(self):
         user = self.request.user
 
-        if user.is_staff or user.has_perm('imersao.ver_todas_inscricoes'):
+        if user.is_staff or user.has_perm('imersao.ver_formularios_workshop'):
             return FormularioInscricao.objects.all()
         
         try:
@@ -383,7 +385,7 @@ class InteresseAreaViewSet(ErrorHandlingMixin, BaseEntidadeViewSet, viewsets.Mod
 
     def get_queryset(self):
         user = self.request.user
-        if user.is_staff or user.has_perm('imersao.ver_todas_interesses_area'):
+        if user.is_staff or user.has_perm('imersao.ver_interesses_area'):
             return InteresseArea.objects.all()
         return InteresseArea.objects.none()
         # return InteresseArea.objects.all()
@@ -409,8 +411,8 @@ class PresencaPalestraViewSet(ErrorHandlingMixin, BaseEntidadeViewSet, viewsets.
         user = self.request.user
         if user.is_staff or user.has_perm('imersao.ver_presencas_palestras'):
             return PresencaPalestra.objects.all()
-        # return Palestra.objects.filter(ativa=True)
-        return Palestra.objects.none()
+        return Palestra.objects.filter(iteracao__ativa=True)
+        # return Palestra.objects.none()
     
 class ParticipacaoImersaoViewSet(ErrorHandlingMixin, BaseEntidadeViewSet, viewsets.ModelViewSet):
 
@@ -450,15 +452,47 @@ class DiaWorkshopViewSet(ErrorHandlingMixin, BaseEntidadeViewSet, viewsets.Model
         elif self.action in ['update', 'partial_update', 'destroy']:
             permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
         else:
-            permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+            permission_classes = [permissions.IsAuthenticated]
         return [perm() for perm in permission_classes]
+    
     
     def get_queryset(self):
         user = self.request.user
-        if user.is_staff or user.has_perm('imersao.ver_dias_workshop'):
+
+        if user.is_staff or user.has_perm('imersao.ver_dias_workshops'):
             return DiaWorkshop.objects.all()
-        return DiaWorkshop.objects.none()
-        # return ParticipacaoImersao.objects.all()
+
+        workshop_ids = set()
+
+        if hasattr(user, 'participante'):
+            participante = user.participante
+            workshops_participante = ParticipantesWorkshop.objects.filter(
+                participante=participante
+            ).values_list('workshop_id', flat=True)
+            workshop_ids.update(workshops_participante)
+
+            extensionista = Extensionista.objects.filter(participante=participante).first()
+            if extensionista:
+                instrutor_workshops = InstrutorWorkshop.objects.filter(
+                    extensionista=extensionista
+                ).values_list('workshop_id', flat=True)
+                workshop_ids.update(instrutor_workshops)
+
+        elif hasattr(user, 'excecao'):
+            excecao = user.excecao
+            workshops_excecao = ParticipantesWorkshop.objects.filter(
+                participante=excecao
+            ).values_list('workshop_id', flat=True)
+            workshop_ids.update(workshops_excecao)
+
+            extensionista = Extensionista.objects.filter(excecao=excecao).first()
+            if extensionista:
+                instrutor_workshops = InstrutorWorkshop.objects.filter(
+                    extensionista=extensionista
+                ).values_list('workshop_id', flat=True)
+                workshop_ids.update(instrutor_workshops)
+
+        return DiaWorkshop.objects.filter(workshop_id__in=workshop_ids)
 
 class PresencaWorkshopViewSet(ErrorHandlingMixin, BaseEntidadeViewSet, viewsets.ModelViewSet):
     
@@ -488,7 +522,7 @@ class PresencaWorkshopViewSet(ErrorHandlingMixin, BaseEntidadeViewSet, viewsets.
     
     def get_queryset(self):
         user = self.request.user
-        if user.is_staff or user.has_perm('imersao.ver_presencas_workshop'):
+        if user.is_staff or user.has_perm('imersao.ver_presencas_workshops'):
             return PresencaWorkshop.objects.all()
         return PresencaWorkshop.objects.none()
         # return ParticipacaoImersao.objects.all()
@@ -499,23 +533,67 @@ class DesempenhoWorkshopViewSet(ErrorHandlingMixin, BaseEntidadeViewSet, viewset
     entidade = DesempenhoWorkshop
     nome_entidade = 'DesempenhoWorkshop'
     serializer_class = DesempenhoWorkshopSerializer
-    
+
     def get_permissions(self):
-        # define regras de acesso p/ cada acao
         if self.action == 'create':
-            permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
-        elif self.action in ['update', 'partial_update', 'destroy']:
+            permission_classes = [permissions.IsAuthenticated]
+        elif self.action in ['update', 'partial_update']:
+            permission_classes = [permissions.IsAuthenticated, PodeCRUDDesempenho]
+        elif self.action == 'destroy':
             permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
         else:
             permission_classes = [permissions.IsAuthenticated]
         return [perm() for perm in permission_classes]
-    
+
     def get_queryset(self):
         user = self.request.user
-        if user.is_staff or user.has_perm('imersao.ver_desempenhos_workshop'):
+
+        if user.is_staff or user.has_perm('imersao.ver_desempenhos_workshops'):
             return DesempenhoWorkshop.objects.all()
-        return DesempenhoWorkshop.objects.all()
+
+        instrutores = []
+
+        try:
+            instrutores.append(user.participante.extensionista.instrutor)
+        except AttributeError:
+            pass
+
+        try:
+            instrutores.append(user.excecao.extensionista.instrutor)
+        except AttributeError:
+            pass
+
+        if instrutores:
+            return DesempenhoWorkshop.objects.filter(workshop__instrutor__in=instrutores, workshop__iteracao__ativa=True)
+
         return DesempenhoWorkshop.objects.none()
+
+    def perform_create(self, serializer):
+        user = self.request.user
+
+        if user.is_staff:
+            serializer.save()
+            return
+
+        workshop = serializer.validated_data.get('workshop')
+
+        instrutores_autorizados = []
+
+        try:
+            instrutores_autorizados.append(user.participante.extensionista.instrutor)
+        except AttributeError:
+            pass
+
+        try:
+            instrutores_autorizados.append(user.excecao.extensionista.instrutor)
+        except AttributeError:
+            pass
+
+        if workshop.instrutor not in instrutores_autorizados:
+            raise PermissionDenied("Você não é instrutor deste workshop.")
+
+        serializer.save()
+
     
 class WorkshopViewSet(ErrorHandlingMixin, BaseEntidadeViewSet, viewsets.ModelViewSet):
 
@@ -527,24 +605,54 @@ class WorkshopViewSet(ErrorHandlingMixin, BaseEntidadeViewSet, viewsets.ModelVie
         # return [permissions.AllowAny()]
         # define regras de acesso p/ cada acao
         if self.action == 'create':
-            permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+            permission_classes = [permissions.IsAuthenticated]
         elif self.action in ['update', 'partial_update', 'destroy']:
             permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
         else:
             permission_classes = [permissions.IsAuthenticated]
         return [perm() for perm in permission_classes]
     
+
     def get_queryset(self):
         user = self.request.user
+
         if user.is_staff or user.has_perm('imersao.ver_workshops'):
             return Workshop.objects.all()
-        
-        # if user.participante:
-        # elif user.excecao:
-        return Workshop.objects.all()
-        return Workshop.objects.filter()
-        return Workshop.objects.none()
-        # modificar retornor para saber se instrutor ou participante/excecao do workshop
+
+        participante = getattr(user, 'participante', None)
+        excecao = getattr(user, 'excecao', None)
+
+        workshops_participante = Workshop.objects.none()
+        workshops_excecao = Workshop.objects.none()
+        workshops_instrutor = Workshop.objects.none()
+
+        if participante:
+            workshops_participante = Workshop.objects.filter(
+                participantes_workshop__participante=participante
+            )
+
+            try:
+                extensionista = Extensionista.objects.get(participante=participante)
+                workshops_instrutor = Workshop.objects.filter(
+                    instrutores_workshop__instrutor=extensionista
+                )
+            except Extensionista.DoesNotExist:
+                pass
+
+        if excecao:
+            workshops_excecao = Workshop.objects.filter(
+                participantes_workshop__participante=excecao
+            )
+
+            try:
+                extensionista = Extensionista.objects.get(excecao=excecao)
+                workshops_instrutor = workshops_instrutor | Workshop.objects.filter(
+                    instrutores_workshop__instrutor=extensionista
+                )
+            except Extensionista.DoesNotExist:
+                pass
+
+        return (workshops_participante | workshops_excecao | workshops_instrutor).distinct()
         
     def get_serializer_class(self):
         if self.action == 'list':
@@ -574,7 +682,57 @@ class InstrutorViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         user = self.request.user
-        if user.is_staff or user.has_perm('imersao.ver_instrutores_workshop'):
+        if user.is_staff or user.has_perm('imersao.ver_instrutores_workshops'):
             return InstrutorWorkshop.objects.all()
         return InstrutorWorkshop.objects.none()
         # return InstrutorWorkshop.objects.all()
+        
+
+
+class ImersiolnistaViewSet(ErrorHandlingMixin, viewsets.ViewSet):
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    # permission_classes = [permissions.AllowAny]
+
+    def list(self, request):
+        resultado = []
+
+        participantes_extensionistas_ids = Extensionista.objects.exclude(participante=None).values_list('participante_id', flat=True)
+        participantes = Participante.objects.exclude(id__in=participantes_extensionistas_ids).select_related('usuario')
+
+        for p in participantes:
+            usuario = p.usuario
+            formulario = FormularioInscricao.objects.filter(participante=usuario.participante).select_related(
+                'primeira_opcao', 'segunda_opcao'
+            ).first()
+            
+            em_workshop = ParticipantesWorkshop.objects.filter(participante=p).exists()
+
+            resultado.append({
+                'id': usuario.id,
+                'nome': usuario.nome,
+                'tipo': 'participante',
+                'primeira_opcao': getattr(formulario.primeira_opcao, 'nome', None) if formulario else None,
+                'segunda_opcao': getattr(formulario.segunda_opcao, 'nome', None) if formulario else None,
+                'em_workshop': em_workshop
+            })
+
+        excecoes_extensionistas_ids = Extensionista.objects.exclude(excecao=None).values_list('excecao_id', flat=True)
+        excecoes = Excecao.objects.exclude(id__in=excecoes_extensionistas_ids).select_related('usuario')
+
+        for e in excecoes:
+            usuario = e.usuario
+            # formulario = FormularioInscricao.objects.filter(usuario=usuario).select_related(
+            #     'primeira_opcao', 'segunda_opcao'
+            # ).first()
+            # em_workshop = ParticipantesWorkshop.objects.filter(excecao=e).exists()
+
+            resultado.append({
+                'id': usuario.id,
+                'nome': usuario.nome,
+                'tipo': 'excecao',
+                'primeira_opcao': getattr(formulario.primeira_opcao, 'nome', None) if formulario else None,
+                'segunda_opcao': getattr(formulario.segunda_opcao, 'nome', None) if formulario else None,
+                # 'em_workshop': em_workshop
+            })
+
+        return Response(resposta_json(sucesso=True, resultado=resultado))

@@ -9,8 +9,6 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 import hashlib
 
 
-
-
 class UsuarioManager(BaseUserManager):
     
     def get_by_natural_key(self, username):

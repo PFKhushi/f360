@@ -1,172 +1,131 @@
 
-@url_raiz = http://localhost:8000/
-@url_imersao = api/imersao/
-@url_palestra = api/palestra/
-@id_imersao = 1
-#########################################
-@id1 = 1
-@titulo1A = Palestra teste de IA
-@titulo1B = Palestras teste das IA
-@descricao1A = Descricao da palestra de teste de IA.
-@descricao1B = Decricao das palestra de testes das IA.
-@data1A = 2025-01-01T14:00:00
-@data1B = 2025-01-01T04:00:00
-@palestrante1A = Pedro
-@palestrante1B = Predo
-@sala1A = Auditório 1
-@sala1B = Aliditório 1
-@bloco1A = A
-@bloco1B = B
-##########################################
-@id2 = 2
-@titulo2A = Palestra teste de segurança
-@titulo2B = Palestras teste das seguranças
-@descricao2A = Descricao da palestra de teste de segurança.
-@descricao2B = Decricao das palestra de testes das seguranças.
-@data2A = 2025-01-02T14:00:00
-@data2B = 2025-01-02T04:00:00
-@palestrante2A = João
-@palestrante2B = Jão
-@sala2A = Auditório 2
-@sala2B = Aliditório 2
-@bloco2A = C
-@bloco2B = D
-
-@username = admin@exsample.com
-@password = senhaSupesrSegura123
-@admin_access = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUxMTgzODEwLCJpYXQiOjE3NTExODIwMTAsImp0aSI6IjEzZjQ5MWVkMWEzMDQzMmNhYjZkNjcwMTQ1Yjc5M2IwIiwidXNlcl9pZCI6MSwiaWQiOjEsIm5vbWUiOiJBZG1pbmlzdHJhZG9yIEdlcmFsIiwiZW1haWwiOiJhZG1pbkBleHNhbXBsZS5jb20iLCJ0aXBvX3VzdWFyaW8iOiJBRE1JTiJ9.wdPUvvRN7W0KmFC15pgoP9YNjcr8kzGn5psd5mirE50
-
-###
-POST {{url_raiz}}api/login/ HTTP/1.1
-Content-Type: application/json
-
-{
-    "username": "{{username}}",
-    "password": "{{password}}"
-}
 
 ###
 GET {{url_raiz}}{{url_imersao}} HTTP/1.1
 Content-Type: application/json
-Authorization: {{admin_access}}
+Authorization: {{admin_token}}
 
 ###
 GET {{url_raiz}}{{url_palestra}} HTTP/1.1
 Content-Type: application/json
-Authorization: {{admin_access}}
+Authorization: {{admin_token}}
 
 ##########################################################
 
 ###
-GET {{url_raiz}}{{url_palestra}}{{id1}}/ HTTP/1.1
+GET {{url_raiz}}{{url_palestra}}{{palestra_A_id}}/ HTTP/1.1
 Content-Type: application/json
-Authorization: {{admin_access}}
+Authorization: {{admin_token}}###
 
+###
+GET {{url_raiz}}{{url_palestra}}{{palestra_B_id}}/ HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_token}}
+
+############################################################
 
 ###
 POST {{url_raiz}}{{url_palestra}} HTTP/1.1
 Content-Type: application/json
-Authorization: {{admin_access}}
+Authorization: {{admin_token}}
 
 {
-    "titulo": "{{titulo1A}}",
-    "descricao": "{{descricao1A}}",
-    "data": "{{data1A}}",
-    "palestrante": "{{palestrante1A}}",
-    "sala": "{{sala1A}}",
-    "bloco": "{{bloco1A}}"
+    "titulo": "{{palestra_A_titulo}}",
+    "descricao": "{{palestra_A_descricao}}",
+    "data": "{{palestra_A_data_inicio}}",
+    "palestrante": "{{palestra_A_palestrante}}",
+    "sala": "{{palestra_A_sala}}",
+    "bloco": "{{palestra_A_bloco}}"
 }
 
 ###
-PUT {{url_raiz}}{{url_palestra}}{{id1}}/ HTTP/1.1
+POST {{url_raiz}}{{url_palestra}} HTTP/1.1
 Content-Type: application/json
-Authorization: {{admin_access}}
+Authorization: {{admin_token}}
+
+{
+    "titulo": "{{palestra_B_titulo}}",
+    "descricao": "{{palestra_B_descricao}}",
+    "data": "{{palestra_B_data_inicio}}",
+    "palestrante": "{{palestra_B_palestrante}}",
+    "sala": "{{palestra_B_sala}}",
+    "bloco": "{{palestra_B_bloco}}"
+}
+
+################################################################
+
+###
+PUT {{url_raiz}}{{url_palestra}}{{palestra_A_id}}/ HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_token}}
 
 
 {
-    "titulo": "{{titulo1B}}",
-    "descricao": "{{descricao1B}}",
-    "data": "{{data1B}}",
-    "palestrante": "{{palestrante1B}}",
-    "sala": "{{sala1B}}",
-    "bloco": "{{bloco1B}}",
-    "imersao": "{{id_imersao}}"
+    "titulo": "{{palestra_A_titulo2}}",
+    "descricao": "{{palestra_A_descricao2}}",
+    "data": "{{palestra_A_data_inicio2}}",
+    "palestrante": "{{palestra_A_palestrante2}}",
+    "sala": "{{palestra_A_sala2}}",
+    "bloco": "{{palestra_A_bloco2}}",
+    "imersao": "{{imersao_A_id}}"
 }
 
 ###
-PATCH {{url_raiz}}{{url_palestra}}{{id1}}/ HTTP/1.1
+PUT {{url_raiz}}{{url_palestra}}{{palestra_B_id}}/ HTTP/1.1
 Content-Type: application/json
-Authorization: {{admin_access}}
+Authorization: {{admin_token}}
 
 {
-    "titulo": "{{titulo1A}}",
-    "descricao": "{{descricao1A}}",
-    "data": "{{data1A}}",
-    "palestrante": "{{palestrante1A}}",
-    "sala": "{{sala1A}}",
-    "bloco": "{{bloco1A}}",
-    "imersao": "{{id_imersao}}"
+    "titulo": "{{palestra_B_titulo2}}",
+    "descricao": "{{palestra_B_descricao2}}",
+    "data": "{{palestra_B_data_inicio2}}",
+    "palestrante": "{{palestra_B_palestrante2}}",
+    "sala": "{{palestra_B_sala2}}",
+    "bloco": "{{palestra_B_bloco2}}",
+    "imersao": "{{imersao_A_id}}"
+}
+
+###################################################################
+
+###
+PATCH {{url_raiz}}{{url_palestra}}{{palestra_A_id}}/ HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_token}}
+
+{
+    "titulo": "{{palestra_A_titulo}}",
+    "descricao": "{{palestra_A_descricao}}",
+    "data": "{{palestra_A_data_inicio}}",
+    "palestrante": "{{palestra_A_palestrante}}",
+    "sala": "{{palestra_A_sala}}",
+    "bloco": "{{palestra_A_bloco}}",
+    "imersao": "{{imersao_A_id}}"
 }
 
 ###
-DELETE {{url_raiz}}{{url_palestra}}{{id1}}/ HTTP/1.1
+PATCH {{url_raiz}}{{url_palestra}}{{palestra_B_id}}/ HTTP/1.1
 Content-Type: application/json
-Authorization: {{admin_access}}
+Authorization: {{admin_token}}
+
+{
+    "titulo": "{{palestra_B_titulo}}",
+    "descricao": "{{palestra_B_descricao}}",
+    "data": "{{palestra_B_data_inicio}}",
+    "palestrante": "{{palestra_B_palestrante}}",
+    "sala": "{{palestra_B_sala}}",
+    "bloco": "{{palestra_B_bloco}}",
+    "imersao": "{{imersao_A_id}}"
+}
 
 ##########################################################
 
 ###
-GET {{url_raiz}}{{url_palestra}}{{id2}}/ HTTP/1.1
+DELETE {{url_raiz}}{{url_palestra}}{{palestra_A_id}}/ HTTP/1.1
 Content-Type: application/json
-Authorization: {{admin_access}}
-
+Authorization: {{admin_token}}
 
 ###
-POST {{url_raiz}}{{url_palestra}} HTTP/1.1
+DELETE {{url_raiz}}{{url_palestra}}{{palestra_B_id}}/ HTTP/1.1
 Content-Type: application/json
-Authorization: {{admin_access}}
-
-{
-    "titulo": "{{titulo2A}}",
-    "descricao": "{{descricao2A}}",
-    "data": "{{data2A}}",
-    "palestrante": "{{palestrante2A}}",
-    "sala": "{{sala2A}}",
-    "bloco": "{{bloco2A}}"
-}
-
-###
-PUT {{url_raiz}}{{url_palestra}}{{id2}}/ HTTP/1.1
-Content-Type: application/json
-Authorization: {{admin_access}}
-
-{
-    "titulo": "{{titulo2B}}",
-    "descricao": "{{descricao2B}}",
-    "data": "{{data2B}}",
-    "palestrante": "{{palestrante2B}}",
-    "sala": "{{sala2B}}",
-    "bloco": "{{bloco2B}}",
-    "imersao": "{{id_imersao}}"
-}
-
-###
-PATCH {{url_raiz}}{{url_palestra}}{{id2}}/ HTTP/1.1
-Content-Type: application/json
-Authorization: {{admin_access}}
-
-{
-    "titulo": "{{titulo2A}}",
-    "descricao": "{{descricao2A}}",
-    "data": "{{data2A}}",
-    "palestrante": "{{palestrante2A}}",
-    "sala": "{{sala2A}}",
-    "bloco": "{{bloco2A}}",
-    "imersao": "{{id_imersao}}"
-}
-
-###
-DELETE {{url_raiz}}{{url_palestra}}{{id2}}/ HTTP/1.1
-Content-Type: application/json
-Authorization: {{admin_access}}
+Authorization: {{admin_token}}
 

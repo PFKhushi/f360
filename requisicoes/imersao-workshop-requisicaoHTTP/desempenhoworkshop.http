@@ -1,20 +1,3 @@
-@url_raiz = http://localhost:8000/
-@url_workshop = api/workshop/
-@url_desempenho = api/desempenho_workshop/
-
-@username = admin@exsample.com
-@password = senhaSupesrSegura123
-@access_token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUxMTkxOTA5LCJpYXQiOjE3NTExOTAxMDksImp0aSI6ImU5NDQxZTY3YTRmYTQ5YTg4NjAyYzRmYTljM2VlMmJmIiwidXNlcl9pZCI6MSwiaWQiOjEsIm5vbWUiOiJBZG1pbmlzdHJhZG9yIEdlcmFsIiwiZW1haWwiOiJhZG1pbkBleHNhbXBsZS5jb20iLCJ0aXBvX3VzdWFyaW8iOiJBRE1JTiJ9.cN0CI12QEAi_c2x3nHY47WsiRGXasONMhKR5XkQ0-JM
-
-
-###
-POST {{url_raiz}}api/login/ HTTP/1.1
-Content-Type: application/json
-
-{
-    "username": "{{username}}",
-    "password": "{{password}}"
-}
 
 ### Lista workshops
 GET {{url_raiz}}{{url_workshop}} HTTP/1.1
@@ -23,42 +6,106 @@ Content-Type: application/json
 ### Pega workshops
 GET {{url_raiz}}{{url_workshop}}1/ HTTP/1.1
 Content-Type: application/json
-Authorization: {{access_token}}
+Authorization: {{admin_token}}
 
 ### Pega workshops
 GET {{url_raiz}}{{url_desempenho}} HTTP/1.1
 Content-Type: application/json
-Authorization: {{access_token}}
+Authorization: {{admin_token}}
 
-###
+### Atribuir desempenho Participante A como Admin
 POST {{url_raiz}}{{url_desempenho}} HTTP/1.1
 Content-Type: application/json
-Authorization: {{access_token}}
+Authorization: {{admin_token}}
 
 {
-    "usuario_id": 2,
-    "workshop": 1,
-    "desempenho": "asdf",
-    "comentario": "qwerqwerqwer",
-    "especialidade": 2,
+    "usuario_id": "{{participante_A_id}}",
+    "workshop": "{{workshop_A_id}}",
+    "desempenho": "{{desempenho_classificacao5}}",
+    "comentario": "{{desempenho_comentario5}}",
+    "especialidade": "{{tecnologia_A_id}}",
     "aprovado": true,
-    "classificacao": "asdfasdgasg",
-    "experiencia": "asdfafdsdgh"
+    "classificacao": "{{desempenho_classificacao5}}",
+    "experiencia": "{{desempenho_experiencia5}}"
 }
 
-###
+### Atribuir desempenho Participante A como Instrutor
 POST {{url_raiz}}{{url_desempenho}} HTTP/1.1
 Content-Type: application/json
-Authorization: {{access_token}}
+Authorization: {{excecao_D_token}}
 
 {
-    "usuario_id": 3,
-    "workshop": 1,
-    "desempenho": "asdf",
-    "comentario": "qwerqwerqwer",
-    "especialidade": 2,
+    "usuario_id": "{{participante_A_id}}",
+    "workshop": "5",
+    "desempenho": "{{desempenho_classificacao5}}",
+    "comentario": "{{desempenho_comentario5}}",
+    "especialidade": "{{tecnologia_A_id}}",
     "aprovado": true,
-    "classificacao": "asdfasdgasg",
-    "experiencia": "asdfafdsdgh"
+    "classificacao": "{{desempenho_classificacao5}}",
+    "experiencia": "{{desempenho_experiencia5}}"
+}
+
+### Atribuir desempenho Participante B como Admin
+POST {{url_raiz}}{{url_desempenho}} HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_token}}
+
+{
+    "usuario_id": "{{participante_B_id}}",
+    "workshop": "{{workshop_A_id}}",
+    "desempenho": "{{desempenho_classificacao5}}",
+    "comentario": "{{desempenho_comentario5}}",
+    "especialidade": "{{tecnologia_B_id}}",
+    "aprovado": true,
+    "classificacao": "{{desempenho_classificacao5}}",
+    "experiencia": "{{desempenho_experiencia5}}"
+}
+
+### Atribuir desempenho Participante B como Instrutor
+POST {{url_raiz}}{{url_desempenho}} HTTP/1.1
+Content-Type: application/json
+Authorization: {{excecao_A_id}}
+
+{
+    "usuario_id": "{{participante_B_id}}",
+    "workshop": "{{workshop_A_id}}",
+    "desempenho": "{{desempenho_classificacao5}}",
+    "comentario": "{{desempenho_comentario5}}",
+    "especialidade": "{{tecnologia_B_id}}",
+    "aprovado": true,
+    "classificacao": "{{desempenho_classificacao5}}",
+    "experiencia": "{{desempenho_experiencia5}}"
+}
+
+### Atribuir desempenho Participante C como Admin
+POST {{url_raiz}}{{url_desempenho}} HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_token}}
+
+{
+    "usuario_id": "{{participante_C_id}}",
+    "workshop": "{{workshop_A_id}}",
+    "desempenho": "{{desempenho_classificacao5}}",
+    "comentario": "{{desempenho_comentario5}}",
+    "especialidade": "{{tecnologia_C_id}}",
+    "aprovado": true,
+    "classificacao": "{{desempenho_classificacao5}}",
+    "experiencia": "{{desempenho_experiencia5}}"
+}
+
+### Atribuir desempenho Participante C como Instrutor
+POST {{url_raiz}}{{url_desempenho}} HTTP/1.1
+Content-Type: application/json
+Authorization: {{excecao_A_id}}
+
+{
+    "usuario_id": "{{participante_C_id}}",
+    "workshop": "{{workshop_A_id}}",
+    "desempenho": "{{desempenho_classificacao5}}",
+    "comentario": "{{desempenho_comentario5}}",
+    "especialidade": "{{tecnologia_C_id}}",
+    "aprovado": true,
+    "classificacao": "{{desempenho_classificacao5}}",
+    "experiencia": "{{desempenho_experiencia5}}"
 }
 

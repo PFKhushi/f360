@@ -16,7 +16,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
 from .models import Usuario, Participante, TechLeader, Empresa, Excecao, Extensionista
-from .serializers import UsuarioSerializer, ParticipanteSerializer, TechLeaderSerializer, EmpresaSerializer, CustomTokenSerializer, AdminCreateSerializer, ExcecaoSerializer, ExtensionistaSerializer, ExtensionistaBulkSerializer
+from .serializers import UsuarioSerializer, ParticipanteSerializer, TechLeaderSerializer, EmpresaSerializer, CustomTokenSerializer, AdminSerializer, ExcecaoSerializer, ExtensionistaSerializer, ExtensionistaBulkSerializer
 from .permissoes import IsOwnerOrAdmin, IsUserOwnerOrAdmin
 from .swagger import (list_participantes_swagger, update_participantes_swagger,
                     create_participantes_swagger, retrieve_participantes_swagger, 
@@ -222,21 +222,28 @@ class LogoutUsuario(APIView):
         except Exception as e:
             return Response({"detail": "Erro ao fazer logout", "sucesso": False}, status=status.HTTP_400_BAD_REQUEST)
 
-class AdminCreateView(APIView):
-    permission_classes = [permissions.AllowAny] # rota placeholder
+            
+class AdminViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
+    queryset = Usuario.objects.filter(is_superuser=True)
+    serializer_class = AdminSerializer
+    
+    def get_permissions(self):
+        # define regras de acesso p/ cada acao
+        if self.action == 'create':
+            permission_classes = [permissions.AllowAny]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
+        else:
+            permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
+        # return [permissions.AllowAny()] #############retirar depois###############
+        return [perm() for perm in permission_classes]
 
-    def post(self, request):
-        serializer = AdminCreateSerializer(data=request.data)
-        
-        try:
-            serializer.is_valid()
-            admin = serializer.save()
-            return Response(resposta_json(sucesso=True, resultado=serializer.to_representation(admin)), status=status.HTTP_201_CREATED)
-        
-        except:  
-            return Response(resposta_json(
-                erro="Erro de validação nos dados enviados", 
-                detalhes=["Já existe um usuário com esse e-mail."]), status=status.HTTP_400_BAD_REQUEST)
+    def get_queryset(self):
+        # Apenas superusers podem ver outros superusers
+        user = self.request.user
+        if user.is_superuser:
+            return super().get_queryset()
+        return Usuario.objects.none()
 
 def _handle_serialization(context, instance, data=None, partial=False):
     
@@ -325,7 +332,7 @@ class TechLeaderViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
     def get_permissions(self):
         # define regras de acesso p/ cada acao
         if self.action == 'create':
-            permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+            permission_classes = [permissions.AllowAny]
         elif self.action in ['update', 'partial_update', 'destroy']:
             permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
         else:
@@ -384,7 +391,7 @@ class EmpresaViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
     def get_permissions(self):
         # define regras de acesso p/ cada acao
         if self.action == 'create':
-            permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+            permission_classes = [permissions.AllowAny]
         elif self.action in ['update', 'partial_update', 'destroy']:
             permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
         else:
@@ -442,7 +449,7 @@ class ExcecaoViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
     def get_permissions(self):
         
         if self.action == 'create':
-            permissions_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+            permissions_classes = [permissions.AllowAny]
         elif self.action in ['update', 'partial_update', 'destroy']:
             permissions_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
         else:
@@ -642,12 +649,6 @@ class ExtensionistaBulkViewSet(viewsets.ModelViewSet):
     def destroy(self, request, pk=None):
         return super().destroy(request, pk)
 
-
-class TestePermissaoView(APIView):
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
-
-    def get(self, request):
-        return Response({"ok": True})
     
 
 class ExtensionistaViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
@@ -688,7 +689,8 @@ class ExtensionistaViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
         extensionista.delete()
         return Response(resposta_json(sucesso=True, resultado="Extensionista apagado com sucesso"), status=status.HTTP_204_NO_CONTENT)
     
-    
+
+
 class UsuarioVS(ErrorHandlingMixin, viewsets.ViewSet):
     
     PERFIL_VIEWSET_MAP = {
@@ -696,6 +698,7 @@ class UsuarioVS(ErrorHandlingMixin, viewsets.ViewSet):
         'excecao': (ExcecaoViewSet, 'is_excecao', 'excecao'),
         'techleader': (TechLeaderViewSet, 'is_techleader', 'techleader'),
         'empresa': (EmpresaViewSet, 'is_empresa', 'empresa'),
+        'admin': (AdminViewSet, 'is_superuser', None),
     }
     
     def _get_viewset_for_usuario(self, usuario):
@@ -717,6 +720,7 @@ class UsuarioVS(ErrorHandlingMixin, viewsets.ViewSet):
     
     def create(self, request):
         perfil_name = request.data.get('perfil')
+        
         if not perfil_name:
             return self.handle_exception(BusinessLogicException(
                 detail="Perfil não informado",
@@ -725,18 +729,38 @@ class UsuarioVS(ErrorHandlingMixin, viewsets.ViewSet):
                 status_code=400
             ))
         
+        if perfil_name == 'admin':
+            viewset_instance = AdminViewSet()
+            viewset_instance.request = request
+            viewset_instance.action = 'create'
+            viewset_instance.check_permissions(request)
+
+            serializer_class = viewset_instance.get_serializer_class()
+            serializer = serializer_class(data=request.data, context={'request': request})
+            serializer.is_valid(raise_exception=True)
+            instance = serializer.save()
+
+            headers = viewset_instance.get_success_headers(serializer.data)
+            return Response(serializer_class(instance).data, status=status.HTTP_201_CREATED, headers=headers)
+        
         try:
             viewset_class, check, attr_name = self._get_viewset_for_perfil(perfil_name)
-            viewset = viewset_class()
-            viewset.request = request
-            viewset.format_kwarg = self.format_kwarg
-            viewset.action = 'create'  
             
-            try:
-                viewset.check_permissions(request)
-            except PermissionError as e:
-                raise e
-            return viewset.create(request)
+            viewset_instance = viewset_class()
+            viewset_instance.request = request
+            viewset_instance.action = 'create'  
+            
+            viewset_instance.check_permissions(request)
+
+            serializer_class = viewset_instance.get_serializer_class()
+
+            serializer = serializer_class(data=request.data, context={'request': request})
+            
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            
+            headers = viewset_instance.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
             
         except BusinessLogicException as e:
             return self.handle_exception(e)
@@ -757,28 +781,18 @@ class UsuarioVS(ErrorHandlingMixin, viewsets.ViewSet):
                     erro="usuario_sem_perfil",
                     detalhes=["Este usuário não possui um perfil associado"],
                     status_code=404
-                ))
+                ))  
             
             perfil_obj = getattr(usuario, attr_name)
             
-            viewset = viewset_class()
-            viewset.request = request
-            viewset.kwargs = {'pk': perfil_obj.pk}
-            viewset.format_kwarg = self.format_kwarg
+            view = viewset_class.as_view({
+                'get': 'retrieve',
+                'put': 'update',
+                'patch': 'partial_update',
+                'delete': 'destroy'
+            })
             
-            if request.method == 'GET':
-                return viewset.retrieve(request, pk=perfil_obj.pk)
-            elif request.method == 'PUT':
-                return viewset.update(request, pk=perfil_obj.pk)
-            elif request.method == 'PATCH':
-                return viewset.partial_update(request, pk=perfil_obj.pk)
-            elif request.method == 'DELETE':
-                return viewset.destroy(request, pk=perfil_obj.pk)
-            
-            return Response(
-                {"detail": "Método não permitido"}, 
-                status=status.HTTP_405_METHOD_NOT_ALLOWED
-            )
+            return view(request._request, pk=perfil_obj.pk)
             
         except ValidationError as e:
             raise e
@@ -787,9 +801,6 @@ class UsuarioVS(ErrorHandlingMixin, viewsets.ViewSet):
         except Exception as e:
             raise e
         
-    def links(self, request, pk=None):
-        
-        usuario = get_object_or_404(Usuario, pk=pk)
-        viewset_class, attr_name = self._get_viewset_for_usuario(usuario)
-        
-        pass
+    
+    
+#### FAZER A VIEW PARA LISTAR USUARIOS E COLOCAR NO ROTEADOR

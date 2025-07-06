@@ -1,13 +1,185 @@
-###
-POST http://localhost:8000/api/login/ HTTP/1.1
+### Login Admin
+POST {{url_raiz}}{{url_login}} HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "jwsdfgfgfodfg@email.com",
-    "password": "senha123"
+    "username": "{{admin_username}}",
+    "password": "{{admin_password}}"
+}
+
+##############################################################
+
+### Login Participante A
+POST {{url_raiz}}{{url_login}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{participante_A_username}}",
+    "password": "{{participante_A_password}}"
+}
+
+### Login Participante B
+POST {{url_raiz}}{{url_login}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{participante_B_username}}",
+    "password": "{{participante_B_password}}"
+}
+
+### Login Participante C
+POST {{url_raiz}}{{url_login}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{participante_C_username}}",
+    "password": "{{participante_C_password}}"
 }
 
 
-"refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0ODk5ODQ3NCwiaWF0IjoxNzQ4OTEyMDc0LCJqdGkiOiJlZWUxMGNiYzFjY2Q0MTBiOTkyYjFmYjE4YjYwYjRiNCIsInVzZXJfaWQiOjEsImlkIjoxLCJub21lIjoiSm9cdTAwZTNvIFNpbHZhIiwiZW1haWwiOiJqd3NkZmdmZ2ZvZGZnQGVtYWlsLmNvbSIsInRpcG9fdXN1YXJpbyI6IlBBUlQifQ.Pf1V7ijjdlofvJhnaQZmmi8_62savZoq_b35xQXf1Y8",
+### Login Participante D
+POST {{url_raiz}}{{url_login}} HTTP/1.1
+Content-Type: application/json
 
-"access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4OTEzODc0LCJpYXQiOjE3NDg5MTIwNzQsImp0aSI6IjZmY2JmNDU5MmJmZDRjZDk4Nzc3MjBkZDM1MTg4YmUzIiwidXNlcl9pZCI6MSwiaWQiOjEsIm5vbWUiOiJKb1x1MDBlM28gU2lsdmEiLCJlbWFpbCI6Imp3c2RmZ2ZnZm9kZmdAZW1haWwuY29tIiwidGlwb191c3VhcmlvIjoiUEFSVCJ9.xmhEwL_9MhE3rvAKNtwIAcTrnXbD2BkJzrgrPc-b7lM"
+{
+    "username": "{{participante_D_username}}",
+    "password": "{{participante_D_password}}"
+}
+
+
+### Login Participante E
+POST {{url_raiz}}{{url_login}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{participante_E_username}}",
+    "password": "{{participante_E_password}}"
+}
+
+
+### Login Participante F
+POST {{url_raiz}}{{url_login}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{participante_F_username}}",
+    "password": "{{participante_F_password}}"
+}
+
+
+### Login Participante G
+POST {{url_raiz}}{{url_login}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{participante_G_username}}",
+    "password": "{{participante_G_password}}"
+}
+
+
+### Login Participante H
+POST {{url_raiz}}{{url_login}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{participante_H_username}}",
+    "password": "{{participante_H_password}}"
+}
+
+
+### Login Participante I
+POST {{url_raiz}}{{url_login}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{participante_I_username}}",
+    "password": "{{participante_I_password}}"
+}
+
+
+### Login Participante J
+POST {{url_raiz}}{{url_login}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{participante_J_username}}",
+    "password": "{{participante_J_password}}"
+}
+
+#############################################################
+
+### Login Exceção A
+POST {{url_raiz}}{{url_login}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{excecao_A_username}}",
+    "password": "{{excecao_A_password}}"
+}
+
+### Login Exceção B
+POST {{url_raiz}}{{url_login}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{excecao_B_username}}",
+    "password": "{{excecao_B_password}}"
+}
+
+### Login Exceção C
+POST {{url_raiz}}{{url_login}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{excecao_C_username}}",
+    "password": "{{excecao_C_password}}"
+}
+
+### Login Exceção D
+POST {{url_raiz}}{{url_login}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{excecao_D_username}}",
+    "password": "{{excecao_D_password}}"
+}
+
+#############################################################
+
+### Login Tech Leader A
+POST {{url_raiz}}{{url_login}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{techleader_A_username}}",
+    "password": "{{techleader_A_password}}"
+}
+
+### Login Tech Leader B
+POST {{url_raiz}}{{url_login}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{techleader_B_username}}",
+    "password": "{{techleader_B_password}}"
+}
+
+#################################################################
+
+### Login Empresa A
+POST {{url_raiz}}{{url_login}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{empresa_A_username}}",
+    "password": "{{empresa_A_password}}"
+}
+
+### Login Empresa B
+POST {{url_raiz}}{{url_login}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "{{empresa_B_username}}",
+    "password": "{{empresa_B_password}}"
+}

@@ -1,5 +1,6 @@
+from django.urls import path
 from rest_framework.routers import DefaultRouter
-from .views import iteracaoViewSet, ImersaoViewSet, TecnologiaViewSet, AreaFabricaViewSet, PalestraViewSet, FormularioInscricaoViewSet, InteresseAreaViewSet, PresencaPalestraViewSet, ParticipacaoImersaoViewSet, WorkshopViewSet, DesempenhoWorkshopViewSet, PresencaWorkshopViewSet
+from .views import iteracaoViewSet, ImersaoViewSet, TecnologiaViewSet, AreaFabricaViewSet, PalestraViewSet, FormularioInscricaoViewSet, InteresseAreaViewSet, PresencaPalestraViewSet, ParticipacaoImersaoViewSet, WorkshopViewSet, DesempenhoWorkshopViewSet, PresencaWorkshopViewSet, ImersiolnistaViewSet, DiaWorkshopViewSet
 
 router = DefaultRouter()
 
@@ -15,7 +16,13 @@ router.register('participacao_imersao', ParticipacaoImersaoViewSet, basename='pa
 router.register('workshop', WorkshopViewSet, basename='workshop')
 router.register('desempenho_workshop', DesempenhoWorkshopViewSet, basename='desempenho_workshop')
 router.register('presenca_workshop', PresencaWorkshopViewSet, 'presenca_workshop')
+router.register('imersionista', ImersiolnistaViewSet, 'imersionista')
+router.register('dia_workshop', DiaWorkshopViewSet, 'dia_workshop')
 
 
-urlpatterns = []
+
+
+urlpatterns = [
+    # path('imersionistas/', ImersiolnistaAPIView.as_view(), name='imersionistas'),
+]
 urlpatterns += router.urls   

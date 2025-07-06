@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 from api_rest.models import Usuario, Participante, Empresa, TechLeader, Extensionista, Excecao
-from imersao.models import Imersao, Iteracao
+from imersao.models import Imersao, Iteracao, FormularioInscricao
 from django.core.exceptions import ValidationError
 from django.db import models, IntegrityError
 from django.db.models import QuerySet
@@ -27,25 +27,37 @@ def _get_user_data(validated_data):
     return usuario.pop('nome'), usuario.pop('username'), usuario.pop('password'), usuario.pop('telefone') 
     
     
-
-class AdminCreateSerializer(serializers.Serializer):
-    nome = serializers.CharField(max_length=120)
-    username = serializers.EmailField()
+class AdminSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = Usuario
+        fields = ['id', 'nome', 'username', 'password']
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
 
     def create(self, validated_data):
         try:
-            user = Usuario.objects.create_superuser(
+            return Usuario.objects.create_superuser(
                 nome=validated_data['nome'],
                 username=validated_data['username'],
-                password=validated_data['password'],
+                password=validated_data['password']
             )
-            return user
         except IntegrityError:
             raise serializers.ValidationError("Já existe um usuário com esse e-mail.")
 
+    def update(self, instance, validated_data):
+        instance.nome = validated_data.get('nome', instance.nome)
+        instance.username = validated_data.get('username', instance.username)
+        if 'password' in validated_data:
+            instance.set_password(validated_data['password'])
+        instance.save()
+        return instance
+
 # serializer base do usuario, usado nos perfis
 class UsuarioSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = Usuario
         fields = ['id','nome', 'username', 'password', 'telefone']
@@ -128,6 +140,7 @@ class ParticipanteSerializer(BasePerfilSerializer):
     username = serializers.EmailField(source='usuario.username')
     telefone = serializers.CharField(source='usuario.telefone', required=False)
     password = serializers.CharField(write_only=True, min_length=6, source='usuario.password')
+    opcoes = serializers.SerializerMethodField()
     
     id = serializers.SerializerMethodField(read_only=True)
     ativado = serializers.BooleanField(
@@ -138,9 +151,20 @@ class ParticipanteSerializer(BasePerfilSerializer):
 
     class Meta:
         model = Participante
-        fields = ['id','id_usuario', 'nome', 'username', 'telefone', 'password', 'cpf', 'rgm', 'curso', 'outro_curso', 'periodo', 'membro', 'ativado']
+        fields = ['id','id_usuario', 'nome', 'username', 'telefone', 'password', 'cpf', 'rgm', 'curso', 'outro_curso', 'periodo','opcoes', 'membro', 'ativado']
     
     def get_id(self, participante): return participante.usuario.id
+    
+    def get_opcoes(self, participante):
+        formulario = FormularioInscricao.objects.filter(participante=participante).first()
+        
+        if formulario:
+            return {
+                "primeira": getattr(formulario.primeira_opcao, 'nome', None),
+                "segunda": getattr(formulario.segunda_opcao, 'nome', None)
+            }
+        
+        return None
     
     def get_membro(self, participante):
         extensao = participante.extensionista_participante.first()

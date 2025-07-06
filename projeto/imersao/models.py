@@ -11,6 +11,10 @@ class Iteracao(models.Model):
         verbose_name = 'Iteração'
         verbose_name_plural = 'Iterações'
         unique_together = ('ano', 'semestre')
+        permissions = [
+            ("ver_iteracoes", "Ver todas as iterações"),
+            ("editar_iteracoes", "Editar todas as iterações"),
+        ]
         
     def __str__(self):
         return f'{self.ano}.{self.semestre}'
@@ -23,6 +27,10 @@ class Imersao(models.Model):
     class Meta:
         verbose_name = 'Imersão'
         verbose_name_plural = 'Imersões'
+        permissions = [
+            ("ver_imersoes", "Ver todas as imersões"),
+            ("editar_imersoes", "Editar todas as imersões"),
+        ]
         
     def __str__(self):
         return f'Imersão {self.iteracao.__str__()}'
@@ -35,6 +43,10 @@ class AreaFabrica(models.Model):
     class Meta:
         verbose_name = 'Área da Fábrica'
         verbose_name_plural = 'Áreas da Fábrica'
+        permissions = [
+            ("ver_areas_fabrica", "Ver todas as Áreas da Fábrica"),
+            ("editar_areas_fabrica", "Editar todas as Áreas da Fábrica"),
+        ]
     
     def __str__(self):
         return self.nome
@@ -47,6 +59,10 @@ class Tecnologia(models.Model):
     class Meta:
         verbose_name = 'Tecnologia'
         verbose_name_plural = 'Tecnologias'
+        permissions = [
+            ("ver_tecnologia","Ver todas as Tecnologias"),
+            ("editar_tecnologia","Editar todas as Tecnologias"),
+        ]
     
     def __str__(self):
         return self.nome
@@ -91,6 +107,10 @@ class FormularioInscricao(models.Model):
         verbose_name = 'Formulário de Inscrição'
         verbose_name_plural = 'Formulários de Inscrição'
         unique_together = ('participante', 'imersao')
+        permissions = [
+            ("ver_formularios_workshop","Ver todas as Formulários de Inscrição"),
+            ("editar_formularios_workshop","Editar todas as Formulários de Inscrição"),
+        ]
     
     def __str__(self):
         return f"Inscrição de {self.participante.__str__()} nos workshops {self.imersao.__str__()}"
@@ -115,6 +135,10 @@ class InteresseArea(models.Model):
         verbose_name = 'Interesse por Área'
         verbose_name_plural = 'Interesses por Área'
         unique_together = ('formulario', 'area')
+        permissions = [
+            ("ver_interesses_area","Ver todas as Interesses por Área"),
+            ("editar_interesses_area","Editar todas as Interesses por Área"),
+        ]
     
     def __str__(self):
         return f"{self.area}: {self.nivel}"
@@ -138,6 +162,10 @@ class Palestra(models.Model):
         verbose_name = 'Palestra'
         verbose_name_plural = 'Palestras'
         unique_together = ('imersao', 'titulo')
+        permissions = [
+            ("ver_palestras","Ver todas as Palestras"),
+            ("editar_palestras","Editar todas as Palestras"),
+        ]
     
     def __str__(self):
         return f"{self.titulo} - {self.data.strftime('%d/%m/%Y %H:%M')}"
@@ -164,6 +192,10 @@ class Workshop(models.Model):
         verbose_name = 'Workshop'
         verbose_name_plural = 'Workshops'
         unique_together = ('iteracao', 'titulo')
+        permissions = [
+            ("ver_workshops","Ver todas as Workshops"),
+            ("editar_workshop","Editar todas as Workshops"),
+        ]
 
     
     def __str__(self):
@@ -190,6 +222,10 @@ class InstrutorWorkshop(models.Model):
         verbose_name = 'Instrutor do Workshop'
         verbose_name_plural = 'Instrutores do Workshop'
         unique_together = ('workshop', 'extensionista')
+        permissions = [
+            ("ver_instrutores_workshops","Ver todos os Instrutores do Workshop"),
+            ("editar_instrutores_workshops","Editar todos os Instrutores do Workshop"),
+        ]
         
     def __str__(self):
         return f'{self.workshop.__str__()}'
@@ -207,6 +243,10 @@ class DiaWorkshop(models.Model):
         verbose_name = 'Dia de Workshop'
         verbose_name_plural = 'Dias de Workshop'
         unique_together = ('workshop', 'data')
+        permissions = [
+            ("ver_dias_workshops","Ver todos os Dias de Workshop"),
+            ("editar_dias_workshops","Editar todos os Dias de Workshop"),
+        ]
     
     def __str__(self):
         return f"{self.workshop.titulo} - {self.data.strftime('%d/%m/%Y %H:%M')}"
@@ -231,6 +271,10 @@ class DesafioWorkshop(models.Model):
         managed = True
         verbose_name = 'Desafio do workshop'
         verbose_name_plural = 'Desafios dos workshops'
+        permissions = [
+            ("ver_desafios_workshop","Ver todos os Desafios dos workshops"),
+            ("editar_desafios_workshop","Editar todos os Desafios dos workshops"),
+        ]
         
     def __str__(self):
         return f'Desafiio de {self.participante.__str__()} no Workshop {self.workshop.__str__()}'
@@ -256,6 +300,10 @@ class ParticipantesWorkshop(models.Model):
         verbose_name = 'Participação no Workshop'
         verbose_name_plural = 'Participações no Workshop'
         unique_together = ('participante', 'workshop')
+        permissions = [
+            ("ver_participantes_workshop","Ver todos os Desafios dos workshops"),
+            ("editar_participantes_workshop","Editar todos os Desafios dos workshops"),
+        ]
         
     def __str__(self):
         return f"{self.participante.__str__()} - {self.workshop.__str__()}"
@@ -280,6 +328,10 @@ class ParticipacaoImersao(models.Model):
         verbose_name = 'Participação na Imersão'
         verbose_name_plural = 'Participações na Imersão'
         unique_together = ('participante', 'imersao')
+        permissions = [
+            ("ver_participacoes_imersao","Ver todos os Participações na Imersão"),
+            ("editar_participacoes_imersao","Editar todos os Participações na Imersão"),
+        ]
     
     def __str__(self):
         return f"{self.participante.__str__()} - {self.imersao.__str__()}"
@@ -304,6 +356,10 @@ class PresencaPalestra(models.Model):
         verbose_name = 'Presença na Palestra'
         verbose_name_plural = 'Presenças na Palestra'
         unique_together = ('participante', 'palestra')
+        permissions = [
+            ("ver_presencas_palestras","Ver todos os Presenças na Palestra"),
+            ("editar_presencas_palestras","Editar todos os Presenças na Palestra"),
+        ]
     
     def __str__(self):
         return f"{self.participante.__str__()} - {self.palestra.titulo}"
@@ -328,6 +384,10 @@ class PresencaWorkshop(models.Model):
         verbose_name = 'Presença no Workshop'
         verbose_name_plural = 'Presenças no Workshop'
         unique_together = ('participante', 'dia_workshop')
+        permissions = [
+            ("ver_presencas_workshops","Ver todas as Presenças nos Workshops"),
+            ("editar_presencas_workshops","Editar todas as Presenças nos Workshops"),
+        ]
     
     def __str__(self):
         return f"{self.participante.__str__()} - {self.dia_workshop.workshop.titulo} - {self.dia_workshop.data.strftime('%d/%m/%Y')}"
@@ -365,6 +425,10 @@ class DesempenhoWorkshop(models.Model):
         verbose_name = 'Desempenho no Workshop'
         verbose_name_plural = 'Desempenhos nos Workshops'
         unique_together = ('participante', 'workshop')
+        permissions = [
+            ("ver_desempenhos_workshops","Ver todos os Desempenhos nos Workshops"),
+            ("editar_desempenhos_workshops","Editar todos os Desempenhos nos Workshops"),
+        ]
     
     def __str__(self):
         return f"{self.participante.__str__()} - {self.workshop.titulo} - {self.classificacao}"

@@ -1,0 +1,272 @@
+### Cria Admin
+POST {{url_raiz}}{{url_CREATE_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_admin}}",
+    "nome": "{{admin_nome}}",
+    "username": "{{admin_username}}",
+    "password": "{{admin_password}}"
+}
+
+############################################################
+
+### Cria Participante A
+POST {{url_raiz}}{{url_CREATE_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_participante}}",
+    "nome": "{{participante_A_nome}}",
+    "username": "{{participante_A_username}}",
+    "password": "{{participante_A_password}}",
+    "telefone": "{{participante_A_telefone}}",
+    "cpf": "{{participante_A_cpf}}",
+    "rgm": "{{participante_A_rgm}}",
+    "curso": "{{participante_A_curso}}",
+    "periodo": "{{participante_A_periodo}}"
+}
+
+
+### Cria Participante B
+POST {{url_raiz}}{{url_CREATE_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_participante}}",
+    "nome": "{{participante_B_nome}}",
+    "username": "{{participante_B_username}}",
+    "password": "{{participante_B_password}}",
+    "telefone": "{{participante_B_telefone}}",
+    "cpf": "{{participante_B_cpf}}",
+    "rgm": "{{participante_B_rgm}}",
+    "curso": "{{participante_B_curso}}",
+    "periodo": "{{participante_B_periodo}}"
+}
+
+
+### Cria Participante C
+POST {{url_raiz}}{{url_CREATE_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_participante}}",
+    "nome": "{{participante_C_nome}}",
+    "username": "{{participante_C_username}}",
+    "password": "{{participante_C_password}}",
+    "telefone": "{{participante_C_telefone}}",
+    "cpf": "{{participante_C_cpf}}",
+    "rgm": "{{participante_C_rgm}}",
+    "curso": "{{participante_C_curso}}",
+    "periodo": "{{participante_C_periodo}}"
+}
+
+
+### Cria Participante D
+POST {{url_raiz}}{{url_CREATE_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_participante}}",
+    "nome": "{{participante_D_nome}}",
+    "username": "{{participante_D_username}}",
+    "password": "{{participante_D_password}}",
+    "telefone": "{{participante_D_telefone}}",
+    "cpf": "{{participante_D_cpf}}",
+    "rgm": "{{participante_D_rgm}}",
+    "curso": "{{participante_D_curso}}",
+    "periodo": "{{participante_D_periodo}}"
+}
+
+
+### Cria Participante E
+POST {{url_raiz}}{{url_CREATE_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_participante}}",
+    "nome": "{{participante_E_nome}}",
+    "username": "{{participante_E_username}}",
+    "password": "{{participante_E_password}}",
+    "telefone": "{{participante_E_telefone}}",
+    "cpf": "{{participante_E_cpf}}",
+    "rgm": "{{participante_E_rgm}}",
+    "curso": "{{participante_E_curso}}",
+    "periodo": "{{participante_E_periodo}}"
+}
+
+
+### Cria Participante F
+POST {{url_raiz}}{{url_CREATE_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_participante}}",
+    "nome": "{{participante_F_nome}}",
+    "username": "{{participante_F_username}}",
+    "password": "{{participante_F_password}}",
+    "telefone": "{{participante_F_telefone}}",
+    "cpf": "{{participante_F_cpf}}",
+    "rgm": "{{participante_F_rgm}}",
+    "curso": "{{participante_F_curso}}",
+    "periodo": "{{participante_F_periodo}}"
+}
+
+
+### Cria Participante G
+POST {{url_raiz}}{{url_CREATE_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_participante}}",
+    "nome": "{{participante_G_nome}}",
+    "username": "{{participante_G_username}}",
+    "password": "{{participante_G_password}}",
+    "telefone": "{{participante_G_telefone}}",
+    "cpf": "{{participante_G_cpf}}",
+    "rgm": "{{participante_G_rgm}}",
+    "curso": "{{participante_G_curso}}",
+    "periodo": "{{participante_G_periodo}}"
+}
+
+
+### Cria Participante H
+POST {{url_raiz}}{{url_CREATE_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_participante}}",
+    "nome": "{{participante_H_nome}}",
+    "username": "{{participante_H_username}}",
+    "password": "{{participante_H_password}}",
+    "telefone": "{{participante_H_telefone}}",
+    "cpf": "{{participante_H_cpf}}",
+    "rgm": "{{participante_H_rgm}}",
+    "curso": "{{participante_H_curso}}",
+    "periodo": "{{participante_H_periodo}}"
+}
+
+### Cria Participante I
+POST {{url_raiz}}{{url_CREATE_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_participante}}",
+    "nome": "{{participante_I_nome}}",
+    "username": "{{participante_I_username}}",
+    "password": "{{participante_I_password}}",
+    "telefone": "{{participante_I_telefone}}",
+    "cpf": "{{participante_I_cpf}}",
+    "rgm": "{{participante_I_rgm}}",
+    "curso": "{{participante_I_curso}}",
+    "periodo": "{{participante_I_periodo}}"
+}
+
+
+### Cria Participante J
+POST {{url_raiz}}{{url_CREATE_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_participante}}",
+    "nome": "{{participante_J_nome}}",
+    "username": "{{participante_J_username}}",
+    "password": "{{participante_J_password}}",
+    "telefone": "{{participante_J_telefone}}",
+    "cpf": "{{participante_J_cpf}}",
+    "rgm": "{{participante_J_rgm}}",
+    "curso": "{{participante_J_curso}}",
+    "periodo": "{{participante_J_periodo}}"
+}
+
+##########################################################
+
+### Cria Exceção A
+POST {{url_raiz}}api/usuario/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_excecao}}",
+    "nome": "{{excecao_A_nome}}",
+    "username": "{{excecao_A_username}}",
+    "password": "{{excecao_A_password}}",
+    "telefone": "{{excecao_A_telefone}}",
+    "motivo": "{{excecao_A_motivo}}",
+    "nota": "{{excecao_A_nota}}"
+}
+
+
+### Cria Exceção B
+POST {{url_raiz}}api/usuario/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_excecao}}",
+    "nome": "{{excecao_B_nome}}",
+    "username": "{{excecao_B_username}}",
+    "password": "{{excecao_B_password}}",
+    "telefone": "{{excecao_B_telefone}}",
+    "motivo": "{{excecao_B_motivo}}",
+    "nota": "{{excecao_B_nota}}"
+}
+
+
+### Cria Exceção C
+POST {{url_raiz}}api/usuario/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_excecao}}",
+    "nome": "{{excecao_C_nome}}",
+    "username": "{{excecao_C_username}}",
+    "password": "{{excecao_C_password}}",
+    "telefone": "{{excecao_C_telefone}}",
+    "motivo": "{{excecao_C_motivo}}",
+    "nota": "{{excecao_C_nota}}"
+}
+
+
+### Cria Exceção D
+POST {{url_raiz}}api/usuario/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_excecao}}",
+    "nome": "{{excecao_D_nome}}",
+    "username": "{{excecao_D_username}}",
+    "password": "{{excecao_D_password}}",
+    "telefone": "{{excecao_D_telefone}}",
+    "motivo": "{{excecao_D_motivo}}",
+    "nota": "{{excecao_D_nota}}"
+}
+
+
+### Cria Techleader A
+POST {{url_raiz}}api/usuario/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_techleader}}",
+    "nome": "{{techleader_A_nome}}",
+    "username": "{{techleader_A_username}}",
+    "password": "{{techleader_A_password}}",
+    "telefone": "{{techleader_A_telefone}}",
+    "codigo": "{{techleader_A_codigo}}",
+    "especialidade": "{{techleader_A_especialidade}}"
+}
+
+
+### Cria Techleader B
+POST {{url_raiz}}api/usuario/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "perfil": "{{perfil_techleader}}",
+    "nome": "{{techleader_B_nome}}",
+    "username": "{{techleader_B_username}}",
+    "password": "{{techleader_B_password}}",
+    "telefone": "{{techleader_B_telefone}}",
+    "codigo": "{{techleader_B_codigo}}",
+    "especialidade": "{{techleader_B_especialidade}}"
+}
+

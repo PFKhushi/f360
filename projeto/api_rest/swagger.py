@@ -1,6 +1,6 @@
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from .serializers import ParticipanteSerializer, TechLeaderSerializer, EmpresaSerializer, ExcecaoSerializer, ExtensionistaSerializer, CustomTokenSerializer, AdminCreateSerializer
+from .serializers import ParticipanteSerializer, TechLeaderSerializer, EmpresaSerializer, ExcecaoSerializer, ExtensionistaSerializer, CustomTokenSerializer
 from rest_framework import serializers
 
 # Esquemas de erro de validação
@@ -819,18 +819,18 @@ def login_swagger():
         tags=['Autenticação']
     )
 
-def admin_create_swagger():
-    return swagger_auto_schema(
-        operation_description="Cria um novo usuário administrador. "
-                            "Acesso restrito a superusuários.",
-        request_body=AdminCreateSerializer,
-        responses={
-            201: success_admin_schema,
-            400: openapi.Response('Erro de validação', erro_validacao_schema),
-            409: openapi.Response('Conflito de dados', erro_participante_integridade_schema)
-        },
-        tags=['Administração']
-    )
+# def admin_create_swagger():
+#     return swagger_auto_schema(
+#         operation_description="Cria um novo usuário administrador. "
+#                             "Acesso restrito a superusuários.",
+#         request_body=AdminCreateSerializer,
+#         responses={
+#             201: success_admin_schema,
+#             400: openapi.Response('Erro de validação', erro_validacao_schema),
+#             409: openapi.Response('Conflito de dados', erro_participante_integridade_schema)
+#         },
+#         tags=['Administração']
+#     )
 
 #Swagger UsuarioVS
 
@@ -902,7 +902,7 @@ def retrieve_usuario_perfil_swagger():
         responses={
             200: success_usuario_perfil_schema,
             404: openapi.Response('Não encontrado', oneOf=[
-                erro_nao_encontrado_schema,
+                # erro_nao_encontrado_schema,
                 erro_perfil_nao_encontrado_schema
             ]),
             403: openapi.Response('Erro de permissão', erro_permissao_schema)
@@ -938,7 +938,7 @@ def update_usuario_perfil_swagger():
             200: success_usuario_perfil_schema,
             400: openapi.Response('Erro de validação', erro_validacao_schema),
             404: openapi.Response('Não encontrado', oneOf=[
-                erro_nao_encontrado_schema,
+                # erro_nao_encontrado_schema,
                 erro_perfil_nao_encontrado_schema
             ]),
             403: openapi.Response('Erro de permissão', erro_permissao_schema),
@@ -980,7 +980,7 @@ def partial_update_usuario_perfil_swagger():
             200: success_usuario_perfil_schema,
             400: openapi.Response('Erro de validação', erro_validacao_schema),
             404: openapi.Response('Não encontrado', oneOf=[
-                erro_nao_encontrado_schema,
+                # erro_nao_encontrado_schema,
                 erro_perfil_nao_encontrado_schema
             ]),
             403: openapi.Response('Erro de permissão', erro_permissao_schema),
@@ -1001,7 +1001,7 @@ def delete_usuario_perfil_swagger():
         responses={
             204: "Usuário e perfil excluídos com sucesso",
             404: openapi.Response('Não encontrado', oneOf=[
-                erro_nao_encontrado_schema,
+                # erro_nao_encontrado_schema,
                 erro_perfil_nao_encontrado_schema
             ]),
             403: openapi.Response('Erro de permissão', erro_permissao_schema)
