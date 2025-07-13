@@ -1,0 +1,105 @@
+### Retorna Admin
+GET {{url_raiz}}{{url_CREATE_usuarios}}{{admin_id}}{{url_CRUD_usuarios}} HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_token}}
+
+############################################################
+
+### Retorna Participante A
+GET {{url_raiz}}{{url_CREATE_usuarios}}{{participante_A_id}}{{url_CRUD_usuarios}} HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_token}}
+
+
+### Retorna Participante B
+GET {{url_raiz}}{{url_CREATE_usuarios}}{{participante_B_id}}{{url_CRUD_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+
+### Retorna Participante C
+GET {{url_raiz}}{{url_CREATE_usuarios}}{{participante_C_id}}{{url_CRUD_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+
+### Retorna Participante D
+GET {{url_raiz}}{{url_CREATE_usuarios}}{{participante_D_id}}{{url_CRUD_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+
+### Retorna Participante E
+GET {{url_raiz}}{{url_CREATE_usuarios}}{{participante_E_id}}{{url_CRUD_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+
+### Retorna Participante F
+GET {{url_raiz}}{{url_CREATE_usuarios}}{{participante_F_id}}{{url_CRUD_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+
+### Retorna Participante G
+GET {{url_raiz}}{{url_CREATE_usuarios}}{{participante_G_id}}{{url_CRUD_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+
+### Retorna Participante H
+GET {{url_raiz}}{{url_CREATE_usuarios}}{{participante_H_id}}{{url_CRUD_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+
+### Retorna Participante I
+GET {{url_raiz}}{{url_CREATE_usuarios}}{{participante_I_id}}{{url_CRUD_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+
+### Retorna Participante J
+GET {{url_raiz}}{{url_CREATE_usuarios}}{{participante_J_id}}{{url_CRUD_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+
+##########################################################
+
+### Retorna Exceção A
+GET {{url_raiz}}{{url_CREATE_usuarios}}{{excecao_A_id}}{{url_CRUD_usuarios}} HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_token}}
+
+
+### Retorna Exceção B
+GET {{url_raiz}}{{url_CREATE_usuarios}}{{excecao_B_id}}{{url_CRUD_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+
+### Retorna Exceção C
+GET {{url_raiz}}{{url_CREATE_usuarios}}{{excecao_C_id}}{{url_CRUD_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+
+### Retorna Exceção D
+GET {{url_raiz}}{{url_CREATE_usuarios}}{{excecao_D_id}}{{url_CRUD_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+##################################################################################
+
+### Retorna Techleader A
+GET {{url_raiz}}{{url_CREATE_usuarios}}{{techleader_A_id}}{{url_CRUD_usuarios}} HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_token}}
+
+
+### Retorna Techleader B
+GET {{url_raiz}}{{url_CREATE_usuarios}}{{techleader_B_id}}{{url_CRUD_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+###################################################################################
+
+### Retorna Empresa A
+GET {{url_raiz}}{{url_CREATE_usuarios}}{{empresa_A_id}}{{url_CRUD_usuarios}} HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_token}}
+
+
+### Retorna Empresa B
+GET {{url_raiz}}{{url_CREATE_usuarios}}{{empresa_B_id}}{{url_CRUD_usuarios}} HTTP/1.1
+Content-Type: application/json
+
+

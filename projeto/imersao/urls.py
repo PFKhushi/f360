@@ -1,10 +1,10 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
-from .views import iteracaoViewSet, ImersaoViewSet, TecnologiaViewSet, AreaFabricaViewSet, PalestraViewSet, FormularioInscricaoViewSet, InteresseAreaViewSet, PresencaPalestraViewSet, ParticipacaoImersaoViewSet, WorkshopViewSet, DesempenhoWorkshopViewSet, PresencaWorkshopViewSet, ImersiolnistaViewSet, DiaWorkshopViewSet
+from .views import iteracaoViewSet, ImersaoViewSet, TecnologiaViewSet, AreaFabricaViewSet, PalestraViewSet, FormularioInscricaoViewSet, InteresseAreaViewSet, PresencaPalestraViewSet, ParticipacaoImersaoViewSet, WorkshopViewSet, DesempenhoWorkshopViewSet, PresencaWorkshopViewSet, ImersionistaViewSet, DiaWorkshopViewSet, EmailsParticipantesViewSet, EmailsAdminsViewSet, EmailsFixosViewSet
 
 router = DefaultRouter()
 
-router.register('iteracao', iteracaoViewSet, basename='iteracao')
+router.register(r'iteracao', iteracaoViewSet, basename='iteracao')
 router.register('imersao', ImersaoViewSet, basename='imersao')
 router.register('tecnologia', TecnologiaViewSet, basename='tecnologia')
 router.register('area_fabrica', AreaFabricaViewSet, basename='area_fabrica')
@@ -16,8 +16,11 @@ router.register('participacao_imersao', ParticipacaoImersaoViewSet, basename='pa
 router.register('workshop', WorkshopViewSet, basename='workshop')
 router.register('desempenho_workshop', DesempenhoWorkshopViewSet, basename='desempenho_workshop')
 router.register('presenca_workshop', PresencaWorkshopViewSet, 'presenca_workshop')
-router.register('imersionista', ImersiolnistaViewSet, 'imersionista')
+router.register('imersionista', ImersionistaViewSet, 'imersionista')
 router.register('dia_workshop', DiaWorkshopViewSet, 'dia_workshop')
+router.register('emails_participantes', EmailsParticipantesViewSet, basename='emails_participantes')
+router.register('emails_admins', EmailsAdminsViewSet, basename='emails_admins')
+router.register('emails_membros', EmailsFixosViewSet, basename='emails_membros')
 
 
 

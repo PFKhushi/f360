@@ -48,6 +48,9 @@ INSTALLED_APPS = [
 
     'api_rest',
     'imersao',
+    'projetos',
+    'painel_admin',
+    
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
@@ -87,7 +90,7 @@ ROOT_URLCONF = 'projeto.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -113,9 +116,9 @@ DATABASES = {
     }
 }
 
+DATABASES['default'] = dj_database_url.parse('postgresql://db_f360_biq8_user:IPNb0qGA5p39mEFHRGDrKnjkSvMDcdon@dpg-d1oimb0dl3ps73fgs0tg-a.oregon-postgres.render.com/db_f360_biq8')
 
-# DATABASES['default'] = dj_database_url.parse('postgresql://f360db_user:lwAGXrCZrFuzxCgsnMY2GHGFgBgZIJ9V@dpg-d19044vdiees73acclb0-a.oregon-postgres.render.com/f360db')
-
+# DATABASES['default'] = dj_database_url.parse('postgresql://f360db_igby_user:NE2gHwZDVivyCWJk2xsuTdbNciajFUfJ@dpg-d1m1di2li9vc73clvr50-a.oregon-postgres.render.com/f360db_igby')
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -171,7 +174,9 @@ USE_TZ = True   # Django vai salvar todas as datas em UTC no banco. E vai conver
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

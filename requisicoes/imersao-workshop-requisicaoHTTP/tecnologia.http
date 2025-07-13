@@ -1,21 +1,6 @@
 @url_raiz = http://localhost:8000/
 
 
-
-@nome1A = Python
-@nome1B = Pynton
-@id1 = 1
-@nome2A = Blazor
-@nome2B = Blazer
-@id2 = 2
-@nome3A = Java
-@nome3B = Jarva
-@id3 = 3
-
-@username = admin@exsample.com
-@password = senhaSupesrSegura123
-
-
 ###
 GET {{url_raiz}}{{url_tecnologia}} HTTP/1.1
 Content-Type: application/json

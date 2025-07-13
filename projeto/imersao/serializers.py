@@ -2,8 +2,10 @@ from rest_framework import serializers
 from .models import (
     Iteracao, Imersao, AreaFabrica, Tecnologia, FormularioInscricao, InteresseArea,
     Palestra, Workshop, DesafioWorkshop, DiaWorkshop, ParticipacaoImersao, PresencaPalestra,
-    PresencaWorkshop, DesempenhoWorkshop, InstrutorWorkshop, ParticipantesWorkshop
+    PresencaWorkshop, DesempenhoWorkshop, InstrutorWorkshop, ParticipantesWorkshop, EmailsFixos, EmailsParticipantes, EmailsAdmins
 )
+
+from rest_framework.exceptions import MethodNotAllowed
 from api_rest.serializers import ParticipanteSerializer, ExtensionistaSerializer
 from api_rest.models import Participante, Extensionista, Usuario
 from rest_framework.response import Response
@@ -35,7 +37,185 @@ class IteracaoSerializer(serializers.ModelSerializer):
             self.desativar_outras_iteracoes()
         return super().update(instance, validated_data)
 
+class EmailsFixosReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EmailsFixos
+        fields = ['id', 'email']
+        
+        
+class EmailsAdminsReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EmailsAdmins
+        fields = ['id', 'email']
 
+class EmailsParticipantesReadSerializer(serializers.ModelSerializer):
+    iteracao = serializers.StringRelatedField()
+    class Meta:
+        model = EmailsParticipantes
+        fields = ['id', 'email', 'iteracao']
+        
+class EmailsFixosBulkSerializer(serializers.Serializer):
+    emails = serializers.ListField(child=serializers.EmailField(), required=True, allow_empty=False)
+
+    def validate(self, data):
+        emails_input = set(data['emails'])
+        if len(emails_input) != len(data['emails']):
+            raise serializers.ValidationError("A lista enviada contém e-mails duplicados.")
+
+        existing_emails = set(EmailsFixos.objects.filter(email__in=emails_input).values_list('email', flat=True))
+        
+        self.rejeitados = [{"email": email, "erro": "Email já existe."} for email in existing_emails]
+        
+        data['emails'] = list(emails_input - existing_emails)
+        return data
+
+    def create(self, validated_data):
+        emails_to_create = validated_data.get('emails', [])
+        
+        criados_objs = [EmailsFixos(email=email) for email in emails_to_create]
+        if criados_objs:
+            EmailsFixos.objects.bulk_create(criados_objs)
+
+        criados_report = [{"email": email} for email in emails_to_create]
+        return {"criados": criados_report, "rejeitados": getattr(self, 'rejeitados', [])}
+
+    def update(self, instance, validated_data):
+        raise MethodNotAllowed('Esta ação não é permitida.')
+
+
+class EmailsAdminsBulkSerializer(serializers.Serializer):
+    emails = serializers.ListField(child=serializers.EmailField(), required=True, allow_empty=False)
+
+    def validate(self, data):
+        emails_input = set(data['emails'])
+        if len(emails_input) != len(data['emails']):
+            raise serializers.ValidationError("A lista enviada contém e-mails duplicados.")
+            
+        existing_emails = set(EmailsAdmins.objects.filter(email__in=emails_input).values_list('email', flat=True))
+        
+        self.rejeitados = [{"email": email, "erro": "Email já existe."} for email in existing_emails]
+        data['emails'] = list(emails_input - existing_emails)
+        return data
+
+    def create(self, validated_data):
+        emails_to_create = validated_data.get('emails', [])
+        criados_objs = [EmailsAdmins(email=email) for email in emails_to_create]
+        if criados_objs:
+            EmailsAdmins.objects.bulk_create(criados_objs)
+            
+        criados_report = [{"email": email} for email in emails_to_create]
+        return {"criados": criados_report, "rejeitados": getattr(self, 'rejeitados', [])}
+
+    def update(self, instance, validated_data):
+        raise MethodNotAllowed('Esta ação não é permitida.')
+
+
+
+class EmailsParticipantesBulkSerializer(serializers.Serializer):
+    emails = serializers.ListField(child=serializers.EmailField(), required=True, allow_empty=False)
+    iteracao = serializers.PrimaryKeyRelatedField(queryset=Iteracao.objects.all(), required=False, allow_null=True)
+
+    def validate(self, data):
+        iteracao_obj = data.get('iteracao')
+        if not iteracao_obj:
+            iteracao_obj = Iteracao.objects.filter(ativa=True).first()
+            if not iteracao_obj:
+                self.rejeitados = [{"erro": "Nenhuma iteração foi fornecida ou encontrada."}]
+                data['emails'] = []
+                data['iteracao'] = None
+                return data
+            data['iteracao'] = iteracao_obj
+
+        emails_input = data['emails']
+        emails_set = set(emails_input)
+
+        self.rejeitados = []
+        if len(emails_set) != len(emails_input):
+            self.rejeitados += [
+                {"email": email, "erro": "Email duplicado na lista enviada."}
+                for email in emails_input
+                if emails_input.count(email) > 1
+            ]
+
+        existing_emails = set(
+            EmailsParticipantes.objects.filter(
+                iteracao=data['iteracao'],
+                email__in=emails_set
+            ).values_list('email', flat=True)
+        )
+
+        self.rejeitados += [{"email": email, "erro": "Email já existe nesta iteração."} for email in existing_emails]
+
+        data['emails'] = list(emails_set - existing_emails)
+        return data
+
+    def create(self, validated_data):
+        iteracao_obj = validated_data.get('iteracao')
+        emails_to_create = validated_data.get('emails', [])
+
+        criados_objs = [EmailsParticipantes(email=email, iteracao=iteracao_obj) for email in emails_to_create]
+        if criados_objs:
+            EmailsParticipantes.objects.bulk_create(criados_objs)
+        imersao = f'{iteracao_obj}'
+        criados_report = [{"email": email, "imersao": imersao} for email in emails_to_create]
+        return {"criados": criados_report, "rejeitados": getattr(self, 'rejeitados', [])}
+
+    def update(self, instance, validated_data):
+        raise MethodNotAllowed("Esta ação não é permitida.")
+    
+    
+class EmailsFixosDeleteSerializer(serializers.Serializer):
+    emails = serializers.ListField(
+        child=serializers.EmailField(),
+        help_text="Uma lista de e-mails a serem apagados."
+    )
+
+    def validate_emails(self, emails_list):
+        if not emails_list:
+            raise serializers.ValidationError("A lista de e-mails não pode estar vazia.")
+        return emails_list
+    
+class EmailsAdminsDeleteSerializer(serializers.Serializer):
+    emails = serializers.ListField(
+        child=serializers.EmailField(),
+        help_text="Uma lista de e-mails a serem apagados."
+    )
+
+    def validate_emails(self, emails_list):
+        if not emails_list:
+            raise serializers.ValidationError("A lista de e-mails não pode estar vazia.")
+        return emails_list
+    
+class EmailsParticipantesDeleteSerializer(serializers.Serializer):
+    emails = serializers.ListField(
+        child=serializers.EmailField(),
+        help_text="Uma lista de e-mails a serem apagados."
+    )
+    iteracao = serializers.PrimaryKeyRelatedField(
+        queryset=Iteracao.objects.all(),
+        required=False,
+        allow_null=True,
+        help_text="ID da iteração. Se nulo, usa a iteração ativa."
+    )
+
+    def validate(self, data):
+        iteracao_obj = data.get('iteracao')
+
+        if not iteracao_obj:
+            iteracao_obj = Iteracao.objects.filter(ativa=True).first()
+            if not iteracao_obj:
+                raise serializers.ValidationError({
+                    "iteracao": "Nenhuma iteração fornecida e não há iteração ativa."
+                })
+
+        if not data.get('emails'):
+            raise serializers.ValidationError({"emails": "A lista de e-mails não pode estar vazia."})
+
+        data['iteracao'] = iteracao_obj
+        return data
+    
+    
+        
 class ImersaoSerializer(serializers.ModelSerializer):
     
     iteracao = serializers.PrimaryKeyRelatedField(
@@ -43,18 +223,38 @@ class ImersaoSerializer(serializers.ModelSerializer):
         required=False,
         allow_null=True,
     )
+    usuario_inscricao = serializers.SerializerMethodField()
     iteracao_nome = serializers.ReadOnlyField(source='iteracao.__str__')
     ano = serializers.IntegerField(write_only=True, required=False)
     semestre = serializers.IntegerField(write_only=True, required=False)
+    imersao_ativa = serializers.SerializerMethodField()
     
     class Meta:
         model = Imersao
-        fields = ['id', 'iteracao', 'iteracao_nome', 'ano', 'semestre']
-        read_only_fields = ['iteracao_nome']
+        fields = ['id', 'iteracao', 'iteracao_nome','usuario_inscricao', 'imersao_ativa',  'ano', 'semestre']
+        read_only_fields = ['iteracao_nome', 'usuario_inscricao', 'imersao_ativa']
         extra_kwargs = {
             'iteracao': {'write_only': True} 
         }
         
+    def get_usuario_inscricao(self, obj):
+        user = self.context['request'].user
+        try:
+            return FormularioInscricao.objects.filter(participante=user.participante, imersao=obj).exists()
+        except:
+            return None
+    def desativar_outras_iteracoes(self):
+        iteracao_ativa = Iteracao.objects.filter(ativa=True)
+        if iteracao_ativa:
+            for iteracao in iteracao_ativa:
+                iteracao.ativa = False
+                iteracao.save()
+    
+    def get_imersao_ativa(self, obj):
+        return obj.iteracao.ativa
+    
+    def get_nome_imersao(self, obj):
+        return obj.__str__()
         
     def validate_iteracao(self, value):
         if not value.ativa:
@@ -81,8 +281,8 @@ class ImersaoSerializer(serializers.ModelSerializer):
             qs = Iteracao.objects.filter(ano=ano, semestre=semestre)
             if qs.exists():
                 iter_existente = qs.first()
-                if not iter_existente.ativa:
-                    raise serializers.ValidationError({"iteracao": "A iteração encontrada não está ativa."})
+                # if not iter_existente.ativa:
+                #     raise serializers.ValidationError({"iteracao": "A iteração encontrada não está ativa."})
                 if not is_update or self.instance.iteracao != iter_existente:
                     if Imersao.objects.filter(iteracao=iter_existente).exclude(id=getattr(self.instance, 'id', None)).exists():
                         raise serializers.ValidationError({"iteracao": "Já existe uma imersão vinculada a essa iteração."})
@@ -98,7 +298,9 @@ class ImersaoSerializer(serializers.ModelSerializer):
         iteracao_obj = validated_data.get('iteracao')
 
         if ano is not None and semestre is not None:
+            self.desativar_outras_iteracoes()
             iteracao_obj, _ = Iteracao.objects.get_or_create(ano=ano, semestre=semestre, defaults={'ativa': True})
+            
             if iteracao_obj.ativa is False:
                 iteracao_obj.ativa = True
                 iteracao_obj.save()
@@ -112,6 +314,7 @@ class ImersaoSerializer(serializers.ModelSerializer):
         iteracao_obj = validated_data.get('iteracao')
 
         if ano is not None and semestre is not None:
+            self.desativar_outras_iteracoes()
             iteracao_obj, _ = Iteracao.objects.get_or_create(ano=ano, semestre=semestre, defaults={'ativa': True})
             if iteracao_obj.ativa is False:
                 iteracao_obj.ativa = True
@@ -123,6 +326,24 @@ class ImersaoSerializer(serializers.ModelSerializer):
 
         return instance
     
+class ImersaoViewParticipanteSerializer(serializers.ModelSerializer):
+    nome_imersao = serializers.SerializerMethodField()
+    usuario_inscricao = serializers.SerializerMethodField()
+    imersao_ativa = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Imersao
+        fields = ['id', 'nome_imersao', 'usuario_inscricao', 'imersao_ativa']
+
+    def get_nome_imersao(self, obj):
+        return obj.__str__()
+
+    def get_usuario_inscricao(self, obj):
+        user = self.context['request'].user
+        return FormularioInscricao.objects.filter(participante=user.participante, imersao=obj).exists()
+
+    def get_imersao_ativa(self, obj):
+        return obj.iteracao.ativa
 
 class AreaFabricaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -436,6 +657,7 @@ class WorkshopDetailSerializer(serializers.ModelSerializer): # queryset = Worksh
     
     def get_instrutores(self, obj):
         instrutores = obj.instrutores_workshop.all()
+        # print(instrutores)
         return [
             {
                 "extensionista_id": instrutor.extensionista.id,
@@ -486,6 +708,7 @@ class PresencaPalestraSerializer(serializers.ModelSerializer): # queryset = Pres
         fields = ['id', 'participante', 'participante_nome', 'palestra', 
                 'palestra_titulo', 'data_participacao']
 
+
 class PresencaWorkshopBulkCreateSerializer(serializers.Serializer):
     usuario_ids = serializers.ListField(
         child=serializers.IntegerField(), allow_empty=False
@@ -493,22 +716,35 @@ class PresencaWorkshopBulkCreateSerializer(serializers.Serializer):
     dia_workshop = serializers.PrimaryKeyRelatedField(queryset=DiaWorkshop.objects.all())
 
     def validate(self, data):
-        dia = data['dia_workshop']
+        dia_workshop_obj = data['dia_workshop']
         usuario_ids = data['usuario_ids']
 
         participantes = Participante.objects.filter(usuario_id__in=usuario_ids).select_related('usuario')
+        
+        participantes_encontrados_ids = {p.usuario.id: p for p in participantes}
 
         participantes_validos = []
         erros = []
 
-        for participante in participantes:
-            if participante.workshops.filter(pk=dia.workshop_id).exists():
+        for usuario_id in usuario_ids:
+            if usuario_id not in participantes_encontrados_ids:
+                erros.append(f"Usuário com ID {usuario_id} não encontrado ou não é um participante.")
+                continue
+
+            participante = participantes_encontrados_ids[usuario_id]
+            
+            is_inscrito = ParticipantesWorkshop.objects.filter(
+                participante=participante, 
+                workshop=dia_workshop_obj.workshop
+            ).exists()
+
+            if is_inscrito:
                 participantes_validos.append(participante)
             else:
-                erros.append(f"Usuário {participante.usuario_id} não é participante do workshop {dia.workshop_id}.")
+                erros.append(f"Participante '{participante.usuario.nome}' (ID: {usuario_id}) não está inscrito no workshop '{dia_workshop_obj.workshop.titulo}'.")
 
         if not participantes_validos:
-            raise serializers.ValidationError("Nenhum usuário fornecido está vinculado ao workshop.")
+            raise serializers.ValidationError("Nenhum dos usuários fornecidos é um participante válido para este workshop.")
 
         data['participantes_validos'] = participantes_validos
         data['erros'] = erros
@@ -527,6 +763,9 @@ class PresencaWorkshopBulkCreateSerializer(serializers.Serializer):
             presencas.append(presenca)
 
         return presencas
+    
+    def update(self, instance, validated_data):
+        raise MethodNotAllowed('Esta ação não é permitida.')
 
 class PresencaWorkshopSerializer(serializers.ModelSerializer):
     usuario_id = serializers.IntegerField(write_only=True, required=True)
@@ -696,7 +935,7 @@ class WorkshopCreateUpdateSerializer(serializers.ModelSerializer):
         validators = []
     def get_instrutores_info(self, obj):
         resultado = []
-        print('instrutores',obj.instrutores_workshop.all())
+        # print('instrutores',obj.instrutores_workshop.all())
         for instrutor in obj.instrutores_workshop.all():
             ext = instrutor.extensionista
             usuario = None
@@ -748,16 +987,16 @@ class WorkshopCreateUpdateSerializer(serializers.ModelSerializer):
     def _get_extensionista_from_usuario_id(self, usuario_id):
         try:
             usuario = Usuario.objects.get(pk=usuario_id)
-            print("usuario: ", usuario)
+            # print("usuario: ", usuario)
             participante = getattr(usuario, 'participante', None)
-            print("participante:", participante)
+            # print("participante:", participante)
             excecao = getattr(usuario, 'excecao', None)
-            print("excecao",excecao)
+            # print("excecao",excecao)
             if participante:
-                print("participante!")
+                # print("participante!")
                 return Extensionista.objects.filter(participante=participante).first()
             if excecao:
-                print("excecao!")
+                # print("excecao!")
                 return Extensionista.objects.filter(excecao=excecao).first()
         except Usuario.DoesNotExist:
             return None
@@ -777,41 +1016,41 @@ class WorkshopCreateUpdateSerializer(serializers.ModelSerializer):
         
         workshop = Workshop.objects.create(**validated_data)
         try:
-            print("ok1")
+            # print("ok1")
             for usuario_id in instrutores_data:
-                print("ok1 -", usuario_id)
+                # print("ok1 -", usuario_id)
                 extensionista = self._get_extensionista_from_usuario_id(usuario_id)
-                print(extensionista)
+                # print(extensionista)
                 if extensionista:
                     tmp = InstrutorWorkshop.objects.create(
                         workshop=workshop,
                         extensionista=extensionista
                     )
-                    print(1,tmp)
+                    # print(1,tmp)
 
             for usuario_id in participantes_data:
-                print("ok2")
+                # print("ok2")
                 participante = self._get_participante_from_usuario_id(usuario_id)
                 if participante:
                     tmp = ParticipantesWorkshop.objects.create(
                         workshop=workshop,
                         participante=participante
                     )
-                    print(2, tmp)
+                    # print(2, tmp)
 
             for data in dias_workshop_data:
-                print("ok3")
+                # print("ok3")
                 tmp = DiaWorkshop.objects.create(
                     workshop=workshop,
                     data=data
                 )
-                print(3,tmp)
+                # print(3,tmp)
                 
         except Exception as e:
-            print("ERRO NO CREATE:", e)
+            # print("ERRO NO CREATE:", e)
             workshop.delete() 
             raise 
-        print(workshop)
+        # print(workshop)
         
         return workshop
 

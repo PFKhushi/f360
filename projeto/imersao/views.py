@@ -1,7 +1,8 @@
 from rest_framework import generics, permissions, status, viewsets, serializers
 from rest_framework.response import Response 
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.exceptions import NotFound, APIException, PermissionDenied, NotAuthenticated
+from rest_framework.exceptions import NotFound, APIException, PermissionDenied, NotAuthenticated, MethodNotAllowed
+from rest_framework.decorators import action
 
 from django.contrib.auth import authenticate
 from django.shortcuts import get_object_or_404
@@ -13,14 +14,14 @@ from .permissions import PodeCRUDDesempenho
 
 
 from api_rest.models import Participante, Excecao, Extensionista
-from imersao.models import Iteracao, Imersao, AreaFabrica, Tecnologia, InteresseArea, FormularioInscricao, Palestra, DiaWorkshop, Workshop, ParticipacaoImersao, PresencaPalestra, PresencaWorkshop, DesempenhoWorkshop, InstrutorWorkshop, ParticipantesWorkshop
+from imersao.models import Iteracao, Imersao, AreaFabrica, Tecnologia, InteresseArea, FormularioInscricao, Palestra, DiaWorkshop, Workshop, ParticipacaoImersao, PresencaPalestra, PresencaWorkshop, DesempenhoWorkshop, InstrutorWorkshop, ParticipantesWorkshop, EmailsFixos, EmailsAdmins, EmailsParticipantes
 from imersao.serializers import (IteracaoSerializer, ImersaoSerializer, AreaFabricaSerializer, 
 TecnologiaSerializer, InteresseAreaSerializer, FormularioInscricaoListSerializer,
 FormularioInscricaoDetailSerializer, FormularioInscricaoCreateUpdateSerializer, 
 PalestraSerializer, DiaWorkshopSerializer, WorkshopListSerializer, WorkshopDetailSerializer, WorkshopCreateUpdateSerializer, InstrutorWorkshopSerializer,
-ParticipacaoImersaoSerializer, PresencaPalestraSerializer, PresencaWorkshopSerializer, PresencaWorkshopDetailSerializer, PresencaWorkshopListSerializer,
+ParticipacaoImersaoSerializer, PresencaPalestraSerializer, PresencaWorkshopSerializer, PresencaWorkshopDetailSerializer, PresencaWorkshopListSerializer, PresencaWorkshopBulkCreateSerializer,
 DesempenhoWorkshopSerializer, FormularioInscricaoPorImersaoSerializer, ParticipanteDesempenhoSerializer,
-EstatisticasImersaoSerializer)
+EstatisticasImersaoSerializer, EmailsAdminsReadSerializer, EmailsFixosReadSerializer, EmailsParticipantesReadSerializer, EmailsFixosBulkSerializer, EmailsAdminsBulkSerializer, EmailsParticipantesBulkSerializer, EmailsFixosDeleteSerializer, EmailsAdminsDeleteSerializer, EmailsParticipantesDeleteSerializer)
 
 import logging
 
@@ -49,28 +50,28 @@ class ErrorHandlingMixin():
         )
 
         if isinstance(exc, serializers.ValidationError):
-            print('\n\nValidationError\n\n')
+            # print('\n\nValidationError\n\n')
             return self._handle_validation_error(exc)
         elif isinstance(exc, ValidationError):  
-            print('\n\nValidationError\n\n')
+            # print('\n\nValidationError\n\n')
             return self._handle_django_validation_error(exc)
         elif isinstance(exc, IntegrityError):
-            print('\n\nIntegrityError\n\n')
+            # print('\n\nIntegrityError\n\n')
             return self._handle_integrity_error(exc)
         elif isinstance(exc, PermissionDenied):
-            print('\n\nPermissionDenied\n\n')
+            # print('\n\nPermissionDenied\n\n')
             return self._handle_permission_error(exc)
         elif isinstance(exc, (Http404, NotFound)):
-            print('\n\nNotFound\n\n')
+            # print('\n\nNotFound\n\n')
             return self._handle_not_found_error(exc)  
         elif isinstance(exc, NotAuthenticated):
-            print('\n\nNotAuthenticated\n\n')
+            # print('\n\nNotAuthenticated\n\n')
             return self._handle_authentication_error(exc)
         elif isinstance(exc, APIException):
-            print('\n\nAPIException\n\n')
+            # print('\n\nAPIException\n\n')
             return self._handle_api_exception(exc)
         else:
-            print('\n\nelse\n\n')
+            # print('\n\nelse\n\n')
             return self._handle_unexpected_error(exc)
         
     def _flatten_error_messages(self, detail):
@@ -172,7 +173,7 @@ class ErrorHandlingMixin():
 def _handle_serialization(context, instance, data=None, partial=False):
     
     serializer = context.get_serializer(instance, data=data, partial=partial)
-    print(f"\n\ninstance: {instance}\ndata: {data}\n\n")
+    # print(f"\n\ninstance: {instance}\ndata: {data}\n\n")
     try:
         serializer.is_valid(raise_exception=True)
         instance = serializer.save()
@@ -180,13 +181,13 @@ def _handle_serialization(context, instance, data=None, partial=False):
         try:
             result = serializer.data  # Isso pode disparar erro
         except Exception as e:
-            print(">>> ERRO AO SERIALIZAR DADOS:", e)
+            # print(">>> ERRO AO SERIALIZAR DADOS:", e)
             raise
 
-        print(">>> SALVO COM SUCESSO:", instance)
+        # print(">>> SALVO COM SUCESSO:", instance)
         return Response(resposta_json(sucesso=True, resultado=result))
     except Exception as exc:
-        print(">>> EXCEÇÃO GERAL:", exc)
+        # print(">>> EXCEÇÃO GERAL:", exc)
         return context.handle_exception(exc)
 
 def _get_entidade(entidade, pk, nome_entidade):
@@ -226,7 +227,7 @@ class BaseEntidadeViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         objeto = _get_entidade(self.entidade, kwargs['pk'], self.nome_entidade)
         objeto.delete()
-        return Response(resposta_json(sucesso=True, resultado=f'{self.nome_entidade} apagada com sucesso'), status=status.HTTP_204_NO_CONTENT)
+        return Response(resposta_json(sucesso=True, resultado=f'{self.nome_entidade} apagada com sucesso')) 
 
 class iteracaoViewSet(ErrorHandlingMixin, BaseEntidadeViewSet, viewsets.ModelViewSet):
     queryset = Iteracao.objects.all()
@@ -264,6 +265,159 @@ class ImersaoViewSet(ErrorHandlingMixin, BaseEntidadeViewSet, viewsets.ModelView
             permission_classes = [permissions.IsAuthenticated]
         return [perm() for perm in permission_classes]
         return [permissions.AllowAny()] #############retirar depois###############
+    
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_staff or user.has_perm('imersao.ver_imersoes'):
+            return Imersao.objects.all()
+        
+        imersoes_usuario = Imersao.objects.filter(formularios_imersao__participante=user.participante)
+    
+        imersao_ativa = Imersao.objects.filter(iteracao__ativa=True)
+        return (imersoes_usuario | imersao_ativa).distinct()
+        
+        
+    
+    
+class EmailsParticipantesViewSet(viewsets.ModelViewSet):
+
+    queryset = EmailsParticipantes.objects.select_related('iteracao').all()
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    # permission_classes = [permissions.AllowAny]
+
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return EmailsParticipantesBulkSerializer
+        return EmailsParticipantesReadSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data) 
+        serializer.is_valid(raise_exception=True)
+        result = serializer.save()
+        return Response(resposta_json(sucesso=True, resultado=result), status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        raise MethodNotAllowed("PUT")
+
+    def partial_update(self, request, *args, **kwargs):
+        raise MethodNotAllowed("PATCH")
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(resposta_json(sucesso=True, resultado=serializer.data))
+    
+
+    @action(detail=False, methods=['post'], url_path='delete_bulk')
+    def delete_bulk(self, request, *args, **kwargs):
+        serializer = EmailsParticipantesDeleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        emails_list = serializer.validated_data['emails']
+        iteracao = serializer.validated_data.get('iteracao')
+
+        if iteracao:
+            queryset = EmailsParticipantes.objects.filter(iteracao=iteracao, email__in=emails_list)
+        else:
+            queryset = EmailsParticipantes.objects.filter(email__in=emails_list)
+
+        found_emails = set(queryset.values_list('email', flat=True))
+        queryset.delete()
+
+        removidos = [{"email": email, "status": "removido"} for email in found_emails]
+        falhas = [{"email": email, "erro": "Email não encontrado"} for email in set(emails_list) - found_emails]
+
+        return Response(resposta_json(sucesso=True, resultado={"removidos": removidos, "falhas": falhas}))
+
+
+class EmailsFixosViewSet(viewsets.ModelViewSet):
+
+    queryset = EmailsFixos.objects.all()
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    # permission_classes = [permissions.AllowAny]
+
+    
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return EmailsFixosBulkSerializer
+        return EmailsFixosReadSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        result = serializer.save()
+        return Response(resposta_json(sucesso=True, resultado=result), status=status.HTTP_201_CREATED)
+    
+    def update(self, request, *args, **kwargs):
+        raise MethodNotAllowed("PUT")
+
+    def partial_update(self, request, *args, **kwargs):
+        raise MethodNotAllowed("PATCH")
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(resposta_json(sucesso=True, resultado=serializer.data))
+    
+    @action(detail=False, methods=['post'], url_path='delete_bulk')
+    def delete_bulk(self, request, *args, **kwargs):
+        serializer = EmailsFixosDeleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        emails_list = serializer.validated_data['emails']
+        queryset = EmailsFixos.objects.filter(email__in=emails_list)
+        found_emails = set(queryset.values_list('email', flat=True))
+        queryset.delete()
+
+        removidos = [{"email": email, "status": "removido"} for email in found_emails]
+        falhas = [{"email": email, "erro": "Email fixo não encontrado"} for email in set(emails_list) - found_emails]
+
+        return Response(resposta_json(sucesso=True, resultado={"removidos": removidos, "falhas": falhas}))
+    
+class EmailsAdminsViewSet(viewsets.ModelViewSet):
+
+    queryset = EmailsAdmins.objects.all()
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    # permission_classes = [permissions.AllowAny]
+    
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return EmailsAdminsBulkSerializer
+        return EmailsAdminsReadSerializer
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        result = serializer.save()
+        return Response(resposta_json(sucesso=True, resultado=result), status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        raise MethodNotAllowed("PUT")
+
+    def partial_update(self, request, *args, **kwargs):
+        raise MethodNotAllowed("PATCH")
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(resposta_json(sucesso=True, resultado=serializer.data))
+    
+
+    @action(detail=False, methods=['post'], url_path='delete_bulk')
+    def delete_bulk(self, request, *args, **kwargs):
+        serializer = EmailsAdminsDeleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        emails_list = serializer.validated_data['emails']
+        queryset = EmailsAdmins.objects.filter(email__in=emails_list)
+        found_emails = set(queryset.values_list('email', flat=True))
+        queryset.delete()
+
+        removidos = [{"email": email, "status": "removido"} for email in found_emails]
+        falhas = [{"email": email, "erro": "Email admin não encontrado"} for email in set(emails_list) - found_emails]
+
+        return Response(resposta_json(sucesso=True, resultado={"removidos": removidos, "falhas": falhas}))
     
     
 class AreaFabricaViewSet(ErrorHandlingMixin, BaseEntidadeViewSet, viewsets.ModelViewSet):
@@ -322,6 +476,14 @@ class PalestraViewSet(ErrorHandlingMixin, BaseEntidadeViewSet, viewsets.ModelVie
             permission_classes = [permissions.IsAuthenticated]
         return [perm() for perm in permission_classes]
         return [permissions.AllowAny()] #############retirar depois###############
+    
+    def get_queryset(self):
+
+        queryset = Palestra.objects.all()
+        imersao_id = self.request.query_params.get('imersao_id')
+        if imersao_id is not None:
+            queryset = queryset.filter(imersao__id=imersao_id)
+        return queryset
 
 
 class FormularioInscricaoViewSet(ErrorHandlingMixin, BaseEntidadeViewSet, viewsets.ModelViewSet):
@@ -362,7 +524,7 @@ class FormularioInscricaoViewSet(ErrorHandlingMixin, BaseEntidadeViewSet, viewse
             return FormularioInscricaoCreateUpdateSerializer
         
     def perform_create(self, serializer):
-        print("Usuário autenticado:", self.request.user)
+        # print("Usuário autenticado:", self.request.user)
         serializer.save()
 
 class InteresseAreaViewSet(ErrorHandlingMixin, BaseEntidadeViewSet, viewsets.ModelViewSet):
@@ -499,24 +661,30 @@ class PresencaWorkshopViewSet(ErrorHandlingMixin, BaseEntidadeViewSet, viewsets.
     queryset = PresencaWorkshop.objects.all()
     entidade = PresencaWorkshop
     nome_entidade = 'PresencaWorkshop'
-    serializer_class = PresencaWorkshopSerializer
+    # serializer_class = PresencaWorkshopSerializer
     
     def get_permissions(self):
         # define regras de acesso p/ cada acao
-        if self.action == 'create':
-            permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
-        elif self.action in ['update', 'partial_update', 'destroy']:
+        if self.action == ['create']:
+            permission_classes = [permissions.IsAuthenticated]
+        elif self.action in ['update', 'partial_update']:
+            permission_classes = [permissions.IsAuthenticated, PodeCRUDDesempenho]
+        elif self.action == 'destroy':
             permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
         else:
             permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
         return [perm() for perm in permission_classes]
     
     def get_serializer_class(self):
+        # A sua lógica original para trocar de serializer
         if self.action == 'list':
             return PresencaWorkshopListSerializer
         elif self.action == 'retrieve':
             return PresencaWorkshopDetailSerializer
-        else:  # create, update, partial_update, destroy
+        # Adicionamos a verificação para a nova ação
+        elif self.action == 'bulk_create':
+            return PresencaWorkshopBulkCreateSerializer
+        else:
             return PresencaWorkshopSerializer
         
     
@@ -524,8 +692,68 @@ class PresencaWorkshopViewSet(ErrorHandlingMixin, BaseEntidadeViewSet, viewsets.
         user = self.request.user
         if user.is_staff or user.has_perm('imersao.ver_presencas_workshops'):
             return PresencaWorkshop.objects.all()
+        instrutores = []
+
+        try:
+            instrutores.append(user.participante.extensionista.instrutor)
+        except AttributeError:
+            pass
+
+        try:
+            instrutores.append(user.excecao.extensionista.instrutor)
+        except AttributeError:
+            pass
+        
+        if instrutores:
+            return PresencaWorkshop.objects.filter(workshop__instrutor__in=instrutores, workshop__iteracao__ativa=True)
         return PresencaWorkshop.objects.none()
         # return ParticipacaoImersao.objects.all()
+        
+    def perform_create(self, serializer):
+        user = self.request.user
+
+        if user.is_staff:
+            serializer.save()
+            return
+
+        workshop = serializer.validated_data.get('workshop')
+
+        instrutores_autorizados = []
+
+        try:
+            instrutores_autorizados.append(user.participante.extensionista.instrutor)
+        except AttributeError:
+            pass
+
+        try:
+            instrutores_autorizados.append(user.excecao.extensionista.instrutor)
+        except AttributeError:
+            pass
+
+        if workshop.instrutor not in instrutores_autorizados:
+            raise PermissionDenied("Você não é instrutor deste workshop.")
+
+        serializer.save()
+        
+    @action(detail=False, methods=['post'], url_path='bulk_create')
+    def bulk_create(self, request, *args, **kwargs):
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        presencas_criadas = serializer.save()
+        
+        erros_de_validacao = serializer.validated_data.get('erros', [])
+
+        sucessos_serializer = PresencaWorkshopDetailSerializer(presencas_criadas, many=True)
+
+        resultado = {
+            "presencas_registadas": sucessos_serializer.data,
+            "falhas": [{"detalhe": erro} for erro in erros_de_validacao]
+        }
+        
+        return Response(resposta_json(sucesso=True, resultado=resultado), status=status.HTTP_201_CREATED)
+    
     
 class DesempenhoWorkshopViewSet(ErrorHandlingMixin, BaseEntidadeViewSet, viewsets.ModelViewSet):
     
@@ -663,11 +891,11 @@ class WorkshopViewSet(ErrorHandlingMixin, BaseEntidadeViewSet, viewsets.ModelVie
             return WorkshopCreateUpdateSerializer
         
     def perform_create(self, serializer):
-        print("Usuário autenticado:", self.request.user)
+        # print("Usuário autenticado:", self.request.user)
         serializer.save()
         
     
-class InstrutorViewSet(viewsets.ModelViewSet):
+class InstrutorViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
     serializer_class = InstrutorWorkshopSerializer
     
     def get_permissions(self):
@@ -689,7 +917,7 @@ class InstrutorViewSet(viewsets.ModelViewSet):
         
 
 
-class ImersiolnistaViewSet(ErrorHandlingMixin, viewsets.ViewSet):
+class ImersionistaViewSet(ErrorHandlingMixin, viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
     # permission_classes = [permissions.AllowAny]
 
@@ -706,14 +934,20 @@ class ImersiolnistaViewSet(ErrorHandlingMixin, viewsets.ViewSet):
             ).first()
             
             em_workshop = ParticipantesWorkshop.objects.filter(participante=p).exists()
-
+            preencheu_iteracao_ativa = (
+                formulario is not None and
+                formulario.imersao and
+                formulario.imersao.iteracao and
+                formulario.imersao.iteracao.ativa
+            )
             resultado.append({
                 'id': usuario.id,
                 'nome': usuario.nome,
                 'tipo': 'participante',
                 'primeira_opcao': getattr(formulario.primeira_opcao, 'nome', None) if formulario else None,
                 'segunda_opcao': getattr(formulario.segunda_opcao, 'nome', None) if formulario else None,
-                'em_workshop': em_workshop
+                'em_workshop': em_workshop,
+                'usuario_inscrito:': preencheu_iteracao_ativa
             })
 
         excecoes_extensionistas_ids = Extensionista.objects.exclude(excecao=None).values_list('excecao_id', flat=True)
@@ -729,10 +963,11 @@ class ImersiolnistaViewSet(ErrorHandlingMixin, viewsets.ViewSet):
             resultado.append({
                 'id': usuario.id,
                 'nome': usuario.nome,
-                'tipo': 'excecao',
-                'primeira_opcao': getattr(formulario.primeira_opcao, 'nome', None) if formulario else None,
-                'segunda_opcao': getattr(formulario.segunda_opcao, 'nome', None) if formulario else None,
-                # 'em_workshop': em_workshop
+                'tipo': 'excecao'
+                # ,
+                # 'primeira_opcao': getattr(formulario.primeira_opcao, 'nome', None) if formulario else None,
+                # 'segunda_opcao': getattr(formulario.segunda_opcao, 'nome', None) if formulario else None,
+                # # 'em_workshop': em_workshop
             })
 
         return Response(resposta_json(sucesso=True, resultado=resultado))

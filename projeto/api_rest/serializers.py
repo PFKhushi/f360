@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 from api_rest.models import Usuario, Participante, Empresa, TechLeader, Extensionista, Excecao
-from imersao.models import Imersao, Iteracao, FormularioInscricao
+from imersao.models import Imersao, Iteracao, FormularioInscricao, EmailsAdmins, EmailsFixos, EmailsParticipantes
 from django.core.exceptions import ValidationError
 from django.db import models, IntegrityError
 from django.db.models import QuerySet
@@ -24,7 +24,7 @@ def links_acesso():
     
 def _get_user_data(validated_data):
     usuario = validated_data.pop('usuario')
-    return usuario.pop('nome'), usuario.pop('username'), usuario.pop('password'), usuario.pop('telefone') 
+    return usuario.pop('nome'), usuario.pop('username'), usuario.pop('password'), usuario.pop('telefone',None) 
     
     
 class AdminSerializer(serializers.ModelSerializer):
@@ -36,6 +36,11 @@ class AdminSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password': {'write_only': True}
         }
+    
+    def validate_username(self, username):
+        if EmailsAdmins.objects.filter(email=username).exists():
+            return username
+        raise serializers.ValidationError(f"Esse email ({username}) não tem autorização para participar como administrador")
 
     def create(self, validated_data):
         try:
@@ -45,31 +50,31 @@ class AdminSerializer(serializers.ModelSerializer):
                 password=validated_data['password']
             )
         except IntegrityError:
-            raise serializers.ValidationError("Já existe um usuário com esse e-mail.")
+            raise serializers.ValidationError(f"Já existe um usuário com esse e-mail.")
 
     def update(self, instance, validated_data):
         instance.nome = validated_data.get('nome', instance.nome)
         instance.username = validated_data.get('username', instance.username)
+        # ver mecanismo para usuário conseguir alterar o próprio email? ver relevância do problema
+        # ou deixar esse fluxo, admin adiciona novo email, email da conta é trocado, admin apaga email antigo?
         if 'password' in validated_data:
             instance.set_password(validated_data['password'])
         instance.save()
         return instance
 
-# serializer base do usuario, usado nos perfis
 class UsuarioSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Usuario
         fields = ['id','nome', 'username', 'password', 'telefone']
         extra_kwargs = {
-            'password': {'write_only': True},  # senha n aparece em leitura
+            'password': {'write_only': True},  
             'username': {'required': True},
             'nome': {'required': True},
             'telefone': {'required': False},
         }     
     
     def create(self, validated_data):
-        # cria user via manager (usa set_password etc)
         try:
             return Usuario.objects.create_user(**validated_data)
         except ValidationError as e:
@@ -135,11 +140,11 @@ class BasePerfilSerializer(serializers.ModelSerializer):
 class ParticipanteSerializer(BasePerfilSerializer):
     
     membro = serializers.SerializerMethodField(read_only=True)
-    id_usuario = serializers.IntegerField(read_only=True,source='usuario.id')
+    id_usuario = serializers.IntegerField(read_only=True, source='usuario.id')
     nome = serializers.CharField(source='usuario.nome')
     username = serializers.EmailField(source='usuario.username')
     telefone = serializers.CharField(source='usuario.telefone', required=False)
-    password = serializers.CharField(write_only=True, min_length=6, source='usuario.password')
+    password = serializers.CharField(write_only=True, source='usuario.password')
     opcoes = serializers.SerializerMethodField()
     
     id = serializers.SerializerMethodField(read_only=True)
@@ -151,9 +156,14 @@ class ParticipanteSerializer(BasePerfilSerializer):
 
     class Meta:
         model = Participante
-        fields = ['id','id_usuario', 'nome', 'username', 'telefone', 'password', 'cpf', 'rgm', 'curso', 'outro_curso', 'periodo','opcoes', 'membro', 'ativado']
+        fields = ['id','id_usuario', 'nome', 'username', 'telefone', 'password', 'cpf', 'rgm', 'curso', 'outro_curso', 'periodo', 'opcoes', 'membro', 'ativado']
     
     def get_id(self, participante): return participante.usuario.id
+    
+    def validate_username(self, username):
+        if not EmailsParticipantes.objects.filter(email=username).exists():
+            raise serializers.ValidationError(f"Esse email ({username}) não tem autorização para participar da Fábrica de Software.")
+        return username
     
     def get_opcoes(self, participante):
         formulario = FormularioInscricao.objects.filter(participante=participante).first()
@@ -205,11 +215,12 @@ class ParticipanteSerializer(BasePerfilSerializer):
         # cria user + perfil de forma encadeada
         try:
             nome, username, password, telefone = _get_user_data(validated_data)
+            # print(nome, username, password, telefone)
             usuario = Usuario.criar_participante(
                 nome=nome,
                 email=username,
                 senha=password,
-                telefone={telefone or ""},
+                telefone=telefone or "",
                 **validated_data
             )
             return usuario.participante  
@@ -219,6 +230,7 @@ class ParticipanteSerializer(BasePerfilSerializer):
 
 # igual ao participante, porem com campos da Empresa
 class EmpresaSerializer(BasePerfilSerializer):
+    id_usuario = serializers.IntegerField(read_only=True, source='usuario.id')
     nome = serializers.CharField(source='usuario.nome')
     username = serializers.EmailField(source='usuario.username')
     telefone = serializers.CharField(source='usuario.telefone', required=False)
@@ -232,7 +244,7 @@ class EmpresaSerializer(BasePerfilSerializer):
 
     class Meta:
         model = Empresa
-        fields = ['id', 'nome', 'username','password', 'telefone', 'cnpj', 'representante', 'ativado']
+        fields = ['id', 'id_usuario', 'nome', 'username','password', 'telefone', 'cnpj', 'representante', 'ativado']
     
     def get_id(self, participante): return participante.usuario.id
     
@@ -240,17 +252,21 @@ class EmpresaSerializer(BasePerfilSerializer):
         
         if self.instance:
             if Empresa.objects.filter(cnpj=value).exclude(usuario=self.instance.usuario).exists():
-                print(Empresa.objects.filter(cnpj=value).exclude(usuario=self.instance.usuario))
+                # print(Empresa.objects.filter(cnpj=value).exclude(usuario=self.instance.usuario))
                 raise serializers.ValidationError("Este CNPJ já está cadastrado")
         else:
             if Empresa.objects.filter(cnpj=value).exists():
-                print(Empresa.objects.filter(cnpj=value))
+                # print(Empresa.objects.filter(cnpj=value))
                 raise serializers.ValidationError("Este CNPJ já está cadastrado")
         return value
         
+    def validate_username(self, username):
+        if not EmailsFixos.objects.filter(email=username).exists():
+            raise serializers.ValidationError(f"Esse email ({username}) não tem autorização para ser Empresa Cliente da Fábrica de Software.")
+        return username
     
     def create(self, validated_data):
-        print(validated_data)
+        # print(validated_data)
         try:
             nome, username, password, telefone = _get_user_data(validated_data)
             usuario = Usuario.criar_empresa( nome=nome, email=username, senha=password, telefone=telefone, **validated_data )
@@ -261,6 +277,7 @@ class EmpresaSerializer(BasePerfilSerializer):
 
 # igual aos anteriores, usado p/ techleader
 class TechLeaderSerializer(BasePerfilSerializer):
+    id_usuario = serializers.IntegerField(read_only=True, source='usuario.id')
     nome = serializers.CharField(source='usuario.nome')
     username = serializers.EmailField(source='usuario.username')
     telefone = serializers.CharField(source='usuario.telefone', required=False)
@@ -274,7 +291,7 @@ class TechLeaderSerializer(BasePerfilSerializer):
 
     class Meta:
         model = TechLeader
-        fields = ['id', 'nome', 'username', 'telefone', 'password', 'codigo', 'especialidade', 'ativado']
+        fields = ['id', 'id_usuario', 'nome', 'username', 'telefone', 'password', 'codigo', 'especialidade', 'ativado']
         
     def get_id(self, participante): return participante.usuario.id
     
@@ -289,6 +306,11 @@ class TechLeaderSerializer(BasePerfilSerializer):
                 raise serializers.ValidationError("Este código já está cadastrado")
         
         return value
+    
+    def validate_username(self, username):
+        if not EmailsFixos.objects.filter(email=username).exists():
+            raise serializers.ValidationError(f"Esse email ({username}) não tem autorização para ser Techleader da Fábrica de Software.")
+        return username
 
     def create(self, validated_data):
         try:
@@ -302,6 +324,7 @@ class TechLeaderSerializer(BasePerfilSerializer):
 class ExcecaoSerializer(BasePerfilSerializer):
     
     id = serializers.SerializerMethodField(read_only=True)
+    id_usuario = serializers.IntegerField(read_only=True, source='usuario.id')
     nome = serializers.CharField(source='usuario.nome')
     username = serializers.EmailField(source='usuario.username')
     telefone = serializers.CharField(source='usuario.telefone', required=False)
@@ -315,7 +338,7 @@ class ExcecaoSerializer(BasePerfilSerializer):
     
     class Meta:
         model = Excecao
-        fields = ['id', 'nome', 'username', 'telefone', 'password', 'motivo', 'nota', 'data_inicio', 'membro', 'ativado']
+        fields = ['id', 'id_usuario', 'nome', 'username', 'telefone', 'password', 'motivo', 'nota', 'data_inicio', 'membro', 'ativado']
         
     def get_id(self, participante): return participante.usuario.id
         
@@ -329,6 +352,10 @@ class ExcecaoSerializer(BasePerfilSerializer):
         else:
             return {'imersionista': True}
     
+    def validate_username(self, username):
+        if not EmailsParticipantes.objects.filter(email=username).exists():
+            raise serializers.ValidationError(f"Esse email ({username}) não tem autorização para participar da Fábrica de Software.")
+        return username
         
     def create(self, validated_data):
         try:
@@ -390,6 +417,15 @@ class CustomTokenSerializer(TokenObtainPairSerializer):
         except AuthenticationFailed as exc:
             raise serializers.ValidationError(str(exc))
 
+        
+        admin = EmailsAdmins.objects.filter(email = self.user.username).exists()
+        membro = EmailsFixos.objects.filter(email = self.user.username).exists()
+        participante = EmailsParticipantes.objects.filter(email = self.user.username).exists()
+        
+        print(admin, membro, participante)
+        
+        if not (admin or membro or participante):
+            raise serializers.ValidationError(f"Seu email ({self.user.username}) não tem autorização para fazer login")
         if not self.user.is_active:
             raise serializers.ValidationError( "Sua conta está inativa. Contate o suporte.")
         
@@ -398,14 +434,14 @@ class CustomTokenSerializer(TokenObtainPairSerializer):
         data['access'] = str(token.access_token)
         data['refresh'] = str(token)
         
-        return resposta_json(sucesso=True, resultado=data)
+        return data
     
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
         token['id'] = user.id
         token['nome'] = user.nome
-        token['email'] = user.username
+        token['email'] = user.username # Ver com o fornt, mudar para username
         token['tipo_usuario'] = user.get_tipo_usuario()
 
         return token

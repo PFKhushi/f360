@@ -47,6 +47,8 @@ urlpatterns = [
     # API do App 
     path('api/', include('api_rest.urls')),
     path('api/', include('imersao.urls')),
+    path('api/', include('projetos.urls')),
+    path('painel/', include('painel_admin.urls')),
     
     # Documentação swagger
     path('swagger<str:format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),  # JSON/YAML

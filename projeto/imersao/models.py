@@ -18,6 +18,54 @@ class Iteracao(models.Model):
         
     def __str__(self):
         return f'{self.ano}.{self.semestre}'
+    
+    
+
+class EmailsParticipantes(models.Model):
+    email = models.EmailField(max_length=255)
+    iteracao    = models.ForeignKey(Iteracao, on_delete=models.PROTECT)
+    
+    class Meta:
+        verbose_name = 'Email Autorizado de Participante'
+        verbose_name_plural = 'Emails Autorizados de Participantes'
+        unique_together = ('email', 'iteracao')
+        permissions = [
+            ("ver_emails_autorizados_participantes", "Ver todos os Emails Autorizados de Participantes"),
+            ("editar_emails_autorizados_participantes", "Editar todos os Emails Autorizados de Participantes"),
+        ]
+    
+    def __str__(self):
+        return f'Participante: {self.email}'
+
+class EmailsFixos(models.Model):
+    email = models.EmailField(max_length=255, unique=True)
+    
+    
+    class Meta:
+        verbose_name = 'Email Autorizado de Membros'
+        verbose_name_plural = 'Emails Autorizados de Membros'
+        permissions = [
+            ("ver_emails_autorizados_membros", "Ver todos os Emails Autorizados de Membros"),
+            ("editar_emails_autorizados_membros", "Editar todos os Emails Autorizados de Membros"),
+        ]
+    
+    def __str__(self):
+        return f'Membro: {self.email}'
+    
+class EmailsAdmins(models.Model):
+    email = models.EmailField(max_length=255, unique=True)
+    
+    
+    class Meta:
+        verbose_name = 'Email Autorizado de Administradores'
+        verbose_name_plural = 'Emails Autorizados de Administradores'
+        permissions = [
+            ("ver_emails_autorizados_admins", "Ver todos os Emails Autorizados de Administradores"),
+            ("editar_emails_autorizados_admins", "Editar todos os Emails Autorizados de Administradores"),
+        ]
+    
+    def __str__(self):
+        return f'Membro: {self.email}'
 
 
 class Imersao(models.Model):

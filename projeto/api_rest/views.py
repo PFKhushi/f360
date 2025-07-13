@@ -4,10 +4,12 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.exceptions import NotFound, APIException, PermissionDenied, NotAuthenticated
 from rest_framework.decorators import action
 
+
+
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.http import Http404
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.shortcuts import get_object_or_404
 
 from drf_spectacular.utils import extend_schema_view
@@ -144,7 +146,7 @@ class ErrorHandlingMixin():
         elif 'cpf' in error_detail:
             detail = "Este CPF já está cadastrado"
         elif 'cnpj' in error_detail:
-            print(error_detail)
+            # print(error_detail)
             detail = "Este CNPJ já está cadastrado"
         elif 'rgm' in error_detail:
             detail = "Este RGM já está cadastrado"
@@ -197,15 +199,23 @@ class BusinessLogicException(APIException):
         return self._detalhes
         
 
+        
 class LoginUsuario(ErrorHandlingMixin, TokenObtainPairView):
-    
     serializer_class = CustomTokenSerializer
 
     def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+
         try:
-            return super().post(request, *args, **kwargs)  
+            serializer.is_valid(raise_exception=True)
         except Exception as exc:
             return self.handle_exception(exc)
+
+        user = serializer.user
+        login(request, user) 
+
+        return Response(resposta_json(sucesso=True, resultado=serializer.validated_data), status=status.HTTP_200_OK)
+        
 
 # view de logout, invalida o refresh token
 class LogoutUsuario(APIView):
@@ -222,33 +232,11 @@ class LogoutUsuario(APIView):
         except Exception as e:
             return Response({"detail": "Erro ao fazer logout", "sucesso": False}, status=status.HTTP_400_BAD_REQUEST)
 
-            
-class AdminViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
-    queryset = Usuario.objects.filter(is_superuser=True)
-    serializer_class = AdminSerializer
-    
-    def get_permissions(self):
-        # define regras de acesso p/ cada acao
-        if self.action == 'create':
-            permission_classes = [permissions.AllowAny]
-        elif self.action in ['update', 'partial_update', 'destroy']:
-            permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
-        else:
-            permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
-        # return [permissions.AllowAny()] #############retirar depois###############
-        return [perm() for perm in permission_classes]
-
-    def get_queryset(self):
-        # Apenas superusers podem ver outros superusers
-        user = self.request.user
-        if user.is_superuser:
-            return super().get_queryset()
-        return Usuario.objects.none()
 
 def _handle_serialization(context, instance, data=None, partial=False):
     
     serializer = context.get_serializer(instance, data=data, partial=partial)
-    print(serializer)
+    # print(serializer)
     
     try:
         serializer.is_valid(raise_exception=True)
@@ -262,6 +250,54 @@ def _get_perfil(perfil, pk, nome_entidade):
             return perfil.objects.get(pk=pk)
         except perfil.DoesNotExist:
             raise Http404(f"{nome_entidade} não encontrado com o ID fornecido.")
+            
+class AdminViewSet(ErrorHandlingMixin, viewsets.ModelViewSet):
+    queryset = Usuario.objects.filter(is_superuser=True)
+    serializer_class = AdminSerializer
+    
+    def get_permissions(self):
+        if self.action == 'create':
+            permission_classes = [permissions.AllowAny]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+        else:
+            permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+        # return [permissions.AllowAny()] #############retirar depois###############
+        return [perm() for perm in permission_classes]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_superuser:
+            return super().get_queryset()
+        return Usuario.objects.none()
+    
+    @update_participantes_swagger()
+    def update(self, request, *args, **kwargs):
+        
+        admin = _get_perfil(Usuario, kwargs['pk'], "Admin")
+        return _handle_serialization(self, admin, data=request.data)
+
+    @retrieve_participantes_swagger()
+    def retrieve(self, request, *args, **kwargs):
+        admin = _get_perfil(Usuario, kwargs['pk'], "Admin")
+        serializer = self.get_serializer(admin)
+        return Response(resposta_json(sucesso=True, resultado=serializer.data))
+
+    @partial_update_participantes_swagger()
+    def partial_update(self, request, *args, **kwargs):
+        admin = _get_perfil(Usuario, kwargs['pk'], "Admin")
+        return _handle_serialization(self, admin, data=request.data, partial=True)
+
+    @create_participantes_swagger()
+    def create(self, request, *args, **kwargs):
+        return _handle_serialization(self, None, data=request.data)
+
+    @delete_participantes_swagger()
+    def destroy(self, request, *args, **kwargs):
+        # Anonimizar o usuario
+        admin = _get_perfil(Usuario, kwargs['pk'], "Admin")
+        admin.usuario.delete()
+        return Response(resposta_json(sucesso=True, resultado="Admin apagado com sucesso"), status=status.HTTP_204_NO_CONTENT)
 
 
 # view q gerencia CRUD de Participantes
@@ -630,8 +666,10 @@ class ExtensionistaBulkViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         return super().get_permissions()
     
+    @action(detail=False, methods=['post'], url_path='delete_bulk')
     @transaction.atomic
-    def delete(self, request, *args, **kwargs):
+    def delete_bulk(self, request, *args, **kwargs):
+
         serializer = ExtensionistaBulkSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         
@@ -643,7 +681,7 @@ class ExtensionistaBulkViewSet(viewsets.ModelViewSet):
             self._process_user_deletion(user_id, removidos, falhas)
         
         return Response(resposta_json(resultado={"removidos": removidos, "falhas": falhas}, sucesso=True),
-                        status=status.HTTP_201_CREATED)
+                        status=status.HTTP_200_OK)
     
     @transaction.atomic
     def destroy(self, request, pk=None):
@@ -702,13 +740,21 @@ class UsuarioVS(ErrorHandlingMixin, viewsets.ViewSet):
     }
     
     def _get_viewset_for_usuario(self, usuario):
+        # print("\n\nus/uario:", usuario)
         for perfil, (viewset_class, check_method, attr) in self.PERFIL_VIEWSET_MAP.items():
+            # print("\n\nperfil:", perfil)
+            # print("\n\nciewset_class:", viewset_class)
+            # print("\n\ncheck_method:", check_method)
+            # print("\n\nattr:", attr)
             if getattr(usuario, check_method):
+                # print(True)
                 return viewset_class, attr
+            # print(False)
         return None, None
     
     def _get_viewset_for_perfil(self, perfil_name):
         config = self.PERFIL_VIEWSET_MAP.get(perfil_name)
+        # print("\n\n", config)
         if not config:
             raise BusinessLogicException(
                 detail=f"Perfil '{perfil_name}' não existe",
@@ -760,7 +806,7 @@ class UsuarioVS(ErrorHandlingMixin, viewsets.ViewSet):
             serializer.save()
             
             headers = viewset_instance.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            return Response(resposta_json(sucesso=True, resultado=serializer.data), status=status.HTTP_201_CREATED, headers=headers)
             
         except BusinessLogicException as e:
             return self.handle_exception(e)
@@ -782,8 +828,19 @@ class UsuarioVS(ErrorHandlingMixin, viewsets.ViewSet):
                     detalhes=["Este usuário não possui um perfil associado"],
                     status_code=404
                 ))  
+                
+                
+            # print("\n\n", usuario)
+            # print("\n\n", attr_name)
+            # perfil_obj = getattr(usuario, attr_name)
             
-            perfil_obj = getattr(usuario, attr_name)
+            pk_do_perfil = None
+
+            if attr_name is not None:
+                perfil_obj = getattr(usuario, attr_name)
+                pk_do_perfil = perfil_obj.pk
+            else:
+                pk_do_perfil = usuario.pk
             
             view = viewset_class.as_view({
                 'get': 'retrieve',
@@ -792,7 +849,7 @@ class UsuarioVS(ErrorHandlingMixin, viewsets.ViewSet):
                 'delete': 'destroy'
             })
             
-            return view(request._request, pk=perfil_obj.pk)
+            return view(request._request, pk=pk_do_perfil)
             
         except ValidationError as e:
             raise e

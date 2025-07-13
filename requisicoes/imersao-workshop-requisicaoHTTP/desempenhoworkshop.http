@@ -2,6 +2,7 @@
 ### Lista workshops
 GET {{url_raiz}}{{url_workshop}} HTTP/1.1
 Content-Type: application/json
+Authorization: {{admin_token}}
 
 ### Pega workshops
 GET {{url_raiz}}{{url_workshop}}1/ HTTP/1.1
@@ -32,11 +33,11 @@ Authorization: {{admin_token}}
 ### Atribuir desempenho Participante A como Instrutor
 POST {{url_raiz}}{{url_desempenho}} HTTP/1.1
 Content-Type: application/json
-Authorization: {{excecao_D_token}}
+Authorization: {{excecao_A_token}}
 
 {
-    "usuario_id": "{{participante_A_id}}",
-    "workshop": "5",
+    "usuario_id": "{{participante_B_id}}",
+    "workshop": "{{workshop_A_id}}",
     "desempenho": "{{desempenho_classificacao5}}",
     "comentario": "{{desempenho_comentario5}}",
     "especialidade": "{{tecnologia_A_id}}",

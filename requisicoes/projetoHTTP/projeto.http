@@ -1,0 +1,23 @@
+POST {{url_raiz}}api/projeto/ HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_token}}
+
+{
+    "nome": "Projeto Gênesis",
+    "descricao": "Início da nova arquitetura de microserviços.",
+    "area": "Engenharia de Software", 
+    "data_prazo": "2026-06-01",
+    "empresa_usuario_id": "22",
+    "techleader_usuario_id": "20",
+    "equipe": [
+        {
+            "usuario_id": "{{participante_A_id}}",
+            "cargos_ids": ["{{area_fabrica_A_id}}", "{{area_fabrica_B_id}}"], 
+            "status": "ativo"
+        },
+        {
+            "usuario_id": "{{participante_B_id}}",
+            "cargos_ids": ["{{area_fabrica_C_id}}"]
+        }
+    ]
+}

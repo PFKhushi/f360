@@ -32,10 +32,11 @@
             "perfil_empresa": "empresa",
             "perfil_admin": "admin",
 
+            "admin_id": "1",
             "admin_nome": "Administrador Geral",
             "admin_username": "admin@exsample.com",
             "admin_password": "senhaSupesrSegura123",
-            "admin_token": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUxNjQ1MzE3LCJpYXQiOjE3NTE2NDM1MTcsImp0aSI6Ijc0ZTdmNTNkZjliMTQ2YTM5MTIwMjEzZWYyNWVkNzBkIiwidXNlcl9pZCI6MSwiaWQiOjEsIm5vbWUiOiJBZG1pbmlzdHJhZG9yIEdlcmFsIiwiZW1haWwiOiJhZG1pbkBleHNhbXBsZS5jb20iLCJ0aXBvX3VzdWFyaW8iOiJBRE1JTiJ9.9hOAdte7w7JVYn0DK0Kb5fSNZBopRT3aX7YlltmxOQ0",
+            "admin_token": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUyMjYwMjA4LCJpYXQiOjE3NTIyNTg0MDgsImp0aSI6ImZjZWIxN2E2ZDQwMDQyMmViNzhiMDMwMDE2ZDNkYjM4IiwidXNlcl9pZCI6MSwiaWQiOjEsIm5vbWUiOiJBZG1pbmlzdHJhZG9yIEdlcmFsIiwiZW1haWwiOiJhZG1pbkBleHNhbXBsZS5jb20iLCJ0aXBvX3VzdWFyaW8iOiJBRE1JTiJ9.r_IIC212T18XWcuHZy0vmi4YS9TJNVddhSWRog5_8wQ",
 
             "iteracao_A_id": "1",
             "iteracao_A_ano": "2025",
@@ -118,28 +119,20 @@
             "palestra_B_bloco2": "C",
 
             "formulario_A_id": "1",
-            "formulario_A_outras_tech1": "",
-            "formulario_A_outras_tech2": "",
+            "formulario_A_outras_tech1": "Assembly",
+            "formulario_A_outras_tech2": "Lua",
 
             "formulario_B_id": "2",
-            "formulario_B_outras_tech1": "",
-            "formulario_B_outras_tech2": "",
+            "formulario_B_outras_tech1": "ObjC",
+            "formulario_B_outras_tech2": "PHP",
 
             "formulario_C_id": "3",
-            "formulario_C_outras_tech1": "",
-            "formulario_C_outras_tech2": "",
+            "formulario_C_outras_tech1": "Flutter",
+            "formulario_C_outras_tech2": "MongoDB",
 
             "formulario_D_id": "4",
-            "formulario_D_outras_tech1": "",
-            "formulario_D_outras_tech2": "",
-
-            "formulario_E_id": "5",
-            "formulario_E_outras_tech1": "",
-            "formulario_E_outras_tech2": "",
-
-            "formulario_F_id": "6",
-            "formulario_F_outras_tech1": "",
-            "formulario_F_outras_tech2": "",
+            "formulario_D_outras_tech1": "SQLite",
+            "formulario_D_outras_tech2": "HTTP",
 
 
             "workshop_A_id": "1",
@@ -212,7 +205,7 @@
             "participante_A_curso": "CC",
             "participante_A_periodo": "7",
             "participante_A_id": "2",
-            "participante_A_token": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUxNzYyMTc5LCJpYXQiOjE3NTE3NjAzNzksImp0aSI6IjY3M2EyYzg5MzZjOTRlMTRhMWRkYWZmYjY5YjU4YzI4IiwidXNlcl9pZCI6MiwiaWQiOjIsIm5vbWUiOiJQZWRybyBTaWx2YSIsImVtYWlsIjoicGVkcm8uc2lsdmFAYWNhZGVtaWNvLmNvbSIsInRpcG9fdXN1YXJpbyI6IlBBUlQifQ.oUoUnju_r8nHMPGyWa5XhU7z9z459iizTVJ_ZjLlcXc",
+            "participante_A_token": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUyMjU0MjY3LCJpYXQiOjE3NTIyNTI0NjcsImp0aSI6ImUzYTU1OTFiYzdhYzQ5YjhiOTc4MmFhMWY5MzE3ODk2IiwidXNlcl9pZCI6MiwiaWQiOjIsIm5vbWUiOiJQZWRybyBTaWx2YSIsImVtYWlsIjoicGVkcm8uc2lsdmFAYWNhZGVtaWNvLmNvbSIsInRpcG9fdXN1YXJpbyI6IlBBUlQifQ.oOaoqvYEO_mIpzIOUvOArvpYcMR79A5D5Hk7GLTeYWI",
 
             "participante_B_nome": "João Pereira",
             "participante_B_nome2": "Joo Perira",
@@ -227,7 +220,7 @@
             "participante_B_curso": "CC",
             "participante_B_periodo": "7",
             "participante_B_id": "3",
-            "participante_B_token": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUxNzYzOTkyLCJpYXQiOjE3NTE3NjIxOTIsImp0aSI6IjQyMjVkZmY1MGQ5MjQxYmFhMjhmZjFmODQ1OWZmMGYwIiwidXNlcl9pZCI6MywiaWQiOjMsIm5vbWUiOiJKb1x1MDBlM28gUGVyZWlyYSIsImVtYWlsIjoiam9hby5wZXJlaXJhQGFjYWRlbWljby5jb20iLCJ0aXBvX3VzdWFyaW8iOiJQQVJUIn0.ZjFDYFE9RpAxYtTwccmRckvuUXbSY8Kz93ibPd4R-zc",
+            "participante_B_token": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUyMjEwNDI3LCJpYXQiOjE3NTIyMDg2MjcsImp0aSI6IjAwMzk5YmRhM2FmNTRiZjU5MGNlMWIzOTg1ZDJhZDMzIiwidXNlcl9pZCI6MywiaWQiOjMsIm5vbWUiOiJKb1x1MDBlM28gUGVyZWlyYSIsImVtYWlsIjoiam9hby5wZXJlaXJhQGFjYWRlbWljby5jb20iLCJ0aXBvX3VzdWFyaW8iOiJQQVJUIn0.x6HB_AGKdYiC6hVKSaUnw2RHMjwxmdWzntX5R7-Fums",
 
             "participante_C_nome": "Maria Oliveira",
             "participante_C_nome2": "Maira Oliviera",
@@ -358,7 +351,7 @@
             "excecao_A_motivo": "Aluno de pós-graduação",
             "excecao_A_nota": "Desempenho excepcional",
             "excecao_A_id": "12",
-            "excecao_A_token": "Bearer",
+            "excecao_A_token": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUyMjEwOTQ1LCJpYXQiOjE3NTIyMDkxNDUsImp0aSI6ImY5OWM4NTNiODRlYjRkNWE5M2Y4NDc5MmQ2MGQ5ZjRiIiwidXNlcl9pZCI6MTIsImlkIjoxMiwibm9tZSI6IkRhdmlkIEdyYVx1MDBlN2EiLCJlbWFpbCI6ImRhdmlkLmdyYWNhQGluc3RpdHVpY2FvLmNvbSIsInRpcG9fdXN1YXJpbyI6IkVYQyJ9.-z-hJggFHv4trk1E0URrO69j2Oc1s6B3wvyCdVcgjY4",
 
             "excecao_B_nome": "Emanuel Beleu",
             "excecao_B_nome2": "manel Bleu",
@@ -391,7 +384,7 @@
             "excecao_D_motivo": "Pesquisadora visitante",
             "excecao_D_nota": "Colaboração internacional",
             "excecao_D_id": "15",
-            "excecao_D_token": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUxNjQ1MDI4LCJpYXQiOjE3NTE2NDMyMjgsImp0aSI6IjhiMGQzMzJlNzI2ODRlZDQ4ZGI5ZjljNmM1MjQzZDJkIiwidXNlcl9pZCI6NCwiaWQiOjQsIm5vbWUiOiJNYXJpYSBPbGl2ZWlyYSIsImVtYWlsIjoibWFyaWEub2xpdmVpcmFAYWNhZGVtaWNvLmNvbSIsInRpcG9fdXN1YXJpbyI6IlBBUlQifQ.m3LKGP8ZN7ZMt7_55IDJf5vMNm8ud7s3FLdowF8LmMY",
+            "excecao_D_token": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUyMjEwOTAzLCJpYXQiOjE3NTIyMDkxMDMsImp0aSI6IjMxNjc1NTNlZTNlOTQ4ZjRhODVlMTZkZTkzMDkwZDRkIiwidXNlcl9pZCI6MTUsImlkIjoxNSwibm9tZSI6IkNhbWlsYSBSb2NoYSIsImVtYWlsIjoiY2FtaWxhLnJvY2hhQGluc3RpdHVpY2FvLmNvbSIsInRpcG9fdXN1YXJpbyI6IkVYQyJ9.wetfF-rJELp2mtgB2TX0C3L47t8X8CYIydyh3VAOQOQ",
 
             "techleader_A_nome": "Carlos Matos",
             "techleader_A_nome2": "Calos Maos",

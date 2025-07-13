@@ -1,0 +1,111 @@
+###
+POST {{url_raiz}}api/emails_admins/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "emails": ["leonciofernandes@gmail.com"]
+}
+
+###
+POST {{url_raiz}}api/emails_admins/delete_bulk/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "emails": ["{{admin_username}}"]
+}
+
+###################################################################
+
+###
+POST {{url_raiz}}api/emails_participantes/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "emails": [
+        "{{participante_A_username}}", 
+        "{{participante_B_username}}", 
+        "{{participante_C_username}}", 
+        "{{participante_D_username}}",
+        "{{participante_E_username}}", 
+        "{{participante_F_username}}",
+        "{{participante_G_username}}", 
+        "{{participante_H_username}}",
+        "{{participante_I_username}}", 
+        "{{participante_J_username}}",
+        "{{excecao_A_username}}",
+        "{{excecao_B_username}}",
+        "{{excecao_C_username}}",
+        "{{excecao_D_username}}"
+        ]
+}
+
+###
+POST {{url_raiz}}api/emails_participantes/delete_bulk/ HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_token}}
+
+{
+    "emails": [
+        "{{participante_A_username}}", 
+        "{{participante_B_username}}", 
+        "{{participante_C_username}}", 
+        "{{participante_D_username}}",
+        "{{participante_E_username}}", 
+        "{{participante_F_username}}",
+        "{{participante_G_username}}", 
+        "{{participante_H_username}}",
+        "{{participante_I_username}}", 
+        "{{participante_J_username}}",
+        "{{excecao_A_username}}",
+        "{{excecao_B_username}}",
+        "{{excecao_C_username}}",
+        "{{excecao_D_username}}",
+        "{{admin_username}}"
+        ]
+}
+
+###
+POST {{url_raiz}}api/emails_participantes/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "emails": ["teste@teste.com", "teste1@teste.com", "teste2@teste.com", "teste3@teste.com", "teste4@teste.com", "teste5@teste.com"]
+}
+
+###
+POST {{url_raiz}}api/emails_participantes/delete_bulk/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "emails": ["teste@teste.com", "teste1@teste.com", "teste2@teste.com", "teste3@teste.com", "teste4@teste.com", "teste5@teste.com"]
+}
+
+###
+POST {{url_raiz}}api/emails_participantes/delete_bulk/ HTTP/1.1
+Content-Type: application/json
+Authorization: {{admin_token}}
+
+{
+    "iteracao": 1, 
+    "emails": ["{{participante_A_username}}"]
+}
+
+#############################################################################
+
+
+###
+POST {{url_raiz}}api/emails_membros/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "emails": ["{{techleader_A_username}}", "{{techleader_B_username}}", "{{empresa_A_username}}", "{{empresa_B_username}}"]
+}
+
+###
+POST {{url_raiz}}api/emails_membros/delete_bulk/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "emails": ["{{techleader_A_username}}", "{{techleader_B_username}}", "{{empresa_A_username}}", "{{empresa_B_username}}"]
+}
+
