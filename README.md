@@ -2,8 +2,8 @@
 Esta API possui um painel de administrador para suprir necessidades imediatas do cliente. Não é algo definitivo. 
 
 ## Tabela de conteudos
-1. [Manual da API](#manual-api-fabrica-de-software)
-2. [Manual de Painel de Admin](#manual-painel-administrativo-Fabrica-de-software)
+1. [Manual da API](#manual-api-fábrica-de-software)
+2. [Manual de Painel de Admin](#manual-painel-administrativo-fábrica-de-software)
 
 # Manual API Fábrica de Software
 
