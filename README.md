@@ -87,8 +87,8 @@ Para se autenticar, envie uma requisição `POST` para o endpoint de login com a
 
   ```json
   {
-      "username": "email.do.usuario@dominio.com",
-      "password": "sua_senha"
+    "username": "email.do.usuario@dominio.com",
+    "password": "sua_senha"
   }
   ```
 
@@ -96,25 +96,25 @@ Para se autenticar, envie uma requisição `POST` para o endpoint de login com a
 
   ```json
   {
-      "sucesso": true,
-      "resultado": {
-          "refresh": "eyJhbGciOiJI...",
-          "access": "eyJhbGciOiJI..."
-      },
-      "erro": "",
-      "detalhes": []
+    "sucesso": true,
+    "resultado": {
+      "refresh": "eyJhbGciOiJI...",
+      "access": "eyJhbGciOiJI..."
+    },
+    "erro": "",
+    "detalhes": []
   }
   ```
 
 - **O token contem as seguintes informções extras:**
 
   ```json
-    {
-        "id": 1,
-        "nome": "Nome do Usuário",
-        "email": "email.do.usuario@dominio.com",
-        "tipo_usuario": "ADMIN"
-    }
+  {
+    "id": 1,
+    "nome": "Nome do Usuário",
+    "email": "email.do.usuario@dominio.com",
+    "tipo_usuario": "ADMIN"
+  }
   ```
 
 ### Utilizando o Token
@@ -135,17 +135,17 @@ Para fazer logout, envie o `refresh_token` para o endpoint de logout. Isso irá 
 
   ```json
   {
-      "refresh_token": "seu_refresh_token"
+    "refresh_token": "seu_refresh_token"
   }
   ```
 - **Resposta de Sucesso (200 OK):**
 
   ```json
   {
-      "detail": "Logout realizado com sucesso!",
-      "sucesso": true,
-      "erro": "",
-      "detalhes": []
+    "detail": "Logout realizado com sucesso!",
+    "sucesso": true,
+    "erro": "",
+    "detalhes": []
   }
   ```
 
@@ -161,10 +161,10 @@ Uma resposta bem-sucedida sempre terá a chave `"sucesso": true` e os dados esta
 
 ```json
 {
-    "sucesso": true,
-    "resultado": { "...": "..." },
-    "erro": "",
-    "detalhes": []
+  "sucesso": true,
+  "resultado": { "...": "..." },
+  "erro": "",
+  "detalhes": []
 }
 ```
 
@@ -174,12 +174,12 @@ Uma resposta de erro terá `"sucesso": false` e as chaves `"erro"` e `"detalhes"
 
 ```json
 {
-    "sucesso": false,
-    "resultado": null,
-    "erro": "Erro de validação nos dados enviados",
-    "detalhes": [
-        "cpf: Este CPF já está cadastrado"
-    ]
+  "sucesso": false,
+  "resultado": null,
+  "erro": "Erro de validação nos dados enviados",
+  "detalhes": [
+      "cpf: Este CPF já está cadastrado"
+  ]
 }
 ```
 
@@ -208,11 +208,11 @@ Para criar um usuário, envie uma requisição `POST` para `/api/usuario/` e esp
 
   ```json
   {
-      "perfil": "admin",
-      "nome": {{nome}},
-      "username": {{email}},
-      "password": {{senha}},
-      "telefone": {{telefone}},
+    "perfil": "admin",
+    "nome": "{{nome}}",
+    "username": "{{email}}",
+    "password": "{{senha}}",
+    "telefone": "{{telefone}}",
   }
   ```
 
@@ -220,29 +220,30 @@ Para criar um usuário, envie uma requisição `POST` para `/api/usuario/` e esp
 
   ```json
   {
-      "perfil": "participante",
-      "nome": {{nome}},
-      "username": {{email}},
-      "password": {{senha}},
-      "telefone": {{telefone}},
-      "cpf": {{cpf}},
-      "rgm": {{rmg}},
-      "curso": "ADS", #Opções: "ADS", "CC", "SI", "CD", "OTR"
-      "periodo": {{periodo}}
+    "perfil": "participante",
+    "nome": "{{nome}}",
+    "username": "{{email}}",
+    "password": "{{senha}}",
+    "telefone": "{{telefone}}",
+    "cpf": "{{cpf}}",
+    "rgm": "{{rmg}}",
+    "curso": "ADS", 
+    "periodo": "{{periodo}}"
   }
   ```
+  > Opções curso: "ADS", "CC", "SI", "CD", "OTR"
 
 - **Exemplo Criando uma Exceção**
 
   ```json
   {
-      "perfil": "excecao",
-      "nome": {{nome}},
-      "username": {{email}},
-      "password": {{senha}},
-      "telefone": {{telefone}},
-      "motivo": {{motivo}},
-      "nota": {{nota}}
+    "perfil": "excecao",
+    "nome": "{{nome}}",
+    "username": "{{email}}",
+    "password": "{{senha}}",
+    "telefone": "{{telefone}}",
+    "motivo": "{{motivo}}",
+    "nota": "{{nota}}"
   }
   ```
 
@@ -250,13 +251,13 @@ Para criar um usuário, envie uma requisição `POST` para `/api/usuario/` e esp
 
   ```json
   {
-      "perfil": "techleader",
-      "nome": {{nome}},
-      "username": {{email}},
-      "password": {{senha}},
-      "telefone": {{telefone}},
-      "codigo": {{codigo}},
-      "especialidade": {{especialidade}}
+    "perfil": "techleader",
+    "nome": "{{nome}}",
+    "username": "{{email}}",
+    "password": "{{senha}}",
+    "telefone": "{{telefone}}",
+    "codigo": "{{codigo}}",
+    "especialidade": "{{especialidade}}"
   }
   ```
 
@@ -264,13 +265,13 @@ Para criar um usuário, envie uma requisição `POST` para `/api/usuario/` e esp
 
   ```json
   {
-      "perfil": "empresa",
-      "nome": {{nome}},
-      "username": {{email}},
-      "password": {{senha}},
-      "telefone": {{telefone}},
-      "cnpj": {{cnpj}},
-      "representante": {{nome_representante}}
+    "perfil": "empresa",
+    "nome": "{{nome}}",
+    "username": "{{email}}",
+    "password": "{{senha}}",
+    "telefone": "{{telefone}}",
+    "cnpj": "{{cnpj}}",
+    "representante": "{{nome_representante}}"
   }
   ```
 
@@ -291,8 +292,8 @@ Para manipular um perfil existente, use o endpoint aninhado `/perfil/` com o ID 
   ```
   ```json
   {
-      "telefone": {{telefone}},
-      "periodo": {{periodo}}
+    "telefone": "{{telefone}}",
+    "periodo": "{{periodo}}"
   }
   ```
 
@@ -311,7 +312,7 @@ Para manipular um perfil existente, use o endpoint aninhado `/perfil/` com o ID 
 
   ```json
   {
-      "usuario": {{id_usuario_A}}
+    "usuario": "{{id_usuario_A}}"
   }
   ```
 
@@ -323,9 +324,11 @@ Para manipular um perfil existente, use o endpoint aninhado `/perfil/` com o ID 
 
   ```json
   {
-      "usuarios": [
-        {{id_usuario_A}}, {{id_usuario_B}}
-      ]
+    "usuarios": [
+      "{{id_usuario_A}}", 
+      "{{id_usuario_B}}",
+      "{{...}}"
+    ]
   }
   ```
 
@@ -333,18 +336,32 @@ Para manipular um perfil existente, use o endpoint aninhado `/perfil/` com o ID 
 
   ```json
   {
-      "sucesso": true,
-      "resultado": {
-          "criados": [
-              { "usuario_id": 12, "extensionista_id": 1, "nome": "...", "email": "..." },
-              { "usuario_id": 15, "extensionista_id": 2, "nome": "...", "email": "..." }
-          ],
-          "rejeitados": [
-              { "id": 21, "nome": "...", "email": "...", "erro": "Já é Extensionista" }
-          ]
-      },
-      "erro": "",
-      "detalhes": []
+    "sucesso": true,
+    "resultado": {
+      "criados": [
+        { 
+          "usuario_id": "{{id_usuario}}", 
+          "extensionista_id": "{{id_extensionista}}", 
+          "nome": "...", 
+          "email": "..." 
+        },
+        { 
+          "usuario_id": "{{id_usuario}}", 
+          "extensionista_id": "{{id_extensionista}}",
+          "nome": "...", 
+          "email": "..." }
+      ],
+      "rejeitados": [
+        { 
+          "id": "{{id_usuario}}", 
+          "nome": "...", 
+          "email": "...", 
+          "erro": "Já é Extensionista" 
+        }
+      ]
+    },
+    "erro": "",
+    "detalhes": []
   }
   ```
 
@@ -356,9 +373,11 @@ Para manipular um perfil existente, use o endpoint aninhado `/perfil/` com o ID 
 
   ```json
   {
-      "usuarios": [
-        {{id_usuario_A}}, {{id_usuario_B}}
-      ]
+    "usuarios": [
+      "{{id_usuario_A}}", 
+      "{{id_usuario_B}}",
+      "{{...}}"
+    ]
   }
   ```
 
@@ -376,13 +395,23 @@ Estes endpoints permitem que administradores controlem quais emails podem se reg
 - `POST` `/api/emails_admins/`: Adiciona uma lista de emails
 
   ```json
-  { "emails": ["admin1@fabrica.com", "admin2@fabrica.com"] }
+  { "emails": [
+      "admin1@fabrica.com", 
+      "admin2@fabrica.com"
+      "{{...}}"
+    ] 
+  }
   ```
 
 - `POST` `/api/emails_admins/delete_bulk/`: Remove uma lista de emails
 
   ```json
-  { "emails": ["admin2@fabrica.com"] }
+  { 
+    "emails": [
+      "admin2@fabrica.com",
+      "{{...}}"
+    ] 
+  }
   ```
 
 #### Emails de Membros (Empresas/TechLeaders)
@@ -413,8 +442,8 @@ Este conjunto de endpoints gerencia os ciclos de atividades da fábrica.
 - **Corpo da Requisição:**
   ```json
   {
-      "ano": "{{ano}}",
-      "semestre": "{{semestre}}"
+    "ano": "{{ano}}",
+    "semestre": "{{semestre}}"
   }
   ```
 
@@ -429,14 +458,14 @@ Este conjunto de endpoints gerencia os ciclos de atividades da fábrica.
 - **Corpo da Requisição:** (Com Iteração)
   ```json
   {
-      "iteracao": "{{iteracao_id}}"
+    "iteracao": "{{iteracao_id}}"
   }
   ```
 - **Corpo da Requisição:** (Sem Iteração)
   ```json
   {
-      "ano": "{{ano}}",
-      "semestre": "{{semestre}}"
+    "ano": "{{ano}}",
+    "semestre": "{{semestre}}"
   }
   ```
 
@@ -451,8 +480,8 @@ Este conjunto de endpoints gerencia os ciclos de atividades da fábrica.
 - **Corpo da Requisição:**
   ```json
   {
-      "nome": "{{area_fabrica_A_nome2}}",
-      "ativa": "false"
+    "nome": "{{area_fabrica_A_nome2}}",
+    "ativa": "false"
   }
   ```
 
@@ -466,8 +495,8 @@ Este conjunto de endpoints gerencia os ciclos de atividades da fábrica.
 
   ```json
   {
-      "nome": "{{area_fabrica_A_nome2}}",
-      "ativa": "bool"
+    "nome": "{{area_fabrica_A_nome2}}",
+    "ativa": "bool"
   }
   ```
 
@@ -479,8 +508,8 @@ Este conjunto de endpoints gerencia os ciclos de atividades da fábrica.
 
   ```json
   {
-      "nome": "{{area_fabrica_A_nome2}}",
-      "ativa": "bool"
+    "nome": "{{area_fabrica_A_nome2}}",
+    "ativa": "bool"
   }
   ```
 
@@ -495,7 +524,7 @@ Este conjunto de endpoints gerencia os ciclos de atividades da fábrica.
 
   ```json
   {
-    "imersao": {{id_imersao}}
+    "imersao": "{{id_imersao}}",
     "titulo": "{{titulo}}",
     "descricao": "{{descricao}}",
     "data": "{{data_inicio}}",
@@ -513,7 +542,7 @@ Este conjunto de endpoints gerencia os ciclos de atividades da fábrica.
 
   ```json
   {
-    "imersao": {{id_imersao}}
+    "imersao": "{{id_imersao}}",
     "titulo": "{{titulo}}",
     "descricao": "{{descricao}}",
     "data": "{{data_inicio}}",
@@ -531,18 +560,32 @@ Este conjunto de endpoints gerencia os ciclos de atividades da fábrica.
 - **Lógica:** Permite que um participante se inscreva na imersão ativa
 - **Corpo da Requisição:**
 
-  ```json
+  ```json 
   {
-    "primeira_opcao": {{id_area_fabrica_A}},
-    "segunda_opcao": {{id_area_fabrica_B}},
-    "tecnologias": [{{id_tecnologia_fabrica_A}}, {{id_tecnologia_fabrica_B}}],
+    "primeira_opcao": "{{id_area_fabrica_A}}",
+    "segunda_opcao": "{{id_area_fabrica_B}}",
+    "tecnologias": [
+      "{{id_tecnologia_fabrica_A}}", 
+      "{{id_tecnologia_fabrica_B}}"
+    ],
     "interesses": [
-        {"area": {{id_area_fabrica_A}}, "nivel": 5},
-        {"area": {{id_area_fabrica_B}}, "nivel": 4},
-        {"area": {{id_area_fabrica_C}}, "nivel": 2}
+      {
+        "area": "{{id_area_fabrica_A}}", 
+        "nivel": 5
+      },
+      {
+        "area": "{{id_area_fabrica_B}}", 
+        "nivel": 4
+      },
+      {
+        "area": "{{id_area_fabrica_C}}", 
+        "nivel": 2
+      }
     ],
     "outras_tech": [
-        {"nome": "Computação Quântica"}
+      {
+        "nome": "Computação Quântica"
+      }
     ]
   }
   ```
@@ -558,16 +601,28 @@ Este conjunto de endpoints gerencia os ciclos de atividades da fábrica.
 
   ```json
   {    
-    "id_usuario": {{id_usuario}},
-    "imersao": {{id_imersao}},
-    "tecnologias": [{{id_tecnologia_fabrica_A}}, {{id_tecnologia_fabrica_B}}],  
-    "primeira_opcao": {{id_area_fabrica_A}},
-    "segunda_opcao": {{id_area_fabrica_B}},
+    "id_usuario": "{{id_usuario}}",
+    "imersao": "{{id_imersao}}",
+    "tecnologias": [
+      "{{id_tecnologia_fabrica_A}}", 
+      "{{id_tecnologia_fabrica_B}}"
+    ],  
+    "primeira_opcao": "{{id_area_fabrica_A}}",
+    "segunda_opcao": "{{id_area_fabrica_B}}",
     "interesses": [
-          {"area": {{id_area_fabrica_A}}, "nivel": 5},
-          {"area": {{id_area_fabrica_B}}, "nivel": 4},
-          {"area": {{id_area_fabrica_C}}, "nivel": 2}
-      ],
+      {
+        "area": "{{id_area_fabrica_A}}", 
+        "nivel": 5
+      },
+      {
+        "area": "{{id_area_fabrica_B}}", 
+        "nivel": 4
+      },
+      {
+        "area": "{{id_area_fabrica_C}}", 
+        "nivel": 2
+      }
+    ],
   }
   ```
 
@@ -579,17 +634,28 @@ Este conjunto de endpoints gerencia os ciclos de atividades da fábrica.
 
   ```json
   {
-      "primeira_opcao": {{id_area_fabrica_A}},
-      "segunda_opcao": {{id_area_fabrica_B}},
-      "tecnologias": [{{id_tecnologia_fabrica_A}}, {{id_tecnologia_fabrica_B}}],
-      "interesses": [
-          {"area": {{id_area_fabrica_A}}, "nivel": 5},
-          {"area": {{id_area_fabrica_B}}, "nivel": 4},
-          {"area": {{id_area_fabrica_C}}, "nivel": 2}
-      ],
-      "outras_tech": [
-          {"nome": {{nome}} }
-      ]
+    "primeira_opcao": "{{id_area_fabrica_A}}",
+    "segunda_opcao": "{{id_area_fabrica_B}}",
+    "tecnologias": ["{{id_tecnologia_fabrica_A}}", "{{id_tecnologia_fabrica_B}}"],
+    "interesses": [
+      {
+        "area": "{{id_area_fabrica_A}}", 
+        "nivel": 5
+      },
+      {
+        "area": "{{id_area_fabrica_B}}", 
+        "nivel": 4
+      },
+      {
+        "area": "{{id_area_fabrica_C}}", 
+        "nivel": 2
+      }
+    ],
+    "outras_tech": [
+      {
+        "nome": "{{nome}}"
+      }
+    ]
   }
   ```
 
@@ -603,17 +669,26 @@ Este conjunto de endpoints gerencia os ciclos de atividades da fábrica.
 
   ```json
   {
-      "area": {{id_area}},
-      "titulo": {{titulo}},
-      "descricao": {{descricao}},
-      "sala": {{sala}},
-      "bloco": {{bloco}},
-      "instrutores": [ {{id_usuario_A}}, {{id_usuario_B}}],
-      "participantes": [{{id_usuario_C}}, {{id_usuario_D}}{{id_usuario_E}}, {{id_usuario_F}}],
-      "dias_workshop": [
-          "2025-08-10T14:00:00Z",
-          "2025-08-17T14:00:00Z"
-      ]
+    "area": "{{id_area}}",
+    "titulo": "{{titulo}}",
+    "descricao": "{{descricao}}",
+    "sala": "{{sala}}",
+    "bloco": "{{bloco}}",
+    "instrutores": [ 
+      "{{id_usuario_A}}",
+      "{{id_usuario_B}}", 
+      "{{...}}"
+    ],
+    "participantes": [
+      "{{id_usuario_C}}", 
+      "{{id_usuario_D}}", 
+      "{{id_usuario_E}}", 
+      "{{...}}"
+    ],
+    "dias_workshop": [
+      "2025-08-10T14:00:00Z",
+      "2025-08-17T14:00:00Z"
+    ]
   }
   ```
 
@@ -624,17 +699,26 @@ Este conjunto de endpoints gerencia os ciclos de atividades da fábrica.
 
   ```json
   {
-      "area": {{id_area}},
-      "titulo": {{titulo}},
-      "descricao": {{descricao}},
-      "sala": {{sala}},
-      "bloco": {{bloco}},
-      "instrutores": [ {{id_usuario_A}}, {{id_usuario_B}}],
-      "participantes": [{{id_usuario_C}}, {{id_usuario_D}}{{id_usuario_E}}, {{id_usuario_F}}],
-      "dias_workshop": [
-          "2025-08-10T14:00:00Z",
-          "2025-08-17T14:00:00Z"
-      ]
+    "area": "{{id_area}}",
+    "titulo": "{{titulo}}",
+    "descricao": "{{descricao}}",
+    "sala": "{{sala}}",
+    "bloco": "{{bloco}}",
+    "instrutores": [ 
+      "{{id_usuario_A}}", 
+      "{{id_usuario_B}}"
+    ],
+    "participantes": [
+      "{{id_usuario_C}}", 
+      "{{id_usuario_D}}",
+      "{{id_usuario_E}}", 
+      "{{id_usuario_F}}"
+      "{{...}}"
+    ],
+    "dias_workshop": [
+      "2025-08-10T14:00:00Z",
+      "2025-08-17T14:00:00Z"
+    ]
   }
   ```
 
@@ -644,8 +728,8 @@ Este conjunto de endpoints gerencia os ciclos de atividades da fábrica.
 
   ```json
   {
-      "dia_workshop": {{id_dia_workshop}},
-      "usuario_id": {{id_usuario}}
+    "dia_workshop":" {{id_dia_workshop}}",
+    "usuario_id": "{{id_usuario}}"
   }
   ```
 
@@ -655,8 +739,11 @@ Este conjunto de endpoints gerencia os ciclos de atividades da fábrica.
 
   ```json
   {
-      "dia_workshop": {{id_dia_workshop}},
-      "usuario_ids": [{{id_usuario_A}}, {{id_usuario_B}}]
+    "dia_workshop": "{{id_dia_workshop}}",
+    "usuario_ids": [
+      "{{id_usuario_A}}", 
+      "{{id_usuario_B}}"
+    ]
   }
   ```
 
@@ -669,14 +756,14 @@ Este conjunto de endpoints gerencia os ciclos de atividades da fábrica.
 
   ```json
   {
-      "usuario_id": {{id_usuario}},
-      "workshop": {{id_workshop}},
-      "desempenho": {{desempenho}},
-      "comentario": {{comentario}},
-      "especialidade": {{id_tecnologia}},
-      "aprovado": bool,
-      "classificacao": {{classificacao}},
-      "experiencia": {{experiencia}}
+    "usuario_id": "{{id_usuario}}",
+    "workshop": "{{id_workshop}}",
+    "desempenho": "{{desempenho}}",
+    "comentario": "{{comentario}}",
+    "especialidade": "{{id_tecnologia}}",
+    "aprovado": "bool",
+    "classificacao": "{{classificacao}}",
+    "experiencia": "{{experiencia}}"
   }
   ```
 
@@ -686,14 +773,14 @@ Este conjunto de endpoints gerencia os ciclos de atividades da fábrica.
 
   ```json
   {
-      "usuario_id": {{id_usuario}},
-      "workshop": {{id_workshop}},
-      "desempenho": {{desempenho}},
-      "comentario": {{comentario}},
-      "especialidade": {{id_tecnologia}},
-      "aprovado": bool,
-      "classificacao": {{classificacao}},
-      "experiencia": {{experiencia}}
+    "usuario_id": "{{id_usuario}}",
+    "workshop": "{{id_workshop}}",
+    "desempenho": "{{desempenho}}",
+    "comentario": "{{comentario}}",
+    "especialidade": "{{id_tecnologia}}",
+    "aprovado": "bool",
+    "classificacao": "{{classificacao}}",
+    "experiencia": "{{experiencia}}"
   }
   ```
 
@@ -725,29 +812,39 @@ Endpoints para criar e gerenciar projetos da fábrica.
 
   ```json
   {
-      "nome": {{nome}},
-      "descricao": {{descricao}},
-      "area": {{nome_area}},
-      "data_prazo": "2025-12-20",
-      "status": "ativo", # Opções: ativo | pausado | concluido | cancelado
-      "etapa_atual": "planejamento", # Opções: planejamento | desenvolvimento | testes | implantacao | concluido
-      "progresso": 10, # Opções: 0 - 100
-      "empresa_usuario_id": {{id_usuario}},
-      "techleader_usuario_id": {{id_usuario}},
-      "equipe": [
-          {
-              "usuario_id": {{id_usuario}},
-              "cargos_ids": [{{id_area}}],
-              "status": "ativo" # Opções: ativo | inativo
-          },
-          {
-              "usuario_id": {{id_usuario}},
-              "cargos_ids": [{{id_area}}],
-              "status": "ativo" # Opções: ativo | inativo
-          }
-      ]
+    "nome": "{{nome}}",
+    "descricao": "{{descricao}}",
+    "area": "{{nome_area}}",
+    "data_prazo": "2025-12-20",
+    "status": "ativo",     
+    "etapa_atual": "planejamento", 
+    "progresso": 10, 
+    "empresa_usuario_id": "{{id_usuario}}",
+    "techleader_usuario_id": "{{id_usuario}}",
+    "equipe": [
+      {
+        "usuario_id": "{{id_usuario}}",
+        "cargos_ids": [
+          "{{id_area_A}}",
+          "{{id_area_B}}",
+          "{{...}}"
+        ],
+        "status": "ativo" 
+      },
+      {
+        "usuario_id": "{{id_usuario}}",
+        "cargos_ids": [
+          "{{id_area}}"
+        ],
+        "status": "ativo" 
+      }
+    ]
   }
   ```
+  > Opções status: ativo | pausado | concluido | cancelado
+  > Opções etapa atual: planejamento | desenvolvimento | testes | implantacao | concluido
+  > Opções progresso: Inteiros 0 - 100
+  > Opções equipe.status: ativo | inativo
 
 ---
 
@@ -783,7 +880,9 @@ Para utilizar o painel administrativo, você precisa:
 
 ### Primeiro Acesso
 
-1. **Acesse o painel através do link fornecido**
+1. **Acesse o painel através dos links fornecidos**
+  > <URL-BASE>painel/
+  > <URL-BASE>painel/login/
 2. **Faça login com suas credenciais**
 3. **Verifique suas permissões de acesso**
 4. **Familiarize-se com o menu lateral**
