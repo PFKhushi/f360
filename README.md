@@ -231,7 +231,7 @@ Para criar um usuário, envie uma requisição `POST` para `/api/usuario/` e esp
     "periodo": "{{periodo}}"
   }
   ```
-  > Opções curso: "ADS", "CC", "SI", "CD", "OTR"
+    > Opções curso: "ADS", "CC", "SI", "CD", "OTR"
 
 - **Exemplo Criando uma Exceção**
 
@@ -841,10 +841,14 @@ Endpoints para criar e gerenciar projetos da fábrica.
     ]
   }
   ```
-  > Opções status: ativo | pausado | concluido | cancelado
-  > Opções etapa atual: planejamento | desenvolvimento | testes | implantacao | concluido
-  > Opções progresso: Inteiros 0 - 100
-  > Opções equipe.status: ativo | inativo
+
+    > Opções status: ativo | pausado | concluido | cancelado
+
+    > Opções etapa atual: planejamento | desenvolvimento | testes | implantacao | concluido
+
+    > Opções progresso: Inteiros 0 - 100  
+
+    > Opções equipe.status: ativo | inativo
 
 ---
 
@@ -881,8 +885,11 @@ Para utilizar o painel administrativo, você precisa:
 ### Primeiro Acesso
 
 1. **Acesse o painel através dos links fornecidos**
-  > <URL-BASE>painel/
-  > <URL-BASE>painel/login/
+  
+    > **Base URL:** painel/
+
+    > **Base URL:** painel/login/
+
 2. **Faça login com suas credenciais**
 3. **Verifique suas permissões de acesso**
 4. **Familiarize-se com o menu lateral**
